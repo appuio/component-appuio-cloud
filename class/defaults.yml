@@ -1,0 +1,4 @@
+parameters:
+  appuio_cloud:
+    =_metadata: {}
+    namespace: syn-appuio-cloud
