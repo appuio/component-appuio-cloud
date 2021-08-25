@@ -1,7 +1,7 @@
 :global:
   componentName: appuio-cloud
   githubUrl: https://github.com/appuio/component-appuio-cloud
-  feature_goUnitTests: true
+  feature_goUnitTests: false
   feature_goldenTests: true
 
 docs/antora.yml:
