@@ -26,7 +26,7 @@ local appuioNsProvisionerRole = kube.ClusterRole('appuio-ns-provisioner') {
 };
 
 /**
-  * appuio-ns-provisioner role allows to create namespaces
+  * appuio-ns-provisioners cluster role binding allows authenticated users to create namespaces
   */
 local appuioNsProvisionersRoleBinding = kube.ClusterRoleBinding('appuio-ns-provisioners') {
   roleRef: {
