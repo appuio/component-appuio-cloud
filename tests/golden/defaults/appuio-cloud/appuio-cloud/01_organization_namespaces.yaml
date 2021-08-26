@@ -1,0 +1,50 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations: {}
+  labels:
+    name: organization-namespaces
+  name: organization-namespaces
+spec:
+  background: false
+  rules:
+    - exclude:
+        clusterRoles:
+          - cluster-admin
+      match:
+        resources:
+          kinds:
+            - Namespace
+      name: has-organization
+      validate:
+        message: Namespace must have organization
+        pattern:
+          metadata:
+            labels:
+              appuio.io/organization: ?*
+    - context:
+        - apiCall:
+            jmesPath: items
+            urlPath: /apis/user.openshift.io/v1/groups
+          name: groups
+      exclude:
+        clusterRoles:
+          - cluster-admin
+      match:
+        resources:
+          kinds:
+            - Namespace
+      name: is-in-organization
+      preconditions:
+        - key: '{{request.object.metadata.labels."appuio.io/organization"}}'
+          operator: NotEquals
+          value: ''
+      validate:
+        deny:
+          conditions:
+            - key: '{{request.userInfo.username}}'
+              operator: NotIn
+              value: '{{groups[?metadata.name==''{{request.object.metadata.labels."appuio.io/organization"}}''].users[]}}'
+        message: Creating namespace for {{request.object.metadata.labels."appuio.io/organization"}}
+          but {{request.userInfo.username}} is not in organization
+  validationFailureAction: enforce
