@@ -55,6 +55,24 @@ docs-serve: ## Preview the documentation
 test: commodore_args = -f tests/$(instance).yml --search-paths ./dependencies
 test: .compile ## Compile the component
 
+.PHONY: golden-diff-help
+golden-diff-help:
+	@echo "NOTE: if the 'golden-diff' target fails, review output and run:"
+	@echo "      $(MAKE) gen-golden golden-diff"
+	@echo
+
+.PHONY: gen-golden
+gen-golden: commodore_args = -f tests/$(instance).yml --search-paths ./dependencies
+gen-golden: .compile
+	@rm -rf tests/golden/$(instance)
+	@mkdir -p tests/golden/$(instance)
+	@cp -r compiled/ tests/golden/$(instance)
+
+.PHONY: golden-diff
+golden-diff: commodore_args = -f tests/$(instance).yml --search-paths ./dependencies
+golden-diff: .compile golden-diff-help
+	@git diff --exit-code --minimal --no-index -- tests/golden/$(instance) compiled/
+
 .PHONY: clean
 clean: ## Clean the project
 	rm -rf compiled dependencies vendor helmcharts jsonnetfile*.json || true
