@@ -10,10 +10,37 @@ default:: `syn-appuio-cloud`
 
 The namespace in which to deploy this component.
 
+== `reservedNamespaces.match`
 
-== Example
+[horizontal]
+type:: dict
 
-[source,yaml]
-----
-namespace: example-namespace
-----
+Creating and editing namespaces matching any of the entries is disallowed.
+Must consist of entries like `myCustomSet: ['custom-*', 'test']`.
+Remove set by setting value to null: `defaultSet: null`.
+
+== `reservedNamespaces.allowedClusterRoles.create`
+
+[horizontal]
+type:: boolean
+default:: `true`
+
+If enabled creates a `ClusterRole` allowed to create and edit namespaces.
+
+== `reservedNamespaces.allowedClusterRoles.name`
+
+[horizontal]
+type:: string
+default:: `appuio:edit-reserved-namespaces`
+
+Name of the created `ClusterRole` allowed to create and edit namespaces.
+
+== `reservedNamespaces.allowedClusterRoles.additionalRoles`
+
+[horizontal]
+type:: dict
+default:: `defaultSet: ['cluster-admin']`
+
+`ClusterRoles` excluded from the namespace rules.
+Must consist of entries like `myCustomSet: ['my-admin', 'test-admin']`.
+Remove set by setting value to null: `defaultSet: null`.

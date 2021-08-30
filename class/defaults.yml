@@ -2,3 +2,19 @@ parameters:
   appuio_cloud:
     =_metadata: {}
     namespace: syn-appuio-cloud
+
+    reservedNamespaces:
+      allowedClusterRoles:
+        create: true
+        name: appuio:edit-reserved-namespaces
+        additionalRoles:
+          defaultSet:
+            - cluster-admin
+      match:
+        defaultSet:
+          - default
+          - kube-*
+          - openshift-*
+          - syn-*
+          - vshn-*
+          - appuio-*
