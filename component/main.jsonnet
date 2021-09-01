@@ -131,7 +131,8 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
 
 // Define outputs below
 {
-  '00_appuio_ns_provisioner_role': appuioNsProvisionerRole,
-  '00_appuio_ns_provisioners_crb': appuioNsProvisionersRoleBinding,
-  '01_organization_namespaces': organizationNamespaces,
+  '00_namespace': kube.Namespace(params.namespace),
+  '01_appuio_ns_provisioner_role': appuioNsProvisionerRole,
+  '01_appuio_ns_provisioners_crb': appuioNsProvisionersRoleBinding,
+  '02_organization_namespaces': organizationNamespaces,
 }
