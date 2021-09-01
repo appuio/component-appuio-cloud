@@ -6,3 +6,11 @@ parameters:
       - type: https
         source: https://raw.githubusercontent.com/projectsyn/component-kyverno/v1.0.0/lib/kyverno.libsonnet
         output_path: vendor/lib/kyverno.libsonnet
+
+  appuio_cloud:
+    bypassNamespaceRestrictions:
+      subjects:
+        argocd:
+          kind: ServiceAccount
+          name: argocd-application-controller
+          namespace: argocd

@@ -14,18 +14,21 @@ spec:
     - exclude:
         clusterRoles:
           - cluster-admin
-          - appuio:edit-reserved-namespaces
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
       match:
         resources:
           kinds:
             - Namespace
           names:
+            - appuio-*
             - default
             - kube-*
             - openshift-*
             - syn-*
-            - vshn-*
-            - appuio-*
       name: disallow-reserved-namespaces
       validate:
         deny: {}

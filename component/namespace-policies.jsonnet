@@ -7,6 +7,22 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
+local flattenSet(set) = std.flatMap(function(s)
+                                      if std.isArray(set[s]) then set[s] else [ set[s] ],
+                                    std.objectFields(std.prune(set)));
+
+/**
+  * bypassNamespaceRestrictionsSubjects returns an object containing the configured roles and subjects
+  * allowed to bypass restrictions.
+  */
+local bypassNamespaceRestrictionsSubjects() = {
+  local bypass = params.bypassNamespaceRestrictions,
+  clusterRoles+: flattenSet(bypass.clusterRoles),
+  roles+: flattenSet(bypass.roles),
+  subjects+: flattenSet(bypass.subjects),
+};
+
+
 /**
   * appuio-ns-provisioner role allows to create namespaces
   */
@@ -67,11 +83,7 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
             ],
           },
         },
-        exclude: {
-          clusterRoles: [
-            'cluster-admin',
-          ],
-        },
+        exclude: bypassNamespaceRestrictionsSubjects(),
         validate: {
           message: 'Namespace must have organization',
           pattern: {
@@ -131,31 +143,14 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
 };
 
 /**
-  * ClusterRole allowed to create and edit reserved namespaces
-  */
-local editReservedNamespacesClusterRole = kube.ClusterRole(params.reservedNamespaces.allowedClusterRoles.name) {
-  rules: [],
-};
-
-/**
-  * Disallow create or edit reserved namespaces
+  * Disallow the creation and edit of reserved namespaces
   * This policy will:
   * - Check if namespace name matches one of the disallowed namespace patterns
   * - Check if user has cluster role that allows them to create reserved namespaces
   * - Deny namespace creation or modification
   */
 local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-namespaces') {
-  local flattenSet(set) = std.flattenArrays([
-    set[s]
-    for s in std.objectFields(std.prune(set))
-  ]),
   spec: {
-    local additionalRoles = params.reservedNamespaces.allowedClusterRoles.additionalRoles,
-    local allowedClusterRoles = flattenSet(additionalRoles) +
-                                if params.reservedNamespaces.allowedClusterRoles.create then
-                                  [ params.reservedNamespaces.allowedClusterRoles.name ]
-                                else
-                                  [],
     validationFailureAction: 'enforce',
     background: false,
     rules: [
@@ -166,12 +161,10 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
             kinds: [
               'Namespace',
             ],
-            names: flattenSet(params.reservedNamespaces.match),
+            names: flattenSet(params.reservedNamespaces),
           },
         },
-        exclude: {
-          clusterRoles: allowedClusterRoles,
-        },
+        exclude: bypassNamespaceRestrictionsSubjects(),
         validate: {
           message: 'Changing or creating reserved namespaces is not allowed.',
           deny: {},
@@ -188,5 +181,4 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
   '01_appuio_ns_provisioners_crb': appuioNsProvisionersRoleBinding + common.DefaultLabels,
   '02_organization_namespaces': organizationNamespaces + common.DefaultLabels,
   '02_disallow_reserved_namespaces': disallowReservedNamespaces + common.DefaultLabels,
-  [if params.reservedNamespaces.allowedClusterRoles.create then '02_edit_reserved_namespaces_clusterrole']: editReservedNamespacesClusterRole + common.DefaultLabels,
 }

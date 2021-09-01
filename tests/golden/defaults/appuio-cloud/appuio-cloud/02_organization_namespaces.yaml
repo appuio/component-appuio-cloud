@@ -14,6 +14,11 @@ spec:
     - exclude:
         clusterRoles:
           - cluster-admin
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
       match:
         resources:
           kinds:
