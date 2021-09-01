@@ -5,4 +5,4 @@ parameters:
     dependencies:
       - type: https
         source: https://raw.githubusercontent.com/projectsyn/component-kyverno/v1.0.0/lib/kyverno.libsonnet
-        output_path: vendor/lib/kyverno.libjsonnet
+        output_path: vendor/lib/kyverno.libsonnet
