@@ -7,6 +7,8 @@ parameters:
       roles: {}
       clusterRoles:
         cluster-admin: cluster-admin
+        # This is the OpenShift role that syncs namespaces after creation (e.g. add system-relevant labels/annotations from Project)
+        namespace-security-allocation-controller: system:openshift:controller:namespace-security-allocation-controller
       subjects: {}
 
     reservedNamespaces:
