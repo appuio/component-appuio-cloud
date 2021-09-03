@@ -7,22 +7,6 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
-local flattenSet(set) = std.flatMap(function(s)
-                                      if std.isArray(set[s]) then set[s] else [ set[s] ],
-                                    std.objectFields(std.prune(set)));
-
-/**
-  * bypassNamespaceRestrictionsSubjects returns an object containing the configured roles and subjects
-  * allowed to bypass restrictions.
-  */
-local bypassNamespaceRestrictionsSubjects() = {
-  local bypass = params.bypassNamespaceRestrictions,
-  clusterRoles+: flattenSet(bypass.clusterRoles),
-  roles+: flattenSet(bypass.roles),
-  subjects+: flattenSet(bypass.subjects),
-};
-
-
 /**
   * appuio-ns-provisioner role allows to create namespaces
   */
@@ -83,7 +67,7 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
             ],
           },
         },
-        exclude: bypassNamespaceRestrictionsSubjects(),
+        exclude: common.BypassNamespaceRestrictionsSubjects(),
         validate: {
           message: 'Namespace must have organization',
           pattern: {
@@ -161,10 +145,10 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
             kinds: [
               'Namespace',
             ],
-            names: flattenSet(params.reservedNamespaces),
+            names: common.FlattenSet(params.reservedNamespaces),
           },
         },
-        exclude: bypassNamespaceRestrictionsSubjects(),
+        exclude: common.BypassNamespaceRestrictionsSubjects(),
         validate: {
           message: 'Changing or creating reserved namespaces is not allowed.',
           deny: {},
