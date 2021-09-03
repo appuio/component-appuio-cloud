@@ -17,6 +17,6 @@ parameters:
       projectsyn: syn-*
       appuio: appuio-*
 
-    generateDefaultRoleBinding:
+    generatedDefaultRoleBindingInNewNamespaces:
       bindingName: admin
       clusterRoleName: admin

@@ -35,13 +35,13 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
         generate: {
           kind: 'RoleBinding',
           synchronize: false,
-          name: params.generateDefaultRoleBinding.bindingName,
+          name: params.generatedDefaultRoleBindingInNewNamespaces.bindingName,
           namespace: '{{request.object.metadata.name}}',
           data: {
             roleRef: {
               apiGroup: 'rbac.authorization.k8s.io',
               kind: 'ClusterRole',
-              name: params.generateDefaultRoleBinding.clusterRoleName,
+              name: params.generatedDefaultRoleBindingInNewNamespaces.clusterRoleName,
             },
             subjects: [
               {
