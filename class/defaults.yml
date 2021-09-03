@@ -16,3 +16,7 @@ parameters:
       openshift: openshift-*
       projectsyn: syn-*
       appuio: appuio-*
+
+    generateDefaultRoleBinding:
+      bindingName: admin
+      clusterRoleName: admin

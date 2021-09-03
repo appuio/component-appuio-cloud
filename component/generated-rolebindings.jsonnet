@@ -1,5 +1,10 @@
 local common = import 'common.libsonnet';
+local kap = import 'lib/kapitan.libjsonnet';
 local kyverno = import 'lib/kyverno.libsonnet';
+local inv = kap.inventory();
+// The hiera parameters for the component
+local params = inv.parameters.appuio_cloud;
+
 /**
   * This policy will:
   * - Generate a RoleBinding to ClusterRole 'admin' for the organization defined in a label of a namespace.
@@ -30,13 +35,13 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
         generate: {
           kind: 'RoleBinding',
           synchronize: false,
-          name: 'admin',
+          name: params.generateDefaultRoleBinding.bindingName,
           namespace: '{{request.object.metadata.name}}',
           data: {
             roleRef: {
               apiGroup: 'rbac.authorization.k8s.io',
               kind: 'ClusterRole',
-              name: 'admin',
+              name: params.generateDefaultRoleBinding.clusterRoleName,
             },
             subjects: [
               {

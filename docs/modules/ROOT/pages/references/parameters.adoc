@@ -74,3 +74,20 @@ subjects:
 ----
 
 `ServiceAccount`, `User` or `Group` (chosen by `kind:`) excluded from all namespace policies.
+
+== `generateDefaultRoleBinding.clusterRoleName`
+
+[horizontal]
+type:: string
+default:: `admin`
+
+The `ClusterRole` name to which the requesting user account gets a new `RoleBinding` to.
+
+== `generateDefaultRoleBinding.bindingName`
+
+[horizontal]
+type:: string
+default:: `admin`
+
+The `metadata.name` of the `RoleBinding` that gets generated in the new `Namespace` created by the user.
+The role binding is only created upon Namespace creation, it doesn't get synchronized.
