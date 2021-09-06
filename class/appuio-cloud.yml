@@ -7,5 +7,6 @@ parameters:
         output_path: apps/
       - input_paths:
           - appuio-cloud/component/main.jsonnet
+          - appuio-cloud/component/namespace-policies.jsonnet
         input_type: jsonnet
         output_path: appuio-cloud/

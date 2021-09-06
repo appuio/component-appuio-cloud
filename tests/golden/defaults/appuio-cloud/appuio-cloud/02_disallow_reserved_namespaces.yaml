@@ -1,0 +1,36 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
+    name: disallow-reserved-namespaces
+  name: disallow-reserved-namespaces
+spec:
+  background: false
+  rules:
+    - exclude:
+        clusterRoles:
+          - cluster-admin
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
+      match:
+        resources:
+          kinds:
+            - Namespace
+          names:
+            - appuio-*
+            - default
+            - kube-*
+            - openshift-*
+            - syn-*
+      name: disallow-reserved-namespaces
+      validate:
+        deny: {}
+        message: Changing or creating reserved namespaces is not allowed.
+  validationFailureAction: enforce

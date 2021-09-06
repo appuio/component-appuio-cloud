@@ -3,5 +3,8 @@ kind: Namespace
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
     name: syn-appuio-cloud
   name: syn-appuio-cloud

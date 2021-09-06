@@ -10,10 +10,67 @@ default:: `syn-appuio-cloud`
 
 The namespace in which to deploy this component.
 
+== `reservedNamespaces`
 
-== Example
-
+[horizontal]
+type:: dict
+example::
++
 [source,yaml]
 ----
-namespace: example-namespace
+reservedNamespaces:
+  monitoring: ['monitoring-*', 'test-monitoring-*']
+  logging: logging
 ----
+
+Creating and editing namespaces matching any of the entries is disallowed.
+The list must consist of entries like `custom: ['custom-*', 'test-custom-*']` or `custom: 'custom-*'`.
+
+== `bypassNamespaceRestrictions.roles`
+
+[horizontal]
+type:: dict
+example::
++
+[source,yaml]
+----
+roles:
+  my-admin: ['my-admin', 'test-admin']
+  special-role: special-role
+----
+
+`Roles` in the same namespace excluded from all namespace policies.
+Must consist of entries like `my-admin: ['my-admin', 'test-admin']` or `my-admin: 'my-admin'`.
+
+== `bypassNamespaceRestrictions.clusterRoles`
+
+[horizontal]
+type:: dict
+example::
++
+[source,yaml]
+----
+clusterRoles:
+  my-admin: ['my-admin', 'test-admin']
+  special-role: special-role
+----
+
+`ClusterRoles` excluded from all namespace policies.
+Must consist of entries like `my-admin: ['my-admin', 'test-admin']` or `my-admin: 'my-admin'`.
+
+== `bypassNamespaceRestrictions.subjects`
+
+[horizontal]
+type:: dict
+example::
++
+[source,yaml]
+----
+subjects:
+  argocd:
+    kind: ServiceAccount
+    name: argocd-application-controller
+    namespace: syn-argocd
+----
+
+`ServiceAccount`, `User` or `Group` (chosen by `kind:`) excluded from all namespace policies.

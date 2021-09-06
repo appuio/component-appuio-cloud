@@ -3,6 +3,9 @@ kind: ClusterRole
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
     name: appuio-ns-provisioner
   name: appuio-ns-provisioner
 rules:

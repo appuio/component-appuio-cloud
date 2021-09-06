@@ -3,6 +3,9 @@ kind: ClusterPolicy
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
     name: organization-namespaces
   name: organization-namespaces
 spec:
@@ -11,6 +14,11 @@ spec:
     - exclude:
         clusterRoles:
           - cluster-admin
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
       match:
         resources:
           kinds:

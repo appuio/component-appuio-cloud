@@ -2,3 +2,15 @@ parameters:
   appuio_cloud:
     =_metadata: {}
     namespace: syn-appuio-cloud
+
+    bypassNamespaceRestrictions:
+      roles: {}
+      clusterRoles:
+        cluster-admin: cluster-admin
+      subjects: {}
+
+    reservedNamespaces:
+      kubernetes: ['default', 'kube-*']
+      openshift: openshift-*
+      projectsyn: syn-*
+      appuio: appuio-*
