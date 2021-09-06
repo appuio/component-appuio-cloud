@@ -14,6 +14,7 @@ spec:
     - exclude:
         clusterRoles:
           - cluster-admin
+          - system:openshift:controller:namespace-security-allocation-controller
         roles: []
         subjects:
           - kind: ServiceAccount
