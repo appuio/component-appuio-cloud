@@ -88,11 +88,7 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
             ],
           },
         },
-        exclude: {
-          clusterRoles: [
-            'cluster-admin',
-          ],
-        },
+        exclude: common.BypassNamespaceRestrictionsSubjects(),
         preconditions: [
           {
             key: '{{request.object.metadata.labels."appuio.io/organization"}}',
