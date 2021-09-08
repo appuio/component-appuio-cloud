@@ -161,23 +161,14 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
             value: '',
           },
         ],
-        context: [
-          {
-            name: 'groups',
-            apiCall: {
-              urlPath: '/apis/user.openshift.io/v1/groups',
-              jmesPath: 'items',
-            },
-          },
-        ],
         validate: {
           message: 'Creating namespace for {{request.object.metadata.labels."appuio.io/organization"}} but {{request.userInfo.username}} is not in organization',
           deny: {
             conditions: [
               {
-                key: '{{request.userInfo.username}}',
+                key: '{{request.object.metadata.labels."appuio.io/organization"}}',
                 operator: 'NotIn',
-                value: "{{groups[?metadata.name=='{{request.object.metadata.labels.\"appuio.io/organization\"}}'].users[]}}",
+                value: '{{request.userInfo.groups}}',
               },
             ],
           },
