@@ -1,0 +1,65 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
+    name: quota-and-limit-range-in-ns
+  name: quota-and-limit-range-in-ns
+spec:
+  rules:
+    - generate:
+        data:
+          spec:
+            hard:
+              limits.cpu: '2'
+              limits.memory: 8Gi
+              requests.cpu: '1'
+              requests.memory: 4Gi
+            scopeSelector: null
+            scopes: []
+        kind: ResourceQuota
+        name: organization
+        namespace: '{{request.object.metadata.name}}'
+        synchronize: false
+      match:
+        resources:
+          kinds:
+            - Namespace
+          selector:
+            matchExpressions:
+              - key: appuio.io/organization
+                operator: Exists
+      name: generate-quota
+    - generate:
+        data:
+          spec:
+            limits:
+              - default:
+                  cpu: 200m
+                  memory: 200Mi
+                defaultRequest:
+                  cpu: 100m
+                  memory: 100Mi
+                max:
+                  cpu: '1'
+                  memory: 4G
+                min:
+                  cpu: 10m
+                  memory: 4Mi
+                type: Container
+        kind: LimitRange
+        name: organization
+        namespace: '{{request.object.metadata.name}}'
+        synchronize: false
+      match:
+        resources:
+          kinds:
+            - Namespace
+          selector:
+            matchExpressions:
+              - key: appuio.io/organization
+                operator: Exists
+      name: generate-limit-range

@@ -33,3 +33,32 @@ parameters:
     generatedDefaultRoleBindingInNewNamespaces:
       bindingName: admin
       clusterRoleName: admin
+
+    generatedResourceQuota:
+      name: organization
+      synchronize: false
+      hard:
+        requests.cpu: "1"
+        requests.memory: 4Gi
+        limits.cpu: "2"
+        limits.memory: 8Gi
+      scopes: []
+      scopeSelector:
+
+    generatedLimitRange:
+      name: organization
+      synchronize: false
+      limits:
+        "Container":
+          max:
+            cpu: "1"
+            memory: "4G"
+          min:
+            cpu: "10m"
+            memory: "4Mi"
+          default:
+            cpu: "200m"
+            memory: "200Mi"
+          defaultRequest:
+            cpu: "100m"
+            memory: "100Mi"
