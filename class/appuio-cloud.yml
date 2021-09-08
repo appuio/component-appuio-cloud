@@ -9,5 +9,6 @@ parameters:
           - appuio-cloud/component/main.jsonnet
           - appuio-cloud/component/namespace-policies.jsonnet
           - appuio-cloud/component/generated-rolebindings.jsonnet
+          - appuio-cloud/component/project-template.jsonnet
         input_type: jsonnet
         output_path: appuio-cloud/
