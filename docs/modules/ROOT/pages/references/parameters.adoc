@@ -91,3 +91,156 @@ default:: `admin`
 
 The `metadata.name` of the `RoleBinding` that gets generated in the new `Namespace` created by the user.
 The role binding is only created upon Namespace creation, it doesn't get synchronized.
+
+== `generatedResourceQuota.name`
+
+[horizontal]
+type:: string
+default:: `organization`
+
+The `metadata.name` of the `ResourceQuota` that gets generated in the new `Namespace` created by the user.
+
+== `generatedResourceQuota.synchronize`
+
+[horizontal]
+type:: bool
+default:: `false`
+
+Whether the created `ResourceQuota` is kept in sync.
+If set to `false` the created `ResourceQuota` can be modified.
+
+[WARNING]
+====
+There is a bug in `kyverno` up until `v1.4.2`.
+The bug has been fixed, but as of writing this the fix hasn't been released.
+The bug will cause the `ResourceQuota` to be updated if the `Namespace` or `ClusterPolicy` changes, even if `synchronize` has been disabled.
+====
+
+== `generatedResourceQuota.hard`
+
+[horizontal]
+type:: dict
+default::
++
+[source,yaml]
+----
+hard:
+  requests.cpu: "1"
+  requests.memory: 4Gi
+  limits.cpu: "2"
+  limits.memory: 8Gi
+----
+
+The desired hard limits for each named resource.
+Consult https://kubernetes.io/docs/concepts/policy/resource-quotas/[the official Kubernetes documentation] on how to configure these limits.
+
+
+== `generatedResourceQuota.scopes`
+
+[horizontal]
+type:: list
+default:: []
+example::
++
+[source,yaml]
+----
+scopes:
+  - Terminating
+  - BestEffort
+----
+
+Each quota can have an associated set of scopes.
+A quota will only measure usage for a resource if it matches the intersection of enumerated scopes.
+Consult https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-scopes[the official Kubernetes documentation] on how to configure these scopes.
+
+== `generatedResourceQuota.scopeSelector`
+
+ScopeSelector is also a collection of filters like Scopes that must match each object tracked by a quota.
+Consult https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-scopes[the official Kubernetes documentation] on how to configure this `scopeSelector`.
+
+[horizontal]
+type:: dict
+default:: null
+example::
++
+[source,yaml]
+----
+scopeSelector:
+  matchExpressions:
+    - scopeName: PriorityClass
+      operator: In
+      values:
+        - middle
+----
+
+== `generatedLimitRange.name`
+
+[horizontal]
+type:: string
+default:: `organization`
+
+The `metadata.name` of the `LimitRange` that gets generated in the new `Namespace` created by the user.
+
+== `generatedResourceQuota.synchronize`
+
+[horizontal]
+type:: bool
+default:: `false`
+
+Whether the created `LimitRange` is kept in sync.
+If set to `false` the created `LimitRange` can be modified.
+
+[WARNING]
+====
+There is a bug in `kyverno` up until `v1.4.2`.
+The bug has been fixed, but as of writing this the fix hasn't been released.
+The bug will cause the `LimitRange` to be updated if the `Namespace` or `ClusterPolicy` changes, even if `synchronize` has been disabled.
+====
+
+== `generatedLimitRange.limits`
+
+[horizontal]
+type:: dict
+default::
++
+[source,yaml]
+----
+limits:
+  "Container":
+    max:
+      cpu: "1"
+      memory: "4G"
+    min:
+      cpu: "10m"
+      memory: "4Mi"
+    default:
+      cpu: "200m"
+      memory: "200Mi"
+    defaultRequest:
+      cpu: "100m"
+      memory: "100Mi"
+----
+
+A key-value map defining limits for different `Types`.
+
+[source,yaml]
+----
+limits:
+  "Container":
+    max:
+      memory: "4G"
+    min:
+      memory: "4Mi"
+  "PersistentVolumeClaim":
+    max:
+      storage: 2Gi
+    min:
+      storage: 1Gi
+----
+
+The example above will reject any PVC smaller than `1Gi` or larger than `2Gi`.
+It will also reject any container requesting more than `4G` of memory or less than `4Mi`.
+
+
+Consult https://kubernetes.io/docs/concepts/policy/limit-range/[the official Kubernetes documentation] on how to configure these `limits`.
+
