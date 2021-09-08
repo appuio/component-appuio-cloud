@@ -6,29 +6,13 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
-local matchOrgNamespaces = {
-  resources: {
-    kinds: [
-      'Namespace',
-    ],
-    selector: {
-      matchExpressions: [
-        {
-          key: 'appuio.io/organization',
-          operator: 'Exists',
-        },
-      ],
-    },
-  },
-};
-
 
 local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit-range-in-ns') {
   spec: {
     rules: [
       {
         name: 'generate-quota',
-        match: matchOrgNamespaces,
+        match: common.MatchOrgNamespaces,
         generate: {
           kind: 'ResourceQuota',
           synchronize: params.generatedResourceQuota.synchronize,
@@ -45,7 +29,7 @@ local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit
       },
       {
         name: 'generate-limit-range',
-        match: matchOrgNamespaces,
+        match: common.MatchOrgNamespaces,
         generate: {
           kind: 'LimitRange',
           synchronize: params.generatedLimitRange.synchronize,
