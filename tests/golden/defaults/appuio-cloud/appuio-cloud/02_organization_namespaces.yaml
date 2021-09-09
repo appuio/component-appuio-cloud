@@ -41,9 +41,9 @@ spec:
             namespace: argocd
       match:
         all:
-          resources:
-            kinds:
-              - Namespace
+          - resources:
+              kinds:
+                - Namespace
       mutate:
         patchStrategicMerge:
           metadata:
@@ -93,9 +93,10 @@ spec:
             name: argocd-application-controller
             namespace: argocd
       match:
-        resources:
-          kinds:
-            - Namespace
+        all:
+          - resources:
+              kinds:
+                - Namespace
       name: has-organization
       validate:
         message: Namespace must have organization
@@ -127,9 +128,10 @@ spec:
             name: argocd-application-controller
             namespace: argocd
       match:
-        resources:
-          kinds:
-            - Namespace
+        all:
+          - resources:
+              kinds:
+                - Namespace
       name: is-in-organization
       preconditions:
         - key: '{{request.object.metadata.labels."appuio.io/organization"}}'

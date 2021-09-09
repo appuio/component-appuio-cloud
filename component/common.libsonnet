@@ -21,11 +21,26 @@ local flattenSet(set) = std.flatMap(function(s)
   * bypassNamespaceRestrictionsSubjects returns an object containing the configured roles and subjects
   * allowed to bypass restrictions.
   */
-local bypassNamespaceRestrictionsSubjects() = {
-  local bypass = params.bypassNamespaceRestrictions,
-  clusterRoles+: flattenSet(bypass.clusterRoles),
-  roles+: flattenSet(bypass.roles),
-  subjects+: flattenSet(bypass.subjects),
+local bypassNamespaceRestrictionsSubjects() =
+  local bypass = params.bypassNamespaceRestrictions;
+  // FIXME: We would like to nest excludes under `all`. This doesn't work for
+  // clusterRoles in Kyverno 1.4.2, cf. https://github.com/kyverno/kyverno/issues/2301
+  {
+    clusterRoles+: flattenSet(bypass.clusterRoles),
+    roles+: flattenSet(bypass.roles),
+    subjects+: flattenSet(bypass.subjects),
+  };
+
+local matchNamespaces(selector=null, names=null) = {
+  all+: [ {
+    resources+: std.prune({
+      kinds+: [
+        'Namespace',
+      ],
+      selector+: selector,
+      names+: names,
+    }),
+  } ],
 };
 
 
@@ -33,4 +48,5 @@ local bypassNamespaceRestrictionsSubjects() = {
   DefaultLabels: defaultLabels,
   FlattenSet: flattenSet,
   BypassNamespaceRestrictionsSubjects: bypassNamespaceRestrictionsSubjects,
+  MatchNamespaces: matchNamespaces,
 }
