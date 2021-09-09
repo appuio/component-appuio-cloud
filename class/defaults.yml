@@ -36,7 +36,7 @@ parameters:
 
     generatedResourceQuota:
       name: organization
-      synchronize: false
+      synchronize: true
       hard:
         requests.cpu: "1"
         requests.memory: 4Gi
