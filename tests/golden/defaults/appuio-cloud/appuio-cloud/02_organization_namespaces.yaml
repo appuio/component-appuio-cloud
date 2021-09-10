@@ -40,15 +40,35 @@ spec:
             name: argocd-application-controller
             namespace: argocd
       match:
-        resources:
-          kinds:
-            - Namespace
+        all:
+          resources:
+            kinds:
+              - Namespace
       mutate:
         patchStrategicMerge:
           metadata:
             labels:
               +(appuio.io/organization): '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}'
-      name: set-default-organization
+      name: set-default-organization-ns
+    - context:
+        - apiCall:
+            jmesPath: '@'
+            urlPath: /apis/user.openshift.io/v1/users/{{request.object.metadata.annotations."openshift.io/requester"}}
+          name: ocpuser
+      exclude: {}
+      match:
+        all:
+          - resources:
+              annotations:
+                openshift.io/requester: ?*
+              kinds:
+                - Project
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              +(appuio.io/organization): '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}'
+      name: set-default-organization-project
     - exclude:
         clusterRoles:
           - cluster-admin
