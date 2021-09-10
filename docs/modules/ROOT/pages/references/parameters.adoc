@@ -92,15 +92,15 @@ default:: `admin`
 The `metadata.name` of the `RoleBinding` that gets generated in the new `Namespace` created by the user.
 The role binding is only created upon Namespace creation, it doesn't get synchronized.
 
-== `generatedResourceQuota.name`
+== `generatedResourceQuota`
 
 [horizontal]
-type:: string
-default:: `organization`
+type:: dict
 
-The `metadata.name` of the `ResourceQuota` that gets generated in the new `Namespace` created by the user.
+A key-value map defining multiple `ResourceQuota`.
+Each entry will generate a `ResourceQuota` with the key as its name.
 
-== `generatedResourceQuota.synchronize`
+=== `generatedResourceQuota[name].synchronize`
 
 [horizontal]
 type:: bool
@@ -116,7 +116,7 @@ The bug has been fixed, but as of writing this the fix hasn't been released.
 The bug will cause the `ResourceQuota` to be updated if the `Namespace` or `ClusterPolicy` changes, even if `synchronize` has been disabled.
 ====
 
-== `generatedResourceQuota.hard`
+=== `generatedResourceQuota[name].hard`
 
 [horizontal]
 type:: dict
@@ -125,7 +125,7 @@ The desired hard limits for each named resource.
 Consult https://kubernetes.io/docs/concepts/policy/resource-quotas/[the official Kubernetes documentation] on how to configure these limits.
 
 
-== `generatedResourceQuota.scopes`
+=== `generatedResourceQuota[name].scopes`
 
 [horizontal]
 type:: list
@@ -143,7 +143,7 @@ Each quota can have an associated set of scopes.
 A quota will only measure usage for a resource if it matches the intersection of enumerated scopes.
 Consult https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-scopes[the official Kubernetes documentation] on how to configure these scopes.
 
-== `generatedResourceQuota.scopeSelector`
+=== `generatedResourceQuota[name].scopeSelector`
 
 ScopeSelector is also a collection of filters like Scopes that must match each object tracked by a quota.
 Consult https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-scopes[the official Kubernetes documentation] on how to configure this `scopeSelector`.

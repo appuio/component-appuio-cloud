@@ -11,23 +11,6 @@ local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit
   spec: {
     rules: [
       {
-        name: 'generate-quota',
-        match: common.MatchOrgNamespaces,
-        generate: {
-          kind: 'ResourceQuota',
-          synchronize: params.generatedResourceQuota.synchronize,
-          name: params.generatedResourceQuota.name,
-          namespace: '{{request.object.metadata.name}}',
-          data: {
-            spec: {
-              hard: params.generatedResourceQuota.hard,
-              scopes: params.generatedResourceQuota.scopes,
-              scopeSelector: params.generatedResourceQuota.scopeSelector,
-            },
-          },
-        },
-      },
-      {
         name: 'generate-limit-range',
         match: common.MatchOrgNamespaces,
         generate: {
@@ -47,11 +30,30 @@ local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit
           },
         },
       },
+    ] + [
+      {
+        name: 'generate-quota-' + k,
+        match: common.MatchOrgNamespaces,
+        generate: {
+          kind: 'ResourceQuota',
+          synchronize: params.generatedResourceQuota[k].synchronize,
+          name: k,
+          namespace: '{{request.object.metadata.name}}',
+          data: {
+            spec: {
+              hard: params.generatedResourceQuota[k].hard,
+              scopes: params.generatedResourceQuota[k].scopes,
+              scopeSelector: params.generatedResourceQuota[k].scopeSelector,
+            },
+          },
+        },
+      }
+      for k in std.objectFields(params.generatedResourceQuota)
     ],
   },
 };
 
 // Define outputs below
 {
-  '20_generate_quota_limit_range_in_ns': generateQuotaLimitRangeInNsPolicy + common.DefaultLabels,
+  '11_generate_quota_limit_range_in_ns': generateQuotaLimitRangeInNsPolicy + common.DefaultLabels,
 }

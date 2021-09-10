@@ -43,21 +43,16 @@ local matchNamespaces(selector=null, names=null) = {
   } ],
 };
 
-local matchOrgNamespaces = {
-  resources: {
-    kinds: [
-      'Namespace',
+local matchOrgNamespaces = matchNamespaces(
+  selector={
+    matchExpressions: [
+      {
+        key: 'appuio.io/organization',
+        operator: 'Exists',
+      },
     ],
-    selector: {
-      matchExpressions: [
-        {
-          key: 'appuio.io/organization',
-          operator: 'Exists',
-        },
-      ],
-    },
-  },
-};
+  }
+);
 
 {
   DefaultLabels: defaultLabels,
