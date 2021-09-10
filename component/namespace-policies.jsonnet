@@ -59,6 +59,41 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
     background: false,
     rules: [
       {
+        name: 'set-default-organization',
+        match: {
+          resources: {
+            kinds: [
+              'Namespace',
+            ],
+          },
+        },
+        context: [
+          {
+            name: 'ocpuser',
+            apiCall: {
+              urlPath: '/apis/user.openshift.io/v1/users/{{request.userInfo.username}}',
+              // We want the full output of the API call. Despite the docs not
+              // saying anything, if we omit jmesPath here, we don't get the
+              // variable ocpuser in the resulting context at all. Instead, we
+              // provide '@' for jmesPath which responds to the current
+              // element, giving us the full response as ocpuser.
+              jmesPath: '@',
+            },
+          },
+        ],
+        exclude: common.BypassNamespaceRestrictionsSubjects(),
+        mutate: {
+          patchStrategicMerge: {
+            metadata: {
+              labels: {
+                '+(appuio.io/organization)':
+                  '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}',
+              },
+            },
+          },
+        },
+      },
+      {
         name: 'has-organization',
         match: {
           resources: {
