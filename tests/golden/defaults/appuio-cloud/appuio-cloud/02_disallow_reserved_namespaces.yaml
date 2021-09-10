@@ -35,15 +35,16 @@ spec:
             name: argocd-application-controller
             namespace: argocd
       match:
-        resources:
-          kinds:
-            - Namespace
-          names:
-            - appuio-*
-            - default
-            - kube-*
-            - openshift-*
-            - syn-*
+        all:
+          - resources:
+              kinds:
+                - Namespace
+              names:
+                - appuio-*
+                - default
+                - kube-*
+                - openshift-*
+                - syn-*
       name: disallow-reserved-namespaces
       validate:
         deny: {}

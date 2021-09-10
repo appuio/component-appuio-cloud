@@ -24,11 +24,12 @@ spec:
         namespace: '{{request.object.metadata.name}}'
         synchronize: false
       match:
-        resources:
-          kinds:
-            - Namespace
-          selector:
-            matchExpressions:
-              - key: appuio.io/organization
-                operator: Exists
+        all:
+          - resources:
+              kinds:
+                - Namespace
+              selector:
+                matchExpressions:
+                  - key: appuio.io/organization
+                    operator: Exists
       name: default-rolebinding

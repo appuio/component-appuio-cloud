@@ -43,16 +43,6 @@ local appuioNsProvisionersRoleBinding = kube.ClusterRoleBinding('appuio-ns-provi
   ],
 };
 
-local matchAllNamespaces = {
-  all: {
-    resources: {
-      kinds: [
-        'Namespace',
-      ],
-    },
-  },
-};
-
 local matchProjectRequestProjects = {
   all: [ {
     resources: {
@@ -113,7 +103,7 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
     rules: [
       setDefaultOrgPolicy(
         'set-default-organization-ns',
-        matchAllNamespaces,
+        common.MatchNamespaces(),
         common.BypassNamespaceRestrictionsSubjects(),
         '{{request.userInfo.username}}'
       ),
@@ -125,13 +115,7 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
       ),
       {
         name: 'has-organization',
-        match: {
-          resources: {
-            kinds: [
-              'Namespace',
-            ],
-          },
-        },
+        match: common.MatchNamespaces(),
         exclude: common.BypassNamespaceRestrictionsSubjects(),
         validate: {
           message: 'Namespace must have organization',
@@ -146,13 +130,7 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
       },
       {
         name: 'is-in-organization',
-        match: {
-          resources: {
-            kinds: [
-              'Namespace',
-            ],
-          },
-        },
+        match: common.MatchNamespaces(),
         exclude: common.BypassNamespaceRestrictionsSubjects(),
         preconditions: [
           {
@@ -192,14 +170,9 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
     rules: [
       {
         name: 'disallow-reserved-namespaces',
-        match: {
-          resources: {
-            kinds: [
-              'Namespace',
-            ],
-            names: common.FlattenSet(params.reservedNamespaces),
-          },
-        },
+        match: common.MatchNamespaces(
+          names=common.FlattenSet(params.reservedNamespaces),
+        ),
         exclude: common.BypassNamespaceRestrictionsSubjects(),
         validate: {
           message: 'Changing or creating reserved namespaces is not allowed.',
