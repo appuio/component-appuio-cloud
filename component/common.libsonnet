@@ -43,10 +43,21 @@ local matchNamespaces(selector=null, names=null) = {
   } ],
 };
 
+local matchOrgNamespaces = matchNamespaces(
+  selector={
+    matchExpressions: [
+      {
+        key: 'appuio.io/organization',
+        operator: 'Exists',
+      },
+    ],
+  }
+);
 
 {
   DefaultLabels: defaultLabels,
   FlattenSet: flattenSet,
   BypassNamespaceRestrictionsSubjects: bypassNamespaceRestrictionsSubjects,
   MatchNamespaces: matchNamespaces,
+  MatchOrgNamespaces: matchOrgNamespaces,
 }

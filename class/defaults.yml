@@ -33,3 +33,40 @@ parameters:
     generatedDefaultRoleBindingInNewNamespaces:
       bindingName: admin
       clusterRoleName: admin
+
+    generatedResourceQuota:
+      "organization":
+        synchronize: true
+        hard:
+          # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
+          requests.cpu: 2000m
+          requests.memory: 3Gi
+          limits.cpu: 4000m
+          limits.memory: 6Gi
+          requests.storage: 50Gi
+          persistentvolumeclaims: "50"
+          count/configmaps: "150"
+          count/secrets: "150"
+          count/services: "20"
+          openshift.io/imagestreams: "20"
+          openshift.io/imagestreamtags: "50"
+        scopes: []
+        scopeSelector:
+
+    generatedLimitRange:
+      name: organization
+      synchronize: true
+      limits:
+        "Container":
+          max:
+            cpu: "1"
+            memory: "4G"
+          min:
+            cpu: "10m"
+            memory: "4Mi"
+          default:
+            cpu: "200m"
+            memory: "200Mi"
+          defaultRequest:
+            cpu: "100m"
+            memory: "100Mi"

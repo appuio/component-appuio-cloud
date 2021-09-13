@@ -17,16 +17,7 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
     rules: [
       {
         name: 'default-rolebinding',
-        match: common.MatchNamespaces(
-          selector={
-            matchExpressions: [
-              {
-                key: 'appuio.io/organization',
-                operator: 'Exists',
-              },
-            ],
-          }
-        ),
+        match: common.MatchOrgNamespaces,
         generate: {
           kind: 'RoleBinding',
           synchronize: false,
