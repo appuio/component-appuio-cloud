@@ -48,6 +48,8 @@ parameters:
           count/configmaps: "150"
           count/secrets: "150"
           count/services: "20"
+          count/services.loadbalancers: "0"
+          count/services.nodeports: "0"
           count/pods: "45"
           count/replicationcontrollers: "100"
           openshift.io/imagestreams: "20"
