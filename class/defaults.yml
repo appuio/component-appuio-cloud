@@ -43,8 +43,7 @@ parameters:
           requests.memory: 4Gi
           limits.cpu: 1500m
           limits.memory: 4Gi
-          requests.storage: 50Gi
-          persistentvolumeclaims: "50"
+
           count/configmaps: "150"
           count/secrets: "150"
           count/services: "20"
@@ -54,6 +53,13 @@ parameters:
           count/replicationcontrollers: "100"
           openshift.io/imagestreams: "20"
           openshift.io/imagestreamtags: "50"
+
+          requests.storage: 50Gi
+          persistentvolumeclaims: "10"
+          localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims: "0"
+          requests.ephemeral-storage: "250Mi"
+          limits.ephemeral-storage: "500Mi"
+
         scopes: []
         scopeSelector:
 
@@ -65,12 +71,19 @@ parameters:
           max:
             cpu: "1"
             memory: "4G"
+            # limits.ephemeral-storage
+            ephemeral-storage: "500Mi"
           min:
             cpu: "10m"
             memory: "4Mi"
+            ephemeral-storage: "100Ki"
           default:
             cpu: "200m"
             memory: "200Mi"
+            # 500Mi (limits.ephemeral-storage) / 45 (count/pods) = ~10Mi
+            ephemeral-storage: "10Mi"
           defaultRequest:
             cpu: "100m"
             memory: "100Mi"
+            # 250Mi (requests.ephemeral-storage) / 45 (count/pods) = ~5Mi
+            ephemeral-storage: "5Mi"

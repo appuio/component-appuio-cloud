@@ -16,15 +16,19 @@ spec:
             limits:
               - default:
                   cpu: 200m
+                  ephemeral-storage: 10Mi
                   memory: 200Mi
                 defaultRequest:
                   cpu: 100m
+                  ephemeral-storage: 5Mi
                   memory: 100Mi
                 max:
                   cpu: '1'
+                  ephemeral-storage: 500Mi
                   memory: 4G
                 min:
                   cpu: 10m
+                  ephemeral-storage: 100Ki
                   memory: 4Mi
                 type: Container
         kind: LimitRange
@@ -53,11 +57,14 @@ spec:
               count/services.loadbalancers: '0'
               count/services.nodeports: '0'
               limits.cpu: 1500m
+              limits.ephemeral-storage: 500Mi
               limits.memory: 4Gi
+              localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims: '0'
               openshift.io/imagestreams: '20'
               openshift.io/imagestreamtags: '50'
-              persistentvolumeclaims: '50'
+              persistentvolumeclaims: '10'
               requests.cpu: 1000m
+              requests.ephemeral-storage: 250Mi
               requests.memory: 4Gi
               requests.storage: 50Gi
             scopeSelector: null
