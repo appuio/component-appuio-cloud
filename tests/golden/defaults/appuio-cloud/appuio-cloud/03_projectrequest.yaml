@@ -1,0 +1,55 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
+    name: organization-in-projectrequests
+  name: organization-in-projectrequests
+spec:
+  background: false
+  rules:
+    - context:
+        - apiCall:
+            jmesPath: '@'
+            urlPath: /apis/user.openshift.io/v1/users/{{request.userInfo.username}}
+          name: ocpuser
+      exclude:
+        clusterRoles:
+          - cluster-admin
+          - cluster-image-registry-operator
+          - cluster-node-tuning-operator
+          - kyverno:generatecontroller
+          - kyverno:policycontroller
+          - multus-admission-controller-webhook
+          - openshift-dns-operator
+          - openshift-ingress-operator
+          - syn-admin
+          - syn-argocd-application-controller
+          - syn-argocd-server
+          - syn-resource-locker-*
+          - system:controller:generic-garbage-collector
+          - system:controller:operator-lifecycle-manager
+          - system:master
+          - system:openshift:controller:namespace-security-allocation-controller
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
+      match:
+        all:
+          - resources:
+              kinds:
+                - ProjectRequest
+      name: user-has-default-organization
+      validate:
+        deny:
+          conditions:
+            - key: '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}'
+              operator: Equals
+              value: ''
+        message: You cannot create Projects without belonging to an organization
+  validationFailureAction: enforce

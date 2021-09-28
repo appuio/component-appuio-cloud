@@ -10,6 +10,7 @@ parameters:
           - appuio-cloud/component/namespace-policies.jsonnet
           - appuio-cloud/component/generated-rolebindings.jsonnet
           - appuio-cloud/component/project-template.jsonnet
+          - appuio-cloud/component/project-policies.jsonnet
           - appuio-cloud/component/quota-limitrange.jsonnet
         input_type: jsonnet
         output_path: appuio-cloud/
