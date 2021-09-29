@@ -43,6 +43,18 @@ local matchNamespaces(selector=null, names=null) = {
   } ],
 };
 
+local matchProjectRequests(selector=null, names=null) = {
+  all+: [ {
+    resources+: std.prune({
+      kinds+: [
+        'ProjectRequest',
+      ],
+      selector+: selector,
+      names+: names,
+    }),
+  } ],
+};
+
 local matchOrgNamespaces = matchNamespaces(
   selector={
     matchExpressions: [
@@ -60,4 +72,5 @@ local matchOrgNamespaces = matchNamespaces(
   BypassNamespaceRestrictionsSubjects: bypassNamespaceRestrictionsSubjects,
   MatchNamespaces: matchNamespaces,
   MatchOrgNamespaces: matchOrgNamespaces,
+  MatchProjectRequests: matchProjectRequests,
 }
