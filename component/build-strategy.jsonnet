@@ -17,5 +17,6 @@ local disallowDockerBuildStrategyPatch = {
 };
 
 {
-  '15_disallow_docker_build_strategy_patch': resourceLocker.Patch(bindingToPatch, disallowDockerBuildStrategyPatch),
+  [if params.disallowDockerBuildStrategy then '15_disallow_docker_build_strategy_patch']:
+    resourceLocker.Patch(bindingToPatch, disallowDockerBuildStrategyPatch),
 }
