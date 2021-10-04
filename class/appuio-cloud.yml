@@ -12,5 +12,6 @@ parameters:
           - appuio-cloud/component/project-template.jsonnet
           - appuio-cloud/component/project-policies.jsonnet
           - appuio-cloud/component/quota-limitrange.jsonnet
+          - appuio-cloud/component/build-strategy.jsonnet
         input_type: jsonnet
         output_path: appuio-cloud/

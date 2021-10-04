@@ -217,3 +217,10 @@ It will also reject any container requesting more than `4G` of memory or less th
 
 Consult https://kubernetes.io/docs/concepts/policy/limit-range/[the official Kubernetes documentation] on how to configure these `limits`.
 
+== `disallowDockerBuildStrategy`
+
+[horizontal]
+type:: boolean
+default:: `true`
+
+Creating https://docs.openshift.com/container-platform/4.7/cicd/builds/build-strategies.html#builds-strategy-docker-build_build-strategies[build strategies using Docker] is disallowed.

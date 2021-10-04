@@ -6,6 +6,9 @@ parameters:
       - type: https
         source: https://raw.githubusercontent.com/projectsyn/component-kyverno/v1.1.0/lib/kyverno.libsonnet
         output_path: vendor/lib/kyverno.libsonnet
+      - type: https
+        source: https://raw.githubusercontent.com/projectsyn/component-resource-locker/v2.0.1/lib/resource-locker.libjsonnet
+        output_path: vendor/lib/resource-locker.libjsonnet
 
   appuio_cloud:
     bypassNamespaceRestrictions:
@@ -14,3 +17,6 @@ parameters:
           kind: ServiceAccount
           name: argocd-application-controller
           namespace: argocd
+
+  resource_locker:
+    namespace: syn-resource-locker

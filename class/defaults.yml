@@ -87,3 +87,5 @@ parameters:
             memory: "100Mi"
             # 250Mi (requests.ephemeral-storage) / 45 (count/pods) = ~5Mi
             ephemeral-storage: "5Mi"
+
+    disallowDockerBuildStrategy: true
