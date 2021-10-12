@@ -71,8 +71,6 @@ parameters:
           max:
             cpu: "1"
             memory: "4G"
-            # limits.ephemeral-storage
-            ephemeral-storage: "500Mi"
           min:
             cpu: "10m"
             memory: "4Mi"
@@ -80,12 +78,8 @@ parameters:
           default:
             cpu: "200m"
             memory: "200Mi"
-            # 500Mi (limits.ephemeral-storage) / 45 (count/pods) = ~10Mi
-            ephemeral-storage: "10Mi"
           defaultRequest:
             cpu: "100m"
             memory: "100Mi"
-            # 250Mi (requests.ephemeral-storage) / 45 (count/pods) = ~5Mi
-            ephemeral-storage: "5Mi"
 
     disallowDockerBuildStrategy: true

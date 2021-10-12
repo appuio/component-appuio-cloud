@@ -16,15 +16,12 @@ spec:
             limits:
               - default:
                   cpu: 200m
-                  ephemeral-storage: 10Mi
                   memory: 200Mi
                 defaultRequest:
                   cpu: 100m
-                  ephemeral-storage: 5Mi
                   memory: 100Mi
                 max:
                   cpu: '1'
-                  ephemeral-storage: 500Mi
                   memory: 4G
                 min:
                   cpu: 10m
