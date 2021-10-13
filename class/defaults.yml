@@ -83,3 +83,22 @@ parameters:
             memory: "100Mi"
 
     disallowDockerBuildStrategy: true
+
+    projectTemplate:
+      enabled: false
+      objects:
+        project:
+          apiVersion: project.openshift.io/v1
+          kind: Project
+          metadata:
+            annotations:
+              openshift.io/description: '\${PROJECT_DESCRIPTION}'
+              openshift.io/display-name: '\${PROJECT_DISPLAYNAME}'
+              openshift.io/requester: '\${PROJECT_REQUESTING_USER}'
+            name: '\${PROJECT_NAME}'
+      parameters:
+        PROJECT_NAME: {}
+        PROJECT_DISPLAYNAME: {}
+        PROJECT_DESCRIPTION: {}
+        PROJECT_ADMIN_USER: {}
+        PROJECT_REQUESTING_USER: {}
