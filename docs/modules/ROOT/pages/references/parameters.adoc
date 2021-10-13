@@ -224,3 +224,65 @@ type:: boolean
 default:: `true`
 
 Creating https://docs.openshift.com/container-platform/4.7/cicd/builds/build-strategies.html#builds-strategy-docker-build_build-strategies[build strategies using Docker] is disallowed.
+
+== `projectTemplate`
+
+Configuration options for the OpenShift default project template.
+
+=== `projectTemplate.enabled`
+
+[horizontal]
+type:: boolean
+default:: `false`
+
+This parameter controls whether the component deploys and enables a custom default project template.
+
+
+=== `projectTemplate.objects`
+
+[horizontal]
+type:: dict
+default::
++
+[source,yaml]
+----
+project:
+  apiVersion: project.openshift.io/v1
+  kind: Project
+  metadata:
+    annotations:
+      openshift.io/description: '\${PROJECT_DESCRIPTION}'
+      openshift.io/display-name: '\${PROJECT_DISPLAYNAME}'
+      openshift.io/requester: '\${PROJECT_REQUESTING_USER}'
+    name: '\${PROJECT_NAME}'
+----
+
+The contents of this dict are used to populate field `objects` of the OpenShift template object.
+The keys in the dict are ignored, but can be used in the configuration hierarchy to change existing template objects.
+Setting a key to value `null` removes the object from the resulting template.
+
+To avoid Commodore trying to interpret template parameters, escape them with `\${PARAM}` as shown in the default value.
+Any parameters used in the template objects must be defined in component parameter `projectTemplate.parameters`.
+
+NOTE: OpenShift requires that the default template contains at least one object of type `Project`.
+
+=== `projectTemplate.parameters`
+
+[horizontal]
+type:: dict
+default::
++
+[source,yaml]
+----
+PROJECT_NAME: {}
+PROJECT_DISPLAYNAME: {}
+PROJECT_DESCRIPTION: {}
+PROJECT_ADMIN_USER: {}
+PROJECT_REQUESTING_USER: {}
+----
+
+The contents of this dict are used to populate field `parameters` of the OpenShift template object.
+
+The field `parameters` in the template object is a list of objects, see the https://docs.openshift.com/container-platform/latest/openshift_images/using-templates.html#templates-writing_using-templates[OpenShift documentation].
+The component transforms the entries of this component parameter into objects by using the key as field `name` of the resulting object and merging it with the provided value.
+Users can remove parameters by setting value `null`.
