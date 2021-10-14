@@ -1,44 +1,42 @@
+local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
+
+local inv = kap.inventory();
+local params = inv.parameters.appuio_cloud;
+
 local projectTemplate =
   kube._Object('template.openshift.io/v1', 'Template', 'project-request') {
     metadata+: {
       namespace: 'openshift-config',
     },
     objects: [
-      {
-        apiVersion: 'project.openshift.io/v1',
-        kind: 'Project',
-        metadata: {
-          annotations: {
-            'openshift.io/description': '${PROJECT_DESCRIPTION}',
-            'openshift.io/display-name': '${PROJECT_DISPLAYNAME}',
-            'openshift.io/requester': '${PROJECT_REQUESTING_USER}',
-          },
-          name: '${PROJECT_NAME}',
-        },
-      },
+      params.projectTemplate.objects[o]
+      for o in std.objectFields(params.projectTemplate.objects)
+      if params.projectTemplate.objects[o] != null
     ],
     parameters: [
-      { name: 'PROJECT_NAME' },
-      { name: 'PROJECT_DISPLAYNAME' },
-      { name: 'PROJECT_DESCRIPTION' },
-      { name: 'PROJECT_ADMIN_USER' },
-      { name: 'PROJECT_REQUESTING_USER' },
+      { name: p } + params.projectTemplate.parameters[p]
+      for p in std.objectFields(params.projectTemplate.parameters)
+      if params.projectTemplate.parameters[p] != null
+
     ],
   };
 
 local ocpProjectConfig =
   kube._Object('config.openshift.io/v1', 'Project', 'cluster') {
     spec: {
-      projectRequestTemplate: {
+      [if params.projectTemplate.enabled then 'projectRequestTemplate']: {
         name: projectTemplate.metadata.name,
       },
     },
   };
 
 {
-  '20_project_template': [
-    ocpProjectConfig,
-    projectTemplate,
-  ],
+  '20_project_template': std.filter(
+    function(it) it != null,
+    [
+      ocpProjectConfig,
+      if params.projectTemplate.enabled then projectTemplate,
+    ]
+  ),
 }
