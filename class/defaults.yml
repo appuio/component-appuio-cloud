@@ -31,7 +31,7 @@ parameters:
       appuio: appuio-*
 
     generatedDefaultRoleBindingInNewNamespaces:
-      bindingName: admin
+      bindingName: organization-admin
       clusterRoleName: admin
 
     generatedResourceQuota:

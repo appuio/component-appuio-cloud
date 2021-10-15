@@ -20,7 +20,7 @@ spec:
             - kind: Group
               name: '{{request.object.metadata.labels."appuio.io/organization"}}'
         kind: RoleBinding
-        name: admin
+        name: organization-admin
         namespace: '{{request.object.metadata.name}}'
         synchronize: false
       match:
