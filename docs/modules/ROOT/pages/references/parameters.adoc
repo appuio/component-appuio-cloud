@@ -87,7 +87,7 @@ The `ClusterRole` name to which the requesting user account gets a new `RoleBind
 
 [horizontal]
 type:: string
-default:: `admin`
+default:: `organization-admin`
 
 The `metadata.name` of the `RoleBinding` that gets generated in the new `Namespace` created by the user.
 The role binding is only created upon Namespace creation, it doesn't get synchronized.
