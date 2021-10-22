@@ -25,7 +25,7 @@ parameters:
       subjects: {}
 
     reservedNamespaces:
-      kubernetes: ['default', 'kube-*']
+      kubernetes: ["default", "kube-*"]
       openshift: openshift-*
       projectsyn: syn-*
       appuio: appuio-*
@@ -41,8 +41,8 @@ parameters:
           # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
           requests.cpu: 1000m
           requests.memory: 4Gi
-          limits.cpu: 1500m
-          limits.memory: 4Gi
+          limits.cpu: 2
+          limits.memory: 20Gi
 
           count/configmaps: "150"
           count/secrets: "150"
@@ -54,7 +54,7 @@ parameters:
           openshift.io/imagestreams: "20"
           openshift.io/imagestreamtags: "50"
 
-          requests.storage: 50Gi
+          requests.storage: 1000Gi
           persistentvolumeclaims: "10"
           localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims: "0"
           requests.ephemeral-storage: "250Mi"
