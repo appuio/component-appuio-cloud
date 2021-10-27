@@ -53,9 +53,9 @@ spec:
               count/services: '20'
               count/services.loadbalancers: '0'
               count/services.nodeports: '0'
-              limits.cpu: 1500m
+              limits.cpu: 2
               limits.ephemeral-storage: 500Mi
-              limits.memory: 4Gi
+              limits.memory: 20Gi
               localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims: '0'
               openshift.io/imagestreams: '20'
               openshift.io/imagestreamtags: '50'
@@ -63,7 +63,7 @@ spec:
               requests.cpu: 1000m
               requests.ephemeral-storage: 250Mi
               requests.memory: 4Gi
-              requests.storage: 50Gi
+              requests.storage: 1000Gi
             scopeSelector: null
             scopes: []
         kind: ResourceQuota

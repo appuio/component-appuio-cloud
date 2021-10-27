@@ -7,3 +7,7 @@
 docs/antora.yml:
   name: appuio-cloud
   title: appuio-cloud
+
+.gitignore:
+  additionalEntries:
+    - jsonnetfile.json
