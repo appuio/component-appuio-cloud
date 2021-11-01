@@ -35,22 +35,16 @@ parameters:
       clusterRoleName: admin
 
     generatedResourceQuota:
-      "organization":
+      # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
+      organization-objects:
         synchronize: true
         spec:
           hard:
-            # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
-            requests.cpu: 1000m
-            requests.memory: 4Gi
-            limits.cpu: 1500m
-            limits.memory: 4Gi
-
             count/configmaps: "150"
             count/secrets: "150"
             count/services: "20"
             count/services.loadbalancers: "0"
             count/services.nodeports: "0"
-            count/pods: "45"
             count/replicationcontrollers: "100"
             openshift.io/imagestreams: "20"
             openshift.io/imagestreamtags: "50"
@@ -61,8 +55,29 @@ parameters:
             requests.ephemeral-storage: "250Mi"
             limits.ephemeral-storage: "500Mi"
 
-          scopes: []
-          scopeSelector:
+      organization-compute:
+        synchronize: true
+        spec:
+          hard:
+            requests.cpu: 1000m
+            requests.memory: 4Gi
+            limits.cpu: 2
+            limits.memory: 20Gi
+            pods: "45"
+          scopes:
+            - NotTerminating
+
+      organization-compute-terminating:
+        synchronize: true
+        spec:
+          hard:
+            requests.cpu: 1000m
+            requests.memory: 2Gi
+            limits.cpu: 2000m
+            limits.memory: 4Gi
+            pods: "5"
+          scopes:
+            - Terminating
 
     generatedLimitRange:
       name: organization
