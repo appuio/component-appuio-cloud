@@ -37,31 +37,32 @@ parameters:
     generatedResourceQuota:
       "organization":
         synchronize: true
-        hard:
-          # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
-          requests.cpu: 1000m
-          requests.memory: 4Gi
-          limits.cpu: 2
-          limits.memory: 20Gi
+        spec:
+          hard:
+            # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
+            requests.cpu: 1000m
+            requests.memory: 4Gi
+            limits.cpu: 1500m
+            limits.memory: 4Gi
 
-          count/configmaps: "150"
-          count/secrets: "150"
-          count/services: "20"
-          count/services.loadbalancers: "0"
-          count/services.nodeports: "0"
-          count/pods: "45"
-          count/replicationcontrollers: "100"
-          openshift.io/imagestreams: "20"
-          openshift.io/imagestreamtags: "50"
+            count/configmaps: "150"
+            count/secrets: "150"
+            count/services: "20"
+            count/services.loadbalancers: "0"
+            count/services.nodeports: "0"
+            count/pods: "45"
+            count/replicationcontrollers: "100"
+            openshift.io/imagestreams: "20"
+            openshift.io/imagestreamtags: "50"
 
-          requests.storage: 1000Gi
-          persistentvolumeclaims: "10"
-          localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims: "0"
-          requests.ephemeral-storage: "250Mi"
-          limits.ephemeral-storage: "500Mi"
+            requests.storage: 1000Gi
+            persistentvolumeclaims: "10"
+            localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims: "0"
+            requests.ephemeral-storage: "250Mi"
+            limits.ephemeral-storage: "500Mi"
 
-        scopes: []
-        scopeSelector:
+          scopes: []
+          scopeSelector:
 
     generatedLimitRange:
       name: organization

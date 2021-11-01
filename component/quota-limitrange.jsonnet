@@ -40,11 +40,7 @@ local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit
           name: k,
           namespace: '{{request.object.metadata.name}}',
           data: {
-            spec: {
-              hard: params.generatedResourceQuota[k].hard,
-              scopes: params.generatedResourceQuota[k].scopes,
-              scopeSelector: params.generatedResourceQuota[k].scopeSelector,
-            },
+            spec: params.generatedResourceQuota[k].spec,
           },
         },
       }

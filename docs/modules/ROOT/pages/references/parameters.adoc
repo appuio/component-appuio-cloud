@@ -97,7 +97,7 @@ The role binding is only created upon Namespace creation, it doesn't get synchro
 [horizontal]
 type:: dict
 
-A key-value map defining multiple `ResourceQuota`.
+A key-value map defining `ResourceQuota` objects.
 Each entry will generate a `ResourceQuota` with the key as its name.
 
 === `generatedResourceQuota[name].synchronize`
@@ -116,52 +116,14 @@ The bug has been fixed, but as of writing this the fix hasn't been released.
 The bug will cause the `ResourceQuota` to be updated if the `Namespace` or `ClusterPolicy` changes, even if `synchronize` has been disabled.
 ====
 
-=== `generatedResourceQuota[name].hard`
+=== `generatedResourceQuota[name].spec`
 
 [horizontal]
 type:: dict
 
-The desired hard limits for each named resource.
-Consult https://kubernetes.io/docs/concepts/policy/resource-quotas/[the official Kubernetes documentation] on how to configure these limits.
-
-
-=== `generatedResourceQuota[name].scopes`
-
-[horizontal]
-type:: list
-default:: []
-example::
-+
-[source,yaml]
-----
-scopes:
-  - Terminating
-  - BestEffort
-----
-
-Each quota can have an associated set of scopes.
-A quota will only measure usage for a resource if it matches the intersection of enumerated scopes.
-Consult https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-scopes[the official Kubernetes documentation] on how to configure these scopes.
-
-=== `generatedResourceQuota[name].scopeSelector`
-
-ScopeSelector is also a collection of filters like Scopes that must match each object tracked by a quota.
-Consult https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-scopes[the official Kubernetes documentation] on how to configure this `scopeSelector`.
-
-[horizontal]
-type:: dict
-default:: null
-example::
-+
-[source,yaml]
-----
-scopeSelector:
-  matchExpressions:
-    - scopeName: PriorityClass
-      operator: In
-      values:
-        - middle
-----
+The desired contents of field `spec` of the ResourceQuota that should be generated.
+The component doesn't validate the contents of this field.
+See the Kubernetes https://kubernetes.io/docs/concepts/policy/resource-quotas/[Resource Quota documentation] for supported configurations.
 
 == `generatedLimitRange.name`
 
