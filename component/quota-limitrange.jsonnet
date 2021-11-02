@@ -1,4 +1,5 @@
 local common = import 'common.libsonnet';
+local com = import 'lib/commodore.libjsonnet';
 local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
 local kyverno = import 'lib/kyverno.libsonnet';
@@ -6,6 +7,25 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
+local quotaSpec(rq) =
+  local hard = com.getValueOrDefault(rq, 'hard', {});
+  local scopes = com.getValueOrDefault(rq, 'scopes', []);
+  local scopeSel = com.getValueOrDefault(rq, 'scopeSelector', {});
+  if std.objectHas(rq, 'spec') then
+    com.makeMergeable(rq.spec) + {
+      hard+: hard,
+      [if std.length(scopes) > 0 then 'scopes']: (
+        if 'scopes' in super then std.set(super.scopes) else
+          std.set({})
+      ) + std.set(scopes),
+      [if std.length(std.objectFields(scopeSel)) > 0 then 'scopeSelector']+: scopeSel,
+    }
+  else
+    {
+      hard: rq.hard,
+      scopes: rq.scopes,
+      scopeSelector: rq.scopeSelector,
+    };
 
 local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit-range-in-ns') {
   spec: {
@@ -40,7 +60,7 @@ local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit
           name: k,
           namespace: '{{request.object.metadata.name}}',
           data: {
-            spec: params.generatedResourceQuota[k].spec,
+            spec: quotaSpec(params.generatedResourceQuota[k]),
           },
         },
       }
