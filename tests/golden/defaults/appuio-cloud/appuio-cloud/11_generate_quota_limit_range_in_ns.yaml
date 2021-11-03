@@ -71,11 +71,9 @@ spec:
         data:
           spec:
             hard:
-              limits.cpu: 2000m
-              limits.memory: 4Gi
+              limits.cpu: 1000m
+              limits.memory: 2Gi
               pods: '5'
-              requests.cpu: 1000m
-              requests.memory: 2Gi
             scopes:
               - Terminating
         kind: ResourceQuota
