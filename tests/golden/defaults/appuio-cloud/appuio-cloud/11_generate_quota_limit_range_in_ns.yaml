@@ -22,7 +22,7 @@ spec:
                   memory: 100Mi
                 max:
                   cpu: '1'
-                  memory: 4G
+                  memory: 4Gi
                 min:
                   cpu: 10m
                   ephemeral-storage: 100Ki
