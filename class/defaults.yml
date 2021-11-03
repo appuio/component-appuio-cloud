@@ -116,3 +116,7 @@ parameters:
         PROJECT_DESCRIPTION: {}
         PROJECT_ADMIN_USER: {}
         PROJECT_REQUESTING_USER: {}
+
+    runOnceActiveDeadlineSeconds:
+      defaultActiveDeadlineSeconds: 1800
+      overrideAnnotationKey: appuio.io/activeDeadlineSecondsOverride

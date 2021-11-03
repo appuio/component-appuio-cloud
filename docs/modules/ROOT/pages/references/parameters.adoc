@@ -248,3 +248,25 @@ The contents of this dict are used to populate field `parameters` of the OpenShi
 The field `parameters` in the template object is a list of objects, see the https://docs.openshift.com/container-platform/latest/openshift_images/using-templates.html#templates-writing_using-templates[OpenShift documentation].
 The component transforms the entries of this component parameter into objects by using the key as field `name` of the resulting object and merging it with the provided value.
 Users can remove parameters by setting value `null`.
+
+== `runOnceActiveDeadlineSeconds`
+
+Configuration for the cluster policy which ensures that `.spec.activeDeadlineSeconds` is set for all "runonce" pods.
+"Runonce" pods are pods which have `.spec.restartPolicy` set to `OnFailure` or `Never`.
+
+=== `runOnceActiveDeadlineSeconds.defaultActiveDeadlineSeconds`
+
+[horizontal]
+type:: int
+default:: `1800`
+
+This parameter gives the default value for `.spec.activeDeadlineSeconds` which is added to "runonce" pods which don't have the field set already.
+
+=== `runOnceActiveDeadlineSeconds.overrideAnnotationKey`
+
+
+[horizontal]
+type:: string
+default:: `appuio.io/activeDeadlineSecondsOverride`
+
+The key of the namespace annotation which users can use to override the global default value for `.spec.activeDeadlineSeconds`.
