@@ -267,6 +267,6 @@ This parameter gives the default value for `.spec.activeDeadlineSeconds` which i
 
 [horizontal]
 type:: string
-default:: `appuio.io/activeDeadlineSecondsOverride`
+default:: `appuio.io/active-deadline-seconds-override`
 
 The key of the namespace annotation which users can use to override the global default value for `.spec.activeDeadlineSeconds`.

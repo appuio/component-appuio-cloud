@@ -119,4 +119,4 @@ parameters:
 
     runOnceActiveDeadlineSeconds:
       defaultActiveDeadlineSeconds: 1800
-      overrideAnnotationKey: appuio.io/activeDeadlineSecondsOverride
+      overrideAnnotationKey: appuio.io/active-deadline-seconds-override
