@@ -19,7 +19,8 @@ spec:
     - context:
         - apiCall:
             jmesPath: 'to_number(merge(`{"appuio.io/activeDeadlineSecondsOverride":
-              1800}`, metadata.annotations)."appuio.io/activeDeadlineSecondsOverride")'
+              1800}`, metadata.annotations || `{}`)."appuio.io/activeDeadlineSecondsOverride"
+              ) || `1800`'
             urlPath: /api/v1/namespaces/{{request.namespace}}
           name: activeDeadlineSeconds
       match:

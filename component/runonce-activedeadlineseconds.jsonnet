@@ -11,9 +11,10 @@ local config = params.runOnceActiveDeadlineSeconds;
 local defaultDeadline = config.defaultActiveDeadlineSeconds;
 local annotationKey = config.overrideAnnotationKey;
 local jmesPath =
-  'to_number(merge(`%s`, metadata.annotations)."%s")' % [
+  'to_number(merge(`%s`, metadata.annotations || `{}`)."%s" ) || `%s`' % [
     { [annotationKey]: defaultDeadline },
     annotationKey,
+    defaultDeadline,
   ];
 
 local policy =
