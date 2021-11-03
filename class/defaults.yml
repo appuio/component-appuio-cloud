@@ -86,7 +86,7 @@ parameters:
         "Container":
           max:
             cpu: "1"
-            memory: "4G"
+            memory: "4Gi"
           min:
             cpu: "10m"
             memory: "4Mi"
