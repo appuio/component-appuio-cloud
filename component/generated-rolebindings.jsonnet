@@ -38,6 +38,57 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
           },
         },
       },
+      {
+        name: 'namespace-edit-role',
+        match: common.MatchOrgNamespaces,
+        generate: {
+          kind: 'Role',
+          synchronize: false,
+          name: params.generatedNamespaceOwnerRole.name,
+          namespace: '{{request.object.metadata.name}}',
+          data: {
+            rules: [
+              {
+                apiGroups: [
+                  '',
+                ],
+                resources: [
+                  'namespaces',
+                ],
+                verbs: [
+                  'get',
+                  'watch',
+                  'edit',
+                  'patch',
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        name: 'namespace-edit-rolebinding',
+        match: common.MatchOrgNamespaces,
+        generate: {
+          kind: 'RoleBinding',
+          synchronize: false,
+          name: params.generatedNamespaceOwnerRole.name,
+          namespace: '{{request.object.metadata.name}}',
+          data: {
+            roleRef: {
+              apiGroup: 'rbac.authorization.k8s.io',
+              kind: 'Role',
+              name: params.generatedNamespaceOwnerRole.name,
+            },
+            subjects: [
+              {
+                kind: 'Group',
+                name: '{{request.object.metadata.labels."appuio.io/organization"}}',
+              },
+            ],
+          },
+        },
+      },
     ],
   },
 };
