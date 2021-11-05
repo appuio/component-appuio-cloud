@@ -92,6 +92,14 @@ default:: `organization-admin`
 The `metadata.name` of the `RoleBinding` that gets generated in the new `Namespace` created by the user.
 The role binding is only created upon Namespace creation, it doesn't get synchronized.
 
+== `generatedNamespaceOwnerRole.name`
+
+[horizontal]
+type:: string
+default:: `namespace-owner`
+
+The `Role` and `RoleBinding` name for the role that allows users to edit the new `Namespace`
+
 == `generatedResourceQuota`
 
 [horizontal]

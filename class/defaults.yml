@@ -34,6 +34,9 @@ parameters:
       bindingName: organization-admin
       clusterRoleName: admin
 
+    generatedNamespaceOwnerRole:
+      name: namespace-owner
+
     generatedResourceQuota:
       # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
       organization-objects:
