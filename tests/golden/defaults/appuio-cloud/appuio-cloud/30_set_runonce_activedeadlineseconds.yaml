@@ -1,0 +1,36 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    kyverno.syn.tools/policy-description: This policy ensures that all "runonce" pods
+      have `.spec.activeDeadlineSeconds` set. The value for `.spec.activeDeadlineSeconds`
+      for a namepsace can be overridden by adding annotation `appuio.io/active-deadline-seconds-override`
+      with the desired default value on a namespace.
+    pod-policies.kyverno.io/autogen-controllers: none
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
+    name: set-runonce-activedeadlineseconds
+  name: set-runonce-activedeadlineseconds
+spec:
+  background: false
+  rules:
+    - context:
+        - apiCall:
+            jmesPath: 'to_number(merge(`{"appuio.io/active-deadline-seconds-override":
+              1800}`, metadata.annotations || `{}`)."appuio.io/active-deadline-seconds-override"
+              ) || `1800`'
+            urlPath: /api/v1/namespaces/{{request.namespace}}
+          name: activeDeadlineSeconds
+      match:
+        resources:
+          kinds:
+            - Pod
+      mutate:
+        patchStrategicMerge:
+          spec:
+            (restartPolicy): Never|OnFailure
+            +(activeDeadlineSeconds): '{{activeDeadlineSeconds}}'
+      name: set-runonce-activedeadlineseconds
+  validationFailureAction: enforce
