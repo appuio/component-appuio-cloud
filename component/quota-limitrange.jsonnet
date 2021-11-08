@@ -7,11 +7,11 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
-local quotaSpec(rq) =
+local quotaSpec(rn, rq) =
   local hard = com.getValueOrDefault(rq, 'hard', {});
   local scopes = com.getValueOrDefault(rq, 'scopes', []);
   local scopeSel = com.getValueOrDefault(rq, 'scopeSelector', {});
-  if std.objectHas(rq, 'spec') then
+  local spec = if std.objectHas(rq, 'spec') then
     com.makeMergeable(rq.spec) + {
       hard+: hard,
       [if std.length(scopes) > 0 then 'scopes']: (
@@ -26,6 +26,12 @@ local quotaSpec(rq) =
       scopes: rq.scopes,
       scopeSelector: rq.scopeSelector,
     };
+  spec {
+    hard: std.foldl(function(x, k) x {
+      [k]: "{{ request.object.metadata.annotations.\"%s/%s.%s\" || '%s' }}" % [ 'resourcequota.appuio.io', rn, std.strReplace(k, '/', '_'), x[k] ],
+    }, std.objectFields(spec.hard), spec.hard),
+  };
+
 
 local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit-range-in-ns') {
   spec: {
@@ -60,7 +66,7 @@ local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit
           name: k,
           namespace: '{{request.object.metadata.name}}',
           data: {
-            spec: quotaSpec(params.generatedResourceQuota[k]),
+            spec: quotaSpec(k, params.generatedResourceQuota[k]),
           },
         },
       }
