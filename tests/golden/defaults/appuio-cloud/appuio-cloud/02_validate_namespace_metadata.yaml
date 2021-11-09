@@ -1,0 +1,124 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/category: Namespace Management
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
+    name: validate-namespace-metadata
+  name: validate-namespace-metadata
+spec:
+  background: false
+  rules:
+    - exclude:
+        clusterRoles:
+          - cluster-admin
+          - cluster-image-registry-operator
+          - cluster-node-tuning-operator
+          - kyverno:generatecontroller
+          - kyverno:policycontroller
+          - multus-admission-controller-webhook
+          - openshift-dns-operator
+          - openshift-ingress-operator
+          - syn-admin
+          - syn-argocd-application-controller
+          - syn-argocd-server
+          - syn-resource-locker-*
+          - system:controller:generic-garbage-collector
+          - system:controller:operator-lifecycle-manager
+          - system:master
+          - system:openshift:controller:namespace-security-allocation-controller
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
+      match:
+        all:
+          - resources:
+              kinds:
+                - Namespace
+      name: validate-labels
+      preconditions:
+        all:
+          - key: '{{request.operation}}'
+            operator: In
+            value:
+              - CREATE
+              - UPDATE
+      validate:
+        foreach:
+          - deny:
+              conditions:
+                all:
+                  - key: '{{element.key}}'
+                    operator: NotEquals
+                    value: user.appuio.io/*
+                  - key: '{{element.key}}'
+                    operator: NotEquals
+                    value: test.appuio.io/*
+                  - key: '{{element.key}}'
+                    operator: NotEquals
+                    value: compute.test.appuio.io/cpu
+            list: 'request.object.metadata.labels | map(&{key: @}, keys(@))'
+        message: 'The following labels are allowed: user.appuio.io/*, test.appuio.io/*,
+          compute.test.appuio.io/cpu'
+    - exclude:
+        clusterRoles:
+          - cluster-admin
+          - cluster-image-registry-operator
+          - cluster-node-tuning-operator
+          - kyverno:generatecontroller
+          - kyverno:policycontroller
+          - multus-admission-controller-webhook
+          - openshift-dns-operator
+          - openshift-ingress-operator
+          - syn-admin
+          - syn-argocd-application-controller
+          - syn-argocd-server
+          - syn-resource-locker-*
+          - system:controller:generic-garbage-collector
+          - system:controller:operator-lifecycle-manager
+          - system:master
+          - system:openshift:controller:namespace-security-allocation-controller
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
+      match:
+        all:
+          - resources:
+              kinds:
+                - Namespace
+      name: validate-annotations
+      preconditions:
+        all:
+          - key: '{{request.operation}}'
+            operator: In
+            value:
+              - CREATE
+              - UPDATE
+      validate:
+        foreach:
+          - deny:
+              conditions:
+                all:
+                  - key: '{{element.key}}'
+                    operator: NotEquals
+                    value: user.appuio.io/*
+                  - key: '{{element.key}}'
+                    operator: NotEquals
+                    value: appuio.io/active-deadline-seconds-override
+                  - key: '{{element.key}}'
+                    operator: NotEquals
+                    value: test.appuio.io/*
+                  - key: '{{element.key}}'
+                    operator: NotEquals
+                    value: compute.test.appuio.io/cpu
+            list: 'request.object.metadata.annotations | map(&{key: @}, keys(@))'
+        message: 'The following annotations are allowed: user.appuio.io/*, appuio.io/active-deadline-seconds-override,
+          test.appuio.io/*, compute.test.appuio.io/cpu'
+  validationFailureAction: enforce

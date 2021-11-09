@@ -12,6 +12,7 @@ SHELL := bash
 .SUFFIXES:
 
 include Makefile.vars.mk
+include Makefile.kyverno.mk
 
 .PHONY: help
 help: ## Show this help

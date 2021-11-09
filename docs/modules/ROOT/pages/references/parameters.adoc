@@ -26,6 +26,42 @@ reservedNamespaces:
 Creating and editing namespaces matching any of the entries is disallowed.
 The list must consist of entries like `custom: ['custom-*', 'test-custom-*']` or `custom: 'custom-*'`.
 
+== `allowedNamespaceLabels`
+
+[horizontal]
+type:: dict
+example::
++
+[source,yaml]
+----
+allowedNamespaceLabels:
+  kubernetesGenerated:
+    - kubernetes.io/metadata.name
+  appuioUser: user.appuio.io/*
+----
+
+Creating and editing namespace labels is disallowed except for labels explicitly approved using this parameter.
+The list must consist of entries like `custom: ['custom-*', 'test-custom-*']` or `custom: 'custom-*'`.
+
+
+== `allowedNamespaceAnnotations`
+
+[horizontal]
+type:: dict
+example::
++
+[source,yaml]
+----
+allowedNamespaceAnnotations:
+  kubernetesGenerated:
+    - kubectl.kubernetes.io/last-applied-configuration
+  appuioUser: user.appuio.io/*
+----
+
+Creating and editing namespace annotations is disallowed except for annotations explicitly approved using this parameter.
+The list must consist of entries like `custom: ['custom-*', 'test-custom-*']` or `custom: 'custom-*'`.
+
+
 == `bypassNamespaceRestrictions.roles`
 
 [horizontal]

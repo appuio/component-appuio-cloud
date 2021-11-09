@@ -30,6 +30,13 @@ parameters:
       projectsyn: syn-*
       appuio: appuio-*
 
+    allowedNamespaceLabels:
+      appuioUser: user.appuio.io/*
+
+    allowedNamespaceAnnotations:
+      appuioUser: user.appuio.io/*
+      runOnceActiveDeadlineSecondsOverride: ${appuio_cloud:runOnceActiveDeadlineSeconds:overrideAnnotationKey}
+
     generatedDefaultRoleBindingInNewNamespaces:
       bindingName: organization-admin
       clusterRoleName: admin

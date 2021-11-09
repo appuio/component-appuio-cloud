@@ -183,6 +183,65 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
   },
 };
 
+/**
+  * Disallow auxiliary labels and annottions
+  * This policy will:
+  * - Check annotations and labels against a whitelist.
+  * - Deny namespace creation or modification.
+  */
+local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-metadata') {
+  local validateObject = function(key, whitelist) {
+    name: 'validate-%s' % key,
+    match: common.MatchNamespaces(),
+    exclude: common.BypassNamespaceRestrictionsSubjects(),
+    preconditions: {
+      all: [
+        {
+          key: '{{request.operation}}',
+          operator: 'In',
+          value: [ 'CREATE', 'UPDATE' ],
+        },
+      ],
+    },
+    validate: {
+      message: 'The following %s are allowed: %s' % [ key, std.join(', ', whitelist) ],
+      foreach: [
+        {
+          list: 'request.object.metadata.%s | map(&{key: @}, keys(@))' % key,
+          deny: {
+            conditions: {
+              all: [
+                {
+                  key: '{{element.key}}',
+                  operator: 'NotEquals',
+                  value: w,
+                }
+                for w in whitelist
+              ],
+            },
+          },
+        },
+      ],
+    },
+  },
+  metadata+: {
+    annotations+: {
+      // Workaround for bug in `kyverno-cli test` command.
+      // Commodore generates an empty annotation object (`annotations: {}`)
+      // which trips up Kyverno. A non empty object or `annotations: null` is valid.
+      // Ensure a label to not have an empty object.
+      'policies.kyverno.io/category': 'Namespace Management',
+    },
+  },
+  spec: {
+    validationFailureAction: 'enforce',
+    background: false,
+    rules: [
+      validateObject('labels', common.FlattenSet(params.allowedNamespaceLabels)),
+      validateObject('annotations', common.FlattenSet(params.allowedNamespaceAnnotations)),
+    ],
+  },
+};
 
 // Define outputs below
 {
@@ -190,4 +249,5 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
   '01_appuio_ns_provisioners_crb': appuioNsProvisionersRoleBinding + common.DefaultLabels,
   '02_organization_namespaces': organizationNamespaces + common.DefaultLabels,
   '02_disallow_reserved_namespaces': disallowReservedNamespaces + common.DefaultLabels,
+  '02_validate_namespace_metadata': validateNamespaceMetadata + common.DefaultLabels,
 }

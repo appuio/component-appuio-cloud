@@ -1,0 +1,7 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: auxiliary-annotation
+  annotations:
+    gin: tonic
+    moscow: mule
