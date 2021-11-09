@@ -133,6 +133,16 @@ The desired contents of field `spec` of the ResourceQuota that should be generat
 The component doesn't validate the contents of this field.
 See the Kubernetes https://kubernetes.io/docs/concepts/policy/resource-quotas/[Resource Quota documentation] for supported configurations.
 
+[NOTE]
+====
+You can override these default quotas on a namespace level, by setting an annotation `resourcequota.appuio.io/<name>.<resource>` on the namespace.
+
+For example `resourcequota.appuio.io/organization-compute.limits.cpu: "1337"` will increase the limit of used vCPUs to `1337`.
+
+For resources containing a forward slash, you will need to substitute it for an underline.
+For example: `resourcequota.appuio.io/organization-objects.openshift.io_imagestreams: "40"`.
+====
+
 == `generatedLimitRange.name`
 
 [horizontal]

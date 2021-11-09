@@ -46,11 +46,16 @@ spec:
         data:
           spec:
             hard:
-              limits.cpu: 2
-              limits.memory: 20Gi
-              pods: '45'
-              requests.cpu: 1000m
-              requests.memory: 4Gi
+              limits.cpu: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.limits.cpu"
+                || ''2'' }}'
+              limits.memory: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.limits.memory"
+                || ''20Gi'' }}'
+              pods: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.pods"
+                || ''45'' }}'
+              requests.cpu: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.requests.cpu"
+                || ''1000m'' }}'
+              requests.memory: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.requests.memory"
+                || ''4Gi'' }}'
             scopes:
               - NotTerminating
         kind: ResourceQuota
@@ -71,9 +76,12 @@ spec:
         data:
           spec:
             hard:
-              limits.cpu: 1000m
-              limits.memory: 2Gi
-              pods: '5'
+              limits.cpu: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute-terminating.limits.cpu"
+                || ''1000m'' }}'
+              limits.memory: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute-terminating.limits.memory"
+                || ''2Gi'' }}'
+              pods: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute-terminating.pods"
+                || ''5'' }}'
             scopes:
               - Terminating
         kind: ResourceQuota
@@ -94,19 +102,33 @@ spec:
         data:
           spec:
             hard:
-              count/configmaps: '150'
-              count/replicationcontrollers: '100'
-              count/secrets: '150'
-              count/services: '20'
-              count/services.loadbalancers: '0'
-              count/services.nodeports: '0'
-              limits.ephemeral-storage: 500Mi
-              localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims: '0'
-              openshift.io/imagestreams: '20'
-              openshift.io/imagestreamtags: '50'
-              persistentvolumeclaims: '10'
-              requests.ephemeral-storage: 250Mi
-              requests.storage: 1000Gi
+              count/configmaps: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_configmaps"
+                || ''150'' }}'
+              count/replicationcontrollers: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_replicationcontrollers"
+                || ''100'' }}'
+              count/secrets: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_secrets"
+                || ''150'' }}'
+              count/services: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_services"
+                || ''20'' }}'
+              count/services.loadbalancers: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_services.loadbalancers"
+                || ''0'' }}'
+              count/services.nodeports: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_services.nodeports"
+                || ''0'' }}'
+              limits.ephemeral-storage: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.limits.ephemeral-storage"
+                || ''500Mi'' }}'
+              localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims: '{{
+                request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.localblock-storage.storageclass.storage.k8s.io_persistentvolumeclaims"
+                || ''0'' }}'
+              openshift.io/imagestreams: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.openshift.io_imagestreams"
+                || ''20'' }}'
+              openshift.io/imagestreamtags: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.openshift.io_imagestreamtags"
+                || ''50'' }}'
+              persistentvolumeclaims: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.persistentvolumeclaims"
+                || ''10'' }}'
+              requests.ephemeral-storage: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.requests.ephemeral-storage"
+                || ''250Mi'' }}'
+              requests.storage: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.requests.storage"
+                || ''1000Gi'' }}'
         kind: ResourceQuota
         name: organization-objects
         namespace: '{{request.object.metadata.name}}'
