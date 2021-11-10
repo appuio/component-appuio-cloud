@@ -55,6 +55,9 @@ spec:
                 all:
                   - key: '{{element.key}}'
                     operator: NotEquals
+                    value: appuio.io/organization
+                  - key: '{{element.key}}'
+                    operator: NotEquals
                     value: user.appuio.io/*
                   - key: '{{element.key}}'
                     operator: NotEquals
@@ -66,8 +69,8 @@ spec:
                     operator: NotEquals
                     value: compute.test.appuio.io/cpu
             list: 'request.object.metadata.labels | map(&{key: @}, keys(@))'
-        message: 'The following labels are allowed: user.appuio.io/*, kubernetes.io/metadata.name,
-          test.appuio.io/*, compute.test.appuio.io/cpu'
+        message: 'The following labels are allowed: appuio.io/organization, user.appuio.io/*,
+          kubernetes.io/metadata.name, test.appuio.io/*, compute.test.appuio.io/cpu'
     - exclude:
         clusterRoles:
           - cluster-admin

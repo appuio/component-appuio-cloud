@@ -34,6 +34,7 @@ parameters:
       kubernetesGenerated:
         - kubernetes.io/metadata.name
       appuioUser: user.appuio.io/*
+      appuioOrg: appuio.io/organization
 
     allowedNamespaceAnnotations:
       kubernetesGenerated:
