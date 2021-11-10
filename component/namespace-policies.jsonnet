@@ -226,11 +226,11 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
   },
   metadata+: {
     annotations+: {
-      // Workaround for bug in `kyverno-cli test` command.
-      // Commodore generates an empty annotation object (`annotations: {}`)
-      // which trips up Kyverno. A non empty object or `annotations: null` is valid.
-      // Ensure a label to not have an empty object.
-      'policies.kyverno.io/category': 'Namespace Management',
+      // Kyverno somehow detects this rule as needing controller autogeneration.
+      // https://kyverno.io/docs/writing-policies/autogen/
+      // Explicitly disable autogen. Autogen interferes with ArgoCD and we don't need it here
+      // since only Namespaces are validated anyway.
+      'pod-policies.kyverno.io/autogen-controllers': 'none',
     },
   },
   spec: {
