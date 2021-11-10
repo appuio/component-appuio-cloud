@@ -58,13 +58,16 @@ spec:
                     value: user.appuio.io/*
                   - key: '{{element.key}}'
                     operator: NotEquals
+                    value: kubernetes.io/metadata.name
+                  - key: '{{element.key}}'
+                    operator: NotEquals
                     value: test.appuio.io/*
                   - key: '{{element.key}}'
                     operator: NotEquals
                     value: compute.test.appuio.io/cpu
             list: 'request.object.metadata.labels | map(&{key: @}, keys(@))'
-        message: 'The following labels are allowed: user.appuio.io/*, test.appuio.io/*,
-          compute.test.appuio.io/cpu'
+        message: 'The following labels are allowed: user.appuio.io/*, kubernetes.io/metadata.name,
+          test.appuio.io/*, compute.test.appuio.io/cpu'
     - exclude:
         clusterRoles:
           - cluster-admin
@@ -111,6 +114,9 @@ spec:
                     value: user.appuio.io/*
                   - key: '{{element.key}}'
                     operator: NotEquals
+                    value: kubectl.kubernetes.io/last-applied-configuration
+                  - key: '{{element.key}}'
+                    operator: NotEquals
                     value: appuio.io/active-deadline-seconds-override
                   - key: '{{element.key}}'
                     operator: NotEquals
@@ -119,6 +125,6 @@ spec:
                     operator: NotEquals
                     value: compute.test.appuio.io/cpu
             list: 'request.object.metadata.annotations | map(&{key: @}, keys(@))'
-        message: 'The following annotations are allowed: user.appuio.io/*, appuio.io/active-deadline-seconds-override,
-          test.appuio.io/*, compute.test.appuio.io/cpu'
+        message: 'The following annotations are allowed: user.appuio.io/*, kubectl.kubernetes.io/last-applied-configuration,
+          appuio.io/active-deadline-seconds-override, test.appuio.io/*, compute.test.appuio.io/cpu'
   validationFailureAction: enforce
