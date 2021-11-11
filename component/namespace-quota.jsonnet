@@ -7,7 +7,14 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
-
+/**
+  * Check Namespace Quota
+  * This policy will:
+  * - Deny the new namespace if the number of existing namespaces is greater or equal a certain number.
+  * - This number is either a default defined in this component, or it can be overridden for a specific organization.
+  *   To set this override, create a config map in the component namespace with name pattern 'override-<org-name>' with `.data.namespaceOverride` being the number.
+  *   For example: kubectl -n appuio-cloud create cm override-foo --from-literal=namespaceQuota=4
+  */
 local namespaceQuotaPolicy = kyverno.ClusterPolicy('validate-namespace-quota') {
   spec: {
     validationFailureAction: 'enforce',
@@ -18,33 +25,33 @@ local namespaceQuotaPolicy = kyverno.ClusterPolicy('validate-namespace-quota') {
         match: common.MatchOrgNamespaces,
         exclude: common.BypassNamespaceRestrictionsSubjects(),
         context: [
-          // {
-          //   name: 'override',
-          //   configMap: {
-          //     // Name of the ConfigMap which will be looked up
-          //     name: '{{request.object.metadata.labels."appuio.io/organization"}}',
-          //     // Namespace in which this ConfigMap is stored
-          //     namespace: params.namespace,
-          //   },
-          // },
+          {
+            name: 'override',
+            // We can't use Kyverno's 'configMap' syntactic sugar, as that would fail the rule if the configmap doesn't exist.
+            // Also, making an API call to a single configmap fails the rule also if it doesn't exist.
+            // Thus, we list all of them and filter by name, in the end the result is either a number or "null".
+            apiCall: {
+              urlPath: '/api/v1/namespaces/%s/configmaps' % params.namespace,
+              jmesPath: 'items[?metadata.name == \'override-{{request.object.metadata.labels."appuio.io/organization"}}\'].data.namespaceQuota | [0]',
+            },
+          },
           {
             name: 'nsCount',
             apiCall: {
               urlPath: '/api/v1/namespaces',
-              // Filter namespaces that have the same label
+              // Filter namespaces that have the same label and count them
               jmesPath: 'items[?metadata.labels."appuio.io/organization" == \'{{request.object.metadata.labels."appuio.io/organization"}}\'] | length(@)',
             },
           },
         ],
         validate: {
-          message: 'You cannot create more than {{override.data.namespaceQuota || `%s`}} namespaces for organization \'{{request.object.metadata.labels."appuio.io/organization"}}\'\n
-          Please contact support to have your quota raised.' % params.maxNamespaceQuota,
+          message: 'You cannot create more than {{override || `%s`}} namespaces for organization \'{{request.object.metadata.labels."appuio.io/organization"}}\'.\nPlease contact support to have your quota raised.' % params.maxNamespaceQuota,
           deny: {
             conditions: [
               {
                 key: '{{nsCount}}',
                 operator: 'GreaterThanOrEquals',
-                value: '{{override.data.namespaceQuota || `%s`}}' % params.maxNamespaceQuota,
+                value: '{{override || `%s`}}' % params.maxNamespaceQuota,
               },
             ],
           },

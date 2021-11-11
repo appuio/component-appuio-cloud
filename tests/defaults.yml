@@ -17,6 +17,7 @@ parameters:
           kind: ServiceAccount
           name: argocd-application-controller
           namespace: argocd
+    maxNamespaceQuota: 3
 
     allowedNamespaceLabels:
       test:
