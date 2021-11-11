@@ -1,0 +1,7 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: ignore-existing-auxiliary-annotation
+  annotations:
+    test.appuio.io/environment: staging
+    external.cool-tool.io/already-existing: XXX

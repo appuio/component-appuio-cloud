@@ -1,0 +1,6 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: update-existing-auxiliary-annotation
+  annotations:
+    external.cool-tool.io/already-existing: new-value

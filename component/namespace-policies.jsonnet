@@ -186,7 +186,7 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
 /**
   * Disallow auxiliary labels and annottions
   * This policy will:
-  * - Check annotations and labels against a whitelist.
+  * - Check modified annotations and labels against a whitelist.
   * - Deny namespace creation or modification.
   */
 local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-metadata') {
@@ -212,9 +212,10 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
             conditions: {
               all: [
                 {
-                  key: '{{element.key}}',
+                  // Check if label is unchanged or whitelisted
+                  key: '{{request.object.metadata.%(object)s."{{element.key}}" == request.oldObject.metadata.%(object)s."{{element.key}}" || regex_match(`"%(whitelisted)s"`, `"{{element.key}}"`) }}' % { object: key, whitelisted: common.KyvernoPatternToRegex(w) },
                   operator: 'NotEquals',
-                  value: w,
+                  value: true,
                 }
                 for w in whitelist
               ],
