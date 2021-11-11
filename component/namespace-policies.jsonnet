@@ -207,7 +207,19 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
       message: 'The following %s are allowed: %s' % [ key, std.join(', ', whitelist) ],
       foreach: [
         {
-          list: 'request.object.metadata.%s | map(&{key: @}, keys(@))' % key,
+          list: (
+            // Kyverno validates that the expression begins with 'request.object'.
+            // Let's get that out the way here. 'request.object' is always true.
+            'request.object'
+            // Merge the current and the old object to ensure having all keys
+            // even if a user delete one.
+            + '&& merge('
+            + '    not_null(request.object.metadata.%(object)s, `{}`)'
+            + '   ,not_null(request.oldObject.metadata.%(object)s, `{}`))'
+            // Make an array out of the keys. The map is here because Kyverno
+            // only allows an array of objects and not an array of strings.
+            + '  | map(&{key: @}, keys(@))'
+          ) % { object: key },
           deny: {
             conditions: {
               all: [

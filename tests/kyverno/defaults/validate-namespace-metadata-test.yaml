@@ -16,6 +16,8 @@ resources:
   - validate-namespace-metadata/ignore-existing-auxiliary-annotation.yaml
   - validate-namespace-metadata/update-existing-auxiliary-label.yaml
   - validate-namespace-metadata/update-existing-auxiliary-annotation.yaml
+  - validate-namespace-metadata/delete-existing-auxiliary-label.yaml
+  - validate-namespace-metadata/delete-existing-auxiliary-annotation.yaml
 variables: validate-namespace-metadata-variables.yaml
 results:
   # Label validation
@@ -61,6 +63,11 @@ results:
     resource: update-existing-auxiliary-label
     kind: Namespace
     result: fail
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: delete-existing-auxiliary-label
+    kind: Namespace
+    result: fail
 
     # Annotation validation
   - policy: validate-namespace-metadata
@@ -103,5 +110,10 @@ results:
   - policy: validate-namespace-metadata
     rule: validate-annotations
     resource: update-existing-auxiliary-annotation
+    kind: Namespace
+    result: fail
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: delete-existing-auxiliary-annotation
     kind: Namespace
     result: fail

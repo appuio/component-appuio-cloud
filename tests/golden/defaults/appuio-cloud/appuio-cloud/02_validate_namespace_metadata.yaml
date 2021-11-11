@@ -78,7 +78,9 @@ spec:
                       }}'
                     operator: NotEquals
                     value: true
-            list: 'request.object.metadata.labels | map(&{key: @}, keys(@))'
+            list: 'request.object&& merge(    not_null(request.object.metadata.labels,
+              `{}`)   ,not_null(request.oldObject.metadata.labels, `{}`))  | map(&{key:
+              @}, keys(@))'
         message: 'The following labels are allowed: appuio.io/organization, user.appuio.io/*,
           kubernetes.io/metadata.name, test.appuio.io/*, compute.test.appuio.io/cpu'
     - exclude:
@@ -152,7 +154,9 @@ spec:
                       }}'
                     operator: NotEquals
                     value: true
-            list: 'request.object.metadata.annotations | map(&{key: @}, keys(@))'
+            list: 'request.object&& merge(    not_null(request.object.metadata.annotations,
+              `{}`)   ,not_null(request.oldObject.metadata.annotations, `{}`))  |
+              map(&{key: @}, keys(@))'
         message: 'The following annotations are allowed: user.appuio.io/*, kubectl.kubernetes.io/last-applied-configuration,
           appuio.io/active-deadline-seconds-override, test.appuio.io/*, compute.test.appuio.io/cpu'
   validationFailureAction: enforce

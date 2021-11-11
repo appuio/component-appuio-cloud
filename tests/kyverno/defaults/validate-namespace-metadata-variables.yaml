@@ -10,3 +10,15 @@ policies:
       - name: ignore-existing-auxiliary-label
         values:
           request.oldObject.metadata.labels."external.cool-tool.io/already-existing": XXX
+      - name: update-existing-auxiliary-annotation
+        values:
+          request.oldObject.metadata.annotations."external.cool-tool.io/already-existing": XXX
+      - name: update-existing-auxiliary-label
+        values:
+          request.oldObject.metadata.labels."external.cool-tool.io/already-existing": XXX
+      - name: delete-existing-auxiliary-annotation
+        values:
+          request.oldObject.metadata.annotations."external.cool-tool.io/already-existing": XXX
+      - name: delete-existing-auxiliary-label
+        values:
+          request.oldObject.metadata.labels."external.cool-tool.io/already-existing": XXX
