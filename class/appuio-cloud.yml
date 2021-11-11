@@ -12,6 +12,7 @@ parameters:
           - appuio-cloud/component/project-template.jsonnet
           - appuio-cloud/component/project-policies.jsonnet
           - appuio-cloud/component/quota-limitrange.jsonnet
+          - appuio-cloud/component/namespace-quota.jsonnet
           - appuio-cloud/component/build-strategy.jsonnet
           - appuio-cloud/component/runonce-activedeadlineseconds.jsonnet
         input_type: jsonnet

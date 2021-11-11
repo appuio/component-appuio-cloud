@@ -241,6 +241,20 @@ default:: `true`
 
 Creating https://docs.openshift.com/container-platform/4.7/cicd/builds/build-strategies.html#builds-strategy-docker-build_build-strategies[build strategies using Docker] is disallowed.
 
+== `maxNamespaceQuota`
+
+[horizontal]
+type:: int
+default:: 25
+
+Set the number of namespaces an organization can create.
+This quota is applied per zone.
+
+[example]
+----
+With a quota of `5` an organization can have 5 namespaces in Zone A, 5 namespaces in Zone B and so on.
+----
+
 == `projectTemplate`
 
 Configuration options for the OpenShift default project template.

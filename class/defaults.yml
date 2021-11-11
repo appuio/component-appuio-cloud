@@ -57,6 +57,8 @@ parameters:
     generatedNamespaceOwnerRole:
       name: namespace-owner
 
+    maxNamespaceQuota: 25
+
     generatedResourceQuota:
       # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
       organization-objects:
