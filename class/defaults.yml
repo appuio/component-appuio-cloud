@@ -33,13 +33,13 @@ parameters:
     allowedNamespaceLabels:
       kubernetesGenerated:
         - kubernetes.io/metadata.name
-      appuioUser: user.appuio.io/*
+      appuioUserDefined: custom.appuio.io/*
       appuioOrg: appuio.io/organization
 
     allowedNamespaceAnnotations:
       kubernetesGenerated:
         - kubectl.kubernetes.io/last-applied-configuration
-      appuioUser: user.appuio.io/*
+      appuioUserDefined: custom.appuio.io/*
       runOnceActiveDeadlineSecondsOverride: ${appuio_cloud:runOnceActiveDeadlineSeconds:overrideAnnotationKey}
 
     generatedDefaultRoleBindingInNewNamespaces:

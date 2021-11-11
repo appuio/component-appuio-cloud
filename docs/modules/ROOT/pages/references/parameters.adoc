@@ -37,7 +37,7 @@ example::
 allowedNamespaceLabels:
   kubernetesGenerated:
     - kubernetes.io/metadata.name
-  appuioUser: user.appuio.io/*
+  custom: custom.io/*
 ----
 
 Creating and editing namespace labels is disallowed except for labels explicitly approved using this parameter.
@@ -55,7 +55,7 @@ example::
 allowedNamespaceAnnotations:
   kubernetesGenerated:
     - kubectl.kubernetes.io/last-applied-configuration
-  appuioUser: user.appuio.io/*
+  custom: custom.io/*
 ----
 
 Creating and editing namespace annotations is disallowed except for annotations explicitly approved using this parameter.

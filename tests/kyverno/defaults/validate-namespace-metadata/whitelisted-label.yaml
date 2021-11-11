@@ -3,12 +3,12 @@ apiVersion: v1
 metadata:
   name: whitelisted-label-1
   labels:
-    user.appuio.io/environment: staging
+    test.appuio.io/environment: staging
 ---
 kind: Namespace
 apiVersion: v1
 metadata:
   name: whitelisted-label-2
   labels:
-    user.appuio.io/environment: staging
+    test.appuio.io/environment: staging
     compute.test.appuio.io/cpu: "100m"

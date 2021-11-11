@@ -59,7 +59,7 @@ spec:
                     operator: NotEquals
                     value: true
                   - key: '{{request.object.metadata.labels."{{element.key}}" == request.oldObject.metadata.labels."{{element.key}}"
-                      || regex_match(`"^user.appuio.io/.*$"`, `"{{element.key}}"`)
+                      || regex_match(`"^custom.appuio.io/.*$"`, `"{{element.key}}"`)
                       }}'
                     operator: NotEquals
                     value: true
@@ -81,7 +81,7 @@ spec:
             list: 'request.object&& merge(    not_null(request.object.metadata.labels,
               `{}`)   ,not_null(request.oldObject.metadata.labels, `{}`))  | map(&{key:
               @}, keys(@))'
-        message: 'The following labels are allowed: appuio.io/organization, user.appuio.io/*,
+        message: 'The following labels are allowed: appuio.io/organization, custom.appuio.io/*,
           kubernetes.io/metadata.name, test.appuio.io/*, compute.test.appuio.io/cpu'
     - exclude:
         clusterRoles:
@@ -126,7 +126,7 @@ spec:
                 all:
                   - key: '{{request.object.metadata.annotations."{{element.key}}"
                       == request.oldObject.metadata.annotations."{{element.key}}"
-                      || regex_match(`"^user.appuio.io/.*$"`, `"{{element.key}}"`)
+                      || regex_match(`"^custom.appuio.io/.*$"`, `"{{element.key}}"`)
                       }}'
                     operator: NotEquals
                     value: true
@@ -157,6 +157,6 @@ spec:
             list: 'request.object&& merge(    not_null(request.object.metadata.annotations,
               `{}`)   ,not_null(request.oldObject.metadata.annotations, `{}`))  |
               map(&{key: @}, keys(@))'
-        message: 'The following annotations are allowed: user.appuio.io/*, kubectl.kubernetes.io/last-applied-configuration,
+        message: 'The following annotations are allowed: custom.appuio.io/*, kubectl.kubernetes.io/last-applied-configuration,
           appuio.io/active-deadline-seconds-override, test.appuio.io/*, compute.test.appuio.io/cpu'
   validationFailureAction: enforce
