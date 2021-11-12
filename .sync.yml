@@ -8,6 +8,11 @@ docs/antora.yml:
   name: appuio-cloud
   title: appuio-cloud
 
+Makefile:
+  includes:
+    - Makefile.kyverno.mk
+
 .gitignore:
   additionalEntries:
     - jsonnetfile.json
+    - tests/kyverno/*/compiled

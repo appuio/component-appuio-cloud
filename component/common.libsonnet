@@ -66,6 +66,9 @@ local matchOrgNamespaces = matchNamespaces(
   }
 );
 
+local kyvernoPatternToRegex = function(pattern)
+  '^%s$' % std.strReplace(std.strReplace(pattern, '?', '.'), '*', '.*');
+
 {
   DefaultLabels: defaultLabels,
   FlattenSet: flattenSet,
@@ -73,4 +76,5 @@ local matchOrgNamespaces = matchNamespaces(
   MatchNamespaces: matchNamespaces,
   MatchOrgNamespaces: matchOrgNamespaces,
   MatchProjectRequests: matchProjectRequests,
+  KyvernoPatternToRegex: kyvernoPatternToRegex,
 }

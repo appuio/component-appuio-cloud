@@ -1,0 +1,7 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: whitelisted-and-auxiliary-annotations
+  annotations:
+    test.appuio.io/environment: staging
+    scheduler.alpha.kubernetes.io/node-selector: master

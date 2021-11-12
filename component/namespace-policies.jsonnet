@@ -183,6 +183,90 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
   },
 };
 
+/**
+  * Disallow auxiliary labels and annottions
+  * This policy will:
+  * - Check modified annotations and labels against a whitelist.
+  * - Deny namespace creation or modification.
+  */
+local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-metadata') {
+  local validateObject = function(key, whitelist) {
+    name: 'validate-%s' % key,
+    match: common.MatchNamespaces(),
+    exclude: common.BypassNamespaceRestrictionsSubjects(),
+    preconditions: {
+      all: [
+        {
+          key: '{{request.operation}}',
+          operator: 'In',
+          value: [ 'CREATE', 'UPDATE' ],
+        },
+      ],
+    },
+    validate: {
+      message: 'The following %s are allowed: %s' % [ key, std.join(', ', whitelist) ],
+      foreach: [
+        {
+          list: (
+            // Kyverno validates that the expression begins with 'request.object'.
+            // Let's get that out the way here. 'request.object' is always true.
+            'request.object'
+            // Merge the current and the old object to ensure having all keys
+            // even if a user delete one.
+            + '&& merge('
+            + '    not_null(request.object.metadata.%(object)s, `{}`)'
+            + '   ,not_null(request.oldObject.metadata.%(object)s, `{}`))'
+            // Make an array out of the keys. The map is here because Kyverno
+            // only allows an array of objects and not an array of strings.
+            + '  | map(&{key: @}, keys(@))'
+          ) % { object: key },
+          deny: {
+            // Deny if:
+            conditions: {
+              all: [
+                // Label has changed
+                {
+                  key: '{{request.object.metadata.%(object)s."{{element.key}}" != request.oldObject.metadata.%(object)s."{{element.key}}"}}' % { object: key },
+                  operator: 'Equals',
+                  value: true,
+                },
+                // AND
+                // label is not in whitelist
+                // This can be simplified with kyverno 1.6 which supports wildcards for AnyIn and AnyNotIn
+                // https://github.com/kyverno/kyverno/pull/2692
+                {
+                  key: '{{%s}}' % std.join(' || ', std.map(
+                    function(w) 'regex_match(`"%s"`, `"{{element.key}}"`)' % common.KyvernoPatternToRegex(w),
+                    whitelist
+                  )),
+                  operator: 'Equals',
+                  value: false,
+                },
+              ],
+            },
+          },
+        },
+      ],
+    },
+  },
+  metadata+: {
+    annotations+: {
+      // Kyverno somehow detects this rule as needing controller autogeneration.
+      // https://kyverno.io/docs/writing-policies/autogen/
+      // Explicitly disable autogen. Autogen interferes with ArgoCD and we don't need it here
+      // since only Namespaces are validated anyway.
+      'pod-policies.kyverno.io/autogen-controllers': 'none',
+    },
+  },
+  spec: {
+    validationFailureAction: 'enforce',
+    background: false,
+    rules: [
+      validateObject('labels', common.FlattenSet(params.allowedNamespaceLabels)),
+      validateObject('annotations', common.FlattenSet(params.allowedNamespaceAnnotations)),
+    ],
+  },
+};
 
 // Define outputs below
 {
@@ -190,4 +274,5 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
   '01_appuio_ns_provisioners_crb': appuioNsProvisionersRoleBinding + common.DefaultLabels,
   '02_organization_namespaces': organizationNamespaces + common.DefaultLabels,
   '02_disallow_reserved_namespaces': disallowReservedNamespaces + common.DefaultLabels,
+  '02_validate_namespace_metadata': validateNamespaceMetadata + common.DefaultLabels,
 }

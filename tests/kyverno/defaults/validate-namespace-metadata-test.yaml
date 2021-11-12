@@ -1,0 +1,119 @@
+name: test namespace metadata validation
+policies:
+  - compiled/appuio-cloud/appuio-cloud/02_validate_namespace_metadata.yaml
+resources:
+  - validate-namespace-metadata/no-labels.yaml
+  - validate-namespace-metadata/null-labels.yaml
+  - validate-namespace-metadata/whitelisted-label.yaml
+  - validate-namespace-metadata/whitelisted-and-auxiliary-labels.yaml
+  - validate-namespace-metadata/auxiliary-label.yaml
+  - validate-namespace-metadata/no-annotations.yaml
+  - validate-namespace-metadata/null-annotations.yaml
+  - validate-namespace-metadata/whitelisted-annotation.yaml
+  - validate-namespace-metadata/whitelisted-and-auxiliary-annotations.yaml
+  - validate-namespace-metadata/auxiliary-annotation.yaml
+  - validate-namespace-metadata/ignore-existing-auxiliary-label.yaml
+  - validate-namespace-metadata/ignore-existing-auxiliary-annotation.yaml
+  - validate-namespace-metadata/update-existing-auxiliary-label.yaml
+  - validate-namespace-metadata/update-existing-auxiliary-annotation.yaml
+  - validate-namespace-metadata/delete-existing-auxiliary-label.yaml
+  - validate-namespace-metadata/delete-existing-auxiliary-annotation.yaml
+variables: validate-namespace-metadata-variables.yaml
+results:
+  # Label validation
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: null-labels
+    kind: Namespace
+    result: skip
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: no-labels
+    kind: Namespace
+    result: skip
+
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: whitelisted-label-1
+    kind: Namespace
+    result: pass
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: whitelisted-label-2
+    kind: Namespace
+    result: pass
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: ignore-existing-auxiliary-label
+    kind: Namespace
+    result: pass
+
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: auxiliary-label
+    kind: Namespace
+    result: fail
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: whitelisted-and-auxiliary-labels
+    kind: Namespace
+    result: fail
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: update-existing-auxiliary-label
+    kind: Namespace
+    result: fail
+  - policy: validate-namespace-metadata
+    rule: validate-labels
+    resource: delete-existing-auxiliary-label
+    kind: Namespace
+    result: fail
+
+    # Annotation validation
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: null-annotations
+    kind: Namespace
+    result: skip
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: no-annotations
+    kind: Namespace
+    result: skip
+
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: whitelisted-annotation-1
+    kind: Namespace
+    result: pass
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: whitelisted-annotation-2
+    kind: Namespace
+    result: pass
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: ignore-existing-auxiliary-annotation
+    kind: Namespace
+    result: pass
+
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: auxiliary-annotation
+    kind: Namespace
+    result: fail
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: whitelisted-and-auxiliary-annotations
+    kind: Namespace
+    result: fail
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: update-existing-auxiliary-annotation
+    kind: Namespace
+    result: fail
+  - policy: validate-namespace-metadata
+    rule: validate-annotations
+    resource: delete-existing-auxiliary-annotation
+    kind: Namespace
+    result: fail

@@ -18,5 +18,15 @@ parameters:
           name: argocd-application-controller
           namespace: argocd
 
+    allowedNamespaceLabels:
+      test:
+        - test.appuio.io/*
+        - compute.test.appuio.io/cpu
+
+    allowedNamespaceAnnotations:
+      test:
+        - test.appuio.io/*
+        - compute.test.appuio.io/cpu
+
   resource_locker:
     namespace: syn-resource-locker
