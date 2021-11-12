@@ -13,6 +13,15 @@ local defaultLabels = {
   },
 };
 
+local orgLabelSelector = {
+  matchExpressions: [
+    {
+      key: 'appuio.io/organization',
+      operator: 'Exists',
+    },
+  ],
+};
+
 local flattenSet(set) = std.flatMap(function(s)
                                       if std.isArray(set[s]) then set[s] else [ set[s] ],
                                     std.objectFields(std.prune(set)));
@@ -31,39 +40,28 @@ local bypassNamespaceRestrictionsSubjects() =
     subjects+: flattenSet(bypass.subjects),
   };
 
-local matchNamespaces(selector=null, names=null) = {
-  all+: [ {
+local matchKinds(selector=null, names=null, match='all', kinds) = {
+  [match]+: [ {
     resources+: std.prune({
-      kinds+: [
-        'Namespace',
-      ],
+      kinds+: kinds,
       selector+: selector,
       names+: names,
     }),
   } ],
 };
 
-local matchProjectRequests(selector=null, names=null) = {
-  all+: [ {
-    resources+: std.prune({
-      kinds+: [
-        'ProjectRequest',
-      ],
-      selector+: selector,
-      names+: names,
-    }),
-  } ],
-};
+local matchNamespaces(selector=null, names=null, match='all') = matchKinds(selector, names, match, kinds=[ 'Namespace' ]);
+
+local matchProjectRequests(selector=null, names=null, match='all') = matchKinds(selector, names, match, kinds=[ 'ProjectRequest' ]);
 
 local matchOrgNamespaces = matchNamespaces(
-  selector={
-    matchExpressions: [
-      {
-        key: 'appuio.io/organization',
-        operator: 'Exists',
-      },
-    ],
-  }
+  selector=orgLabelSelector,
+  match='any',
+);
+
+local matchOrgProjectRequests = matchProjectRequests(
+  selector=orgLabelSelector,
+  match='any',
 );
 
 local kyvernoPatternToRegex = function(pattern)
@@ -76,5 +74,6 @@ local kyvernoPatternToRegex = function(pattern)
   MatchNamespaces: matchNamespaces,
   MatchOrgNamespaces: matchOrgNamespaces,
   MatchProjectRequests: matchProjectRequests,
+  MatchOrgProjectRequests: matchOrgProjectRequests,
   KyvernoPatternToRegex: kyvernoPatternToRegex,
 }
