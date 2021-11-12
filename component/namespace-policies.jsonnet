@@ -221,21 +221,27 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
             + '  | map(&{key: @}, keys(@))'
           ) % { object: key },
           deny: {
+            // Deny if:
             conditions: {
               all: [
+                // Label has changed
                 {
-                  // Deny if:
-                  key: ('{{'
-                        // Label has changed
-                        + 'request.object.metadata.%(object)s."{{element.key}}" != request.oldObject.metadata.%(object)s."{{element.key}}"'
-                        // AND label is not in whitelist
-                        + '&& !regex_match(`"%(whitelisted)s"`, `"{{element.key}}"`)'
-                        + '}}')
-                       % { object: key, whitelisted: common.KyvernoPatternToRegex(w) },
+                  key: '{{request.object.metadata.%(object)s."{{element.key}}" != request.oldObject.metadata.%(object)s."{{element.key}}"}}' % { object: key },
                   operator: 'Equals',
                   value: true,
-                }
-                for w in whitelist
+                },
+                // AND
+                // label is not in whitelist
+                // This can be simplified with kyverno 1.6 which supports wildcards for AnyIn and AnyNotIn
+                // https://github.com/kyverno/kyverno/pull/2692
+                {
+                  key: '{{%s}}' % std.join(' || ', std.map(
+                    function(w) 'regex_match(`"%s"`, `"{{element.key}}"`)' % common.KyvernoPatternToRegex(w),
+                    whitelist
+                  )),
+                  operator: 'Equals',
+                  value: false,
+                },
               ],
             },
           },
