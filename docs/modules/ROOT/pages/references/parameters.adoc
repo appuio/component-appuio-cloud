@@ -6,7 +6,7 @@ The parent key for all of the following parameters is `appuio_cloud`.
 
 [horizontal]
 type:: string
-default:: `syn-appuio-cloud`
+default:: `appuio-cloud`
 
 The namespace in which to deploy this component.
 

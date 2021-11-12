@@ -1,7 +1,7 @@
 parameters:
   appuio_cloud:
     =_metadata: {}
-    namespace: syn-appuio-cloud
+    namespace: appuio-cloud
 
     bypassNamespaceRestrictions:
       roles: {}
