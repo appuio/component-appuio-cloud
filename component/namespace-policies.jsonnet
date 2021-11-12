@@ -224,9 +224,15 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
             conditions: {
               all: [
                 {
-                  // Check if label is unchanged or whitelisted
-                  key: '{{request.object.metadata.%(object)s."{{element.key}}" == request.oldObject.metadata.%(object)s."{{element.key}}" || regex_match(`"%(whitelisted)s"`, `"{{element.key}}"`) }}' % { object: key, whitelisted: common.KyvernoPatternToRegex(w) },
-                  operator: 'NotEquals',
+                  // Deny if:
+                  key: ('{{'
+                        // Label has changed
+                        + 'request.object.metadata.%(object)s."{{element.key}}" != request.oldObject.metadata.%(object)s."{{element.key}}"'
+                        // AND label is not in whitelist
+                        + '&& !regex_match(`"%(whitelisted)s"`, `"{{element.key}}"`)'
+                        + '}}')
+                       % { object: key, whitelisted: common.KyvernoPatternToRegex(w) },
+                  operator: 'Equals',
                   value: true,
                 }
                 for w in whitelist

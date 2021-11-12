@@ -53,30 +53,25 @@ spec:
           - deny:
               conditions:
                 all:
-                  - key: '{{request.object.metadata.labels."{{element.key}}" == request.oldObject.metadata.labels."{{element.key}}"
-                      || regex_match(`"^appuio.io/organization$"`, `"{{element.key}}"`)
-                      }}'
-                    operator: NotEquals
+                  - key: '{{request.object.metadata.labels."{{element.key}}" != request.oldObject.metadata.labels."{{element.key}}"&&
+                      !regex_match(`"^appuio.io/organization$"`, `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
-                  - key: '{{request.object.metadata.labels."{{element.key}}" == request.oldObject.metadata.labels."{{element.key}}"
-                      || regex_match(`"^custom.appuio.io/.*$"`, `"{{element.key}}"`)
-                      }}'
-                    operator: NotEquals
+                  - key: '{{request.object.metadata.labels."{{element.key}}" != request.oldObject.metadata.labels."{{element.key}}"&&
+                      !regex_match(`"^custom.appuio.io/.*$"`, `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
-                  - key: '{{request.object.metadata.labels."{{element.key}}" == request.oldObject.metadata.labels."{{element.key}}"
-                      || regex_match(`"^kubernetes.io/metadata.name$"`, `"{{element.key}}"`)
-                      }}'
-                    operator: NotEquals
+                  - key: '{{request.object.metadata.labels."{{element.key}}" != request.oldObject.metadata.labels."{{element.key}}"&&
+                      !regex_match(`"^kubernetes.io/metadata.name$"`, `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
-                  - key: '{{request.object.metadata.labels."{{element.key}}" == request.oldObject.metadata.labels."{{element.key}}"
-                      || regex_match(`"^test.appuio.io/.*$"`, `"{{element.key}}"`)
-                      }}'
-                    operator: NotEquals
+                  - key: '{{request.object.metadata.labels."{{element.key}}" != request.oldObject.metadata.labels."{{element.key}}"&&
+                      !regex_match(`"^test.appuio.io/.*$"`, `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
-                  - key: '{{request.object.metadata.labels."{{element.key}}" == request.oldObject.metadata.labels."{{element.key}}"
-                      || regex_match(`"^compute.test.appuio.io/cpu$"`, `"{{element.key}}"`)
-                      }}'
-                    operator: NotEquals
+                  - key: '{{request.object.metadata.labels."{{element.key}}" != request.oldObject.metadata.labels."{{element.key}}"&&
+                      !regex_match(`"^compute.test.appuio.io/cpu$"`, `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
             list: 'request.object&& merge(    not_null(request.object.metadata.labels,
               `{}`)   ,not_null(request.oldObject.metadata.labels, `{}`))  | map(&{key:
@@ -125,34 +120,31 @@ spec:
               conditions:
                 all:
                   - key: '{{request.object.metadata.annotations."{{element.key}}"
-                      == request.oldObject.metadata.annotations."{{element.key}}"
-                      || regex_match(`"^custom.appuio.io/.*$"`, `"{{element.key}}"`)
-                      }}'
-                    operator: NotEquals
+                      != request.oldObject.metadata.annotations."{{element.key}}"&&
+                      !regex_match(`"^custom.appuio.io/.*$"`, `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
                   - key: '{{request.object.metadata.annotations."{{element.key}}"
-                      == request.oldObject.metadata.annotations."{{element.key}}"
-                      || regex_match(`"^kubectl.kubernetes.io/last-applied-configuration$"`,
-                      `"{{element.key}}"`) }}'
-                    operator: NotEquals
+                      != request.oldObject.metadata.annotations."{{element.key}}"&&
+                      !regex_match(`"^kubectl.kubernetes.io/last-applied-configuration$"`,
+                      `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
                   - key: '{{request.object.metadata.annotations."{{element.key}}"
-                      == request.oldObject.metadata.annotations."{{element.key}}"
-                      || regex_match(`"^appuio.io/active-deadline-seconds-override$"`,
-                      `"{{element.key}}"`) }}'
-                    operator: NotEquals
+                      != request.oldObject.metadata.annotations."{{element.key}}"&&
+                      !regex_match(`"^appuio.io/active-deadline-seconds-override$"`,
+                      `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
                   - key: '{{request.object.metadata.annotations."{{element.key}}"
-                      == request.oldObject.metadata.annotations."{{element.key}}"
-                      || regex_match(`"^test.appuio.io/.*$"`, `"{{element.key}}"`)
-                      }}'
-                    operator: NotEquals
+                      != request.oldObject.metadata.annotations."{{element.key}}"&&
+                      !regex_match(`"^test.appuio.io/.*$"`, `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
                   - key: '{{request.object.metadata.annotations."{{element.key}}"
-                      == request.oldObject.metadata.annotations."{{element.key}}"
-                      || regex_match(`"^compute.test.appuio.io/cpu$"`, `"{{element.key}}"`)
-                      }}'
-                    operator: NotEquals
+                      != request.oldObject.metadata.annotations."{{element.key}}"&&
+                      !regex_match(`"^compute.test.appuio.io/cpu$"`, `"{{element.key}}"`)}}'
+                    operator: Equals
                     value: true
             list: 'request.object&& merge(    not_null(request.object.metadata.annotations,
               `{}`)   ,not_null(request.oldObject.metadata.annotations, `{}`))  |
