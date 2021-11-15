@@ -41,6 +41,13 @@ parameters:
         - kubectl.kubernetes.io/last-applied-configuration
       appuioUserDefined: custom.appuio.io/*
       runOnceActiveDeadlineSecondsOverride: ${appuio_cloud:runOnceActiveDeadlineSeconds:overrideAnnotationKey}
+      # If using mutate, Kyverno appends an annotation to debug the mutate patches.
+      # The annotation is appended in the context of the original requestor.
+      # Thus we have to whitelist the annotation or the later validation rejects the request.
+      # This should be safe because:
+      # - The annotation is only for debugging and not referenced elsewhere.
+      # - The mutating policies are validated with a validation rule too.
+      kyvernoMutateLabel: policies.kyverno.io/last-applied-patches
 
     generatedDefaultRoleBindingInNewNamespaces:
       bindingName: organization-admin
