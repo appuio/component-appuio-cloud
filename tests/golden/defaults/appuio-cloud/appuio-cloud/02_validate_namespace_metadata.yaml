@@ -68,7 +68,7 @@ spec:
               @}, keys(@))'
         message: "The following labels can be modified:\n    appuio.io/organization,\
           \ custom.appuio.io/*, kubernetes.io/metadata.name, test.appuio.io/*, compute.test.appuio.io/cpu.\n\
-          Labels given:\n    {{request.object.metadata.labels}}.\nLabels before modification:\n\
+          labels given:\n    {{request.object.metadata.labels}}.\nlabels before modification:\n\
           \    {{request.oldObject.metadata.labels}}."
     - exclude:
         clusterRoles:
@@ -128,6 +128,7 @@ spec:
               map(&{key: @}, keys(@))'
         message: "The following annotations can be modified:\n    custom.appuio.io/*,\
           \ kubectl.kubernetes.io/last-applied-configuration, appuio.io/active-deadline-seconds-override,\
-          \ test.appuio.io/*, compute.test.appuio.io/cpu.\nLabels given:\n    {{request.object.metadata.annotations}}.\n\
-          Labels before modification:\n    {{request.oldObject.metadata.annotations}}."
+          \ test.appuio.io/*, compute.test.appuio.io/cpu.\nannotations given:\n  \
+          \  {{request.object.metadata.annotations}}.\nannotations before modification:\n\
+          \    {{request.oldObject.metadata.annotations}}."
   validationFailureAction: enforce
