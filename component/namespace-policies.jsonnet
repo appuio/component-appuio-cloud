@@ -204,7 +204,11 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
       ],
     },
     validate: {
-      message: 'The following %s are allowed: %s' % [ key, std.join(', ', whitelist) ],
+      message: (
+        'The following %(object)s can be modified: %(whitelist)s.'
+        + ' Labels given: {{request.object.metadata.%(object)s}}.'
+        + ' Labels before modification: {{request.oldObject.metadata.%(object)s}}.'
+      ) % { object: key, whitelist: std.join(', ', whitelist) },
       foreach: [
         {
           list: (
