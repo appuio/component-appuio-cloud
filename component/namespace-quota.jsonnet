@@ -95,7 +95,23 @@ local namespaceQuotaPolicy = kyverno.ClusterPolicy('check-namespace-quota') {
   },
 };
 
+local namespaceQuotaOverrides = [
+  kube.ConfigMap('override-%s' % org) {
+    metadata+: {
+      labels+: {
+        // this label is informational only here
+        'appuio.io/organization': org,
+      },
+    },
+    data+: {
+      namespaceQuota: '%s' % params.namespaceQuotaOverrides[org],
+    },
+  } + common.DefaultLabels
+  for org in std.filter(function(key) key != null && params.namespaceQuotaOverrides[key] != null, std.objectFields(params.namespaceQuotaOverrides))
+];
+
 // Define outputs below
 {
   '12_namespace_quota_per_zone': namespaceQuotaPolicy + common.DefaultLabels,
+  [if std.length(namespaceQuotaOverrides) > 0 then '13_namespace_quota_overrides']: namespaceQuotaOverrides,
 }

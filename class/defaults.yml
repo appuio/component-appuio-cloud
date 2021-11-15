@@ -58,6 +58,7 @@ parameters:
       name: namespace-owner
 
     maxNamespaceQuota: 25
+    namespaceQuotaOverrides: {}
 
     generatedResourceQuota:
       # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
