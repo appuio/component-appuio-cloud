@@ -29,6 +29,7 @@ parameters:
       openshift: openshift-*
       projectsyn: syn-*
       appuio: appuio-*
+      cilium: cilium*
 
     allowedNamespaceLabels:
       kubernetesGenerated:
