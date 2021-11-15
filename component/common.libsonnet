@@ -54,10 +54,7 @@ local matchNamespaces(selector=null, names=null, match='all') = matchKinds(selec
 
 local matchProjectRequests(selector=null, names=null, match='all') = matchKinds(selector, names, match, kinds=[ 'ProjectRequest' ]);
 
-local matchOrgNamespaces = matchNamespaces(
-  selector=orgLabelSelector,
-  match='any',
-);
+local matchOrgNamespaces = matchNamespaces(selector=orgLabelSelector);
 
 local kyvernoPatternToRegex = function(pattern)
   '^%s$' % std.strReplace(std.strReplace(pattern, '?', '.'), '*', '.*');

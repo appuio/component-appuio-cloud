@@ -47,7 +47,7 @@ spec:
             name: argocd-application-controller
             namespace: argocd
       match:
-        any:
+        all:
           - resources:
               kinds:
                 - Namespace

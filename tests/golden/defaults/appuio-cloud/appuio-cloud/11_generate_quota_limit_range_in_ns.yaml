@@ -33,7 +33,7 @@ spec:
         namespace: '{{request.object.metadata.name}}'
         synchronize: true
       match:
-        any:
+        all:
           - resources:
               kinds:
                 - Namespace
@@ -63,7 +63,7 @@ spec:
         namespace: '{{request.object.metadata.name}}'
         synchronize: true
       match:
-        any:
+        all:
           - resources:
               kinds:
                 - Namespace
@@ -89,7 +89,7 @@ spec:
         namespace: '{{request.object.metadata.name}}'
         synchronize: true
       match:
-        any:
+        all:
           - resources:
               kinds:
                 - Namespace
@@ -134,7 +134,7 @@ spec:
         namespace: '{{request.object.metadata.name}}'
         synchronize: true
       match:
-        any:
+        all:
           - resources:
               kinds:
                 - Namespace
