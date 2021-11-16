@@ -1,0 +1,123 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/category: Namespace Management
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
+    name: check-namespace-quota
+  name: check-namespace-quota
+spec:
+  background: false
+  rules:
+    - context:
+        - apiCall:
+            jmesPath: items[?metadata.name == 'override-{{request.object.metadata.labels."appuio.io/organization"}}'].data.namespaceQuota
+              | [0]
+            urlPath: /api/v1/namespaces/appuio-cloud/configmaps
+          name: override
+        - apiCall:
+            jmesPath: items[?metadata.labels."appuio.io/organization" == '{{request.object.metadata.labels."appuio.io/organization"}}']
+              | length(@)
+            urlPath: /api/v1/namespaces
+          name: nsCount
+      exclude:
+        clusterRoles:
+          - cluster-admin
+          - cluster-image-registry-operator
+          - cluster-node-tuning-operator
+          - kyverno:generatecontroller
+          - kyverno:policycontroller
+          - multus-admission-controller-webhook
+          - openshift-dns-operator
+          - openshift-ingress-operator
+          - syn-admin
+          - syn-argocd-application-controller
+          - syn-argocd-server
+          - syn-resource-locker-*
+          - system:controller:generic-garbage-collector
+          - system:controller:operator-lifecycle-manager
+          - system:master
+          - system:openshift:controller:namespace-security-allocation-controller
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
+      match:
+        all:
+          - resources:
+              kinds:
+                - Namespace
+              selector:
+                matchExpressions:
+                  - key: appuio.io/organization
+                    operator: Exists
+      name: check-namespace-count
+      validate:
+        deny:
+          conditions:
+            - key: '{{nsCount}}'
+              operator: GreaterThanOrEquals
+              value: '{{override || `3`}}'
+        message: 'You cannot create more than {{override || `3`}} namespaces for organization
+          ''{{request.object.metadata.labels."appuio.io/organization"}}''.
+
+          Please contact support to have your quota raised.'
+    - context:
+        - apiCall:
+            jmesPath: metadata.annotations."appuio.io/default-organization"
+            urlPath: /apis/user.openshift.io/v1/users/{{request.userInfo.username}}
+          name: organization
+        - apiCall:
+            jmesPath: items[?metadata.name == 'override-{{organization}}'].data.namespaceQuota
+              | [0]
+            urlPath: /api/v1/namespaces/appuio-cloud/configmaps
+          name: override
+        - apiCall:
+            jmesPath: items[?metadata.labels."appuio.io/organization" == '{{organization}}']
+              | length(@)
+            urlPath: /api/v1/namespaces
+          name: nsCount
+      exclude:
+        clusterRoles:
+          - cluster-admin
+          - cluster-image-registry-operator
+          - cluster-node-tuning-operator
+          - kyverno:generatecontroller
+          - kyverno:policycontroller
+          - multus-admission-controller-webhook
+          - openshift-dns-operator
+          - openshift-ingress-operator
+          - syn-admin
+          - syn-argocd-application-controller
+          - syn-argocd-server
+          - syn-resource-locker-*
+          - system:controller:generic-garbage-collector
+          - system:controller:operator-lifecycle-manager
+          - system:master
+          - system:openshift:controller:namespace-security-allocation-controller
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
+      match:
+        all:
+          - resources:
+              kinds:
+                - ProjectRequest
+      name: check-project-count
+      validate:
+        deny:
+          conditions:
+            - key: '{{nsCount}}'
+              operator: GreaterThanOrEquals
+              value: '{{override || `3`}}'
+        message: 'You cannot create more than {{override || `3`}} namespaces for organization
+          ''{{organization}}''.
+
+          Please contact support to have your quota raised.'
+  validationFailureAction: enforce

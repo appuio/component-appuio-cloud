@@ -18,6 +18,11 @@ parameters:
           name: argocd-application-controller
           namespace: argocd
 
+    maxNamespaceQuota: 3
+    namespaceQuotaOverrides:
+      example-company: 50
+      delete-override: null
+
     allowedNamespaceLabels:
       test:
         - test.appuio.io/*
