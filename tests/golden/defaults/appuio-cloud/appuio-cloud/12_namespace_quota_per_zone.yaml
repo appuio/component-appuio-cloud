@@ -56,6 +56,12 @@ spec:
                   - key: appuio.io/organization
                     operator: Exists
       name: check-namespace-count
+      preconditions:
+        all:
+          - key: '{{request.operation}}'
+            operator: In
+            value:
+              - CREATE
       validate:
         deny:
           conditions:
@@ -110,6 +116,12 @@ spec:
               kinds:
                 - ProjectRequest
       name: check-project-count
+      preconditions:
+        all:
+          - key: '{{request.operation}}'
+            operator: In
+            value:
+              - CREATE
       validate:
         deny:
           conditions:
