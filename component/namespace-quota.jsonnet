@@ -40,6 +40,16 @@ local validateRule(varName) = {
   },
 };
 
+local operationPrecondition(match='all', ops=[ 'CREATE' ]) = {
+  [match]+: [
+    {
+      key: '{{request.operation}}',
+      operator: 'In',
+      value: [ 'CREATE' ],
+    },
+  ],
+};
+
 local orgLabelVar = '{{request.object.metadata.labels."appuio.io/organization"}}';
 
 /**
@@ -64,6 +74,7 @@ local namespaceQuotaPolicy = kyverno.ClusterPolicy('check-namespace-quota') {
           nsCountContext(varName=orgLabelVar),
         ],
         validate: validateRule(varName=orgLabelVar),
+        preconditions: operationPrecondition(),
       },
       {
         name: 'check-project-count',
@@ -81,6 +92,7 @@ local namespaceQuotaPolicy = kyverno.ClusterPolicy('check-namespace-quota') {
           nsCountContext(varName='{{organization}}'),
         ],
         validate: validateRule(varName='{{organization}}'),
+        preconditions: operationPrecondition(),
       },
     ],
   },
