@@ -59,15 +59,19 @@ spec:
                   - key: '{{regex_match(`"^appuio.io/organization$"`, `"{{element.key}}"`)
                       || regex_match(`"^custom.appuio.io/.*$"`, `"{{element.key}}"`)
                       || regex_match(`"^kubernetes.io/metadata.name$"`, `"{{element.key}}"`)
-                      || regex_match(`"^test.appuio.io/.*$"`, `"{{element.key}}"`)
-                      || regex_match(`"^compute.test.appuio.io/cpu$"`, `"{{element.key}}"`)}}'
+                      || regex_match(`"^network-policies.syn.tools/no-defaults$"`,
+                      `"{{element.key}}"`) || regex_match(`"^network-policies.syn.tools/purge-defaults$"`,
+                      `"{{element.key}}"`) || regex_match(`"^test.appuio.io/.*$"`,
+                      `"{{element.key}}"`) || regex_match(`"^compute.test.appuio.io/cpu$"`,
+                      `"{{element.key}}"`)}}'
                     operator: Equals
                     value: false
             list: 'request.object&& merge(    not_null(request.object.metadata.labels,
               `{}`)   ,not_null(request.oldObject.metadata.labels, `{}`))  | map(&{key:
               @}, keys(@))'
         message: "The following labels can be modified:\n    appuio.io/organization,\
-          \ custom.appuio.io/*, kubernetes.io/metadata.name, test.appuio.io/*, compute.test.appuio.io/cpu.\n\
+          \ custom.appuio.io/*, kubernetes.io/metadata.name, network-policies.syn.tools/no-defaults,\
+          \ network-policies.syn.tools/purge-defaults, test.appuio.io/*, compute.test.appuio.io/cpu.\n\
           labels given:\n    {{request.object.metadata.labels}}.\nlabels before modification:\n\
           \    {{request.oldObject.metadata.labels}}."
     - exclude:
