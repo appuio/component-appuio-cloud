@@ -60,6 +60,7 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
                   'watch',
                   'edit',
                   'patch',
+                  'delete',
                 ],
               },
             ],
