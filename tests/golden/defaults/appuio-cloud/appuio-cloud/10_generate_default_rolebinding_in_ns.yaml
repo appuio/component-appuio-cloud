@@ -45,6 +45,7 @@ spec:
                 - watch
                 - edit
                 - patch
+                - delete
         kind: Role
         name: namespace-owner
         namespace: '{{request.object.metadata.name}}'
