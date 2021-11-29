@@ -5,4 +5,46 @@ metadata:
   labels:
     name: cluster
   name: cluster
-spec: {}
+spec:
+  projectRequestTemplate:
+    name: project-request
+---
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  annotations: {}
+  labels:
+    name: project-request
+  name: project-request
+  namespace: openshift-config
+objects:
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      creationTimestamp: null
+      labels:
+        appuio.io/uninitialized: 'true'
+      name: admin
+      namespace: ${PROJECT_NAME}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: admin
+    subjects:
+      - apiGroup: rbac.authorization.k8s.io
+        kind: User
+        name: ${PROJECT_ADMIN_USER}
+  - apiVersion: project.openshift.io/v1
+    kind: Project
+    metadata:
+      annotations:
+        openshift.io/description: ${PROJECT_DESCRIPTION}
+        openshift.io/display-name: ${PROJECT_DISPLAYNAME}
+        openshift.io/requester: ${PROJECT_REQUESTING_USER}
+      name: ${PROJECT_NAME}
+parameters:
+  - name: PROJECT_ADMIN_USER
+  - name: PROJECT_DESCRIPTION
+  - name: PROJECT_DISPLAYNAME
+  - name: PROJECT_NAME
+  - name: PROJECT_REQUESTING_USER

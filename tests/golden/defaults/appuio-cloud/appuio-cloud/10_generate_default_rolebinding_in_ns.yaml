@@ -20,7 +20,7 @@ spec:
             - kind: Group
               name: '{{request.object.metadata.labels."appuio.io/organization"}}'
         kind: RoleBinding
-        name: organization-admin
+        name: admin
         namespace: '{{request.object.metadata.name}}'
         synchronize: false
       match:
@@ -33,6 +33,27 @@ spec:
                   - key: appuio.io/organization
                     operator: Exists
       name: default-rolebinding
+    - context:
+        - apiCall:
+            jmesPath: metadata.labels."appuio.io/organization"
+            urlPath: /api/v1/namespaces/{{request.object.metadata.namespace}}
+          name: organization
+      match:
+        all:
+          - resources:
+              kinds:
+                - rbac.authorization.k8s.io/v1/RoleBinding
+              names:
+                - admin
+              selector:
+                matchLabels:
+                  appuio.io/uninitialized: 'true'
+      mutate:
+        patchesJson6902: "- op: add\n  path: \"/subjects\"\n  value: [{\"apiGroup\"\
+          :\"rbac.authorization.k8s.io\",\"kind\":\"Group\",\"name\":\"{{organization}}\"\
+          }]\n  name: update-rolebinding\n- op: remove\n  path: \"/metadata/labels/appuio.io~1uninitialized\"\
+          \n"
+      name: patch-uninitialized-default-rolebinding
     - generate:
         data:
           rules:
