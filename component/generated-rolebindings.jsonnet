@@ -69,14 +69,26 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
           },
         ],
         mutate: {
-          patchesJson6902: |||
-            - op: add
-              path: "/subjects"
-              value: [{"apiGroup":"rbac.authorization.k8s.io","kind":"Group","name":"{{organization}}"}]
-              name: update-rolebinding
-            - op: remove
-              path: "/metadata/labels/appuio.io~1uninitialized"
-          |||,
+          patchesJson6902: std.manifestYamlDoc(
+            [
+              {
+                op: 'add',
+                path: '/subjects',
+                value: [
+                  {
+                    apiGroup: 'rbac.authorization.k8s.io',
+                    kind: 'Group',
+                    name: '{{organization}}',
+                  },
+                ],
+                name: 'update-rolebinding',
+              },
+              {
+                op: 'remove',
+                path: '/metadata/labels/appuio.io~1uninitialized',
+              },
+            ]
+          ),
         },
 
       },

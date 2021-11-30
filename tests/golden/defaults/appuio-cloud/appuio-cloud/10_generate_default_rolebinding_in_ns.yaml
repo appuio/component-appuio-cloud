@@ -50,10 +50,10 @@ spec:
                 matchLabels:
                   appuio.io/uninitialized: 'true'
       mutate:
-        patchesJson6902: "- op: add\n  path: \"/subjects\"\n  value: [{\"apiGroup\"\
-          :\"rbac.authorization.k8s.io\",\"kind\":\"Group\",\"name\":\"{{organization}}\"\
-          }]\n  name: update-rolebinding\n- op: remove\n  path: \"/metadata/labels/appuio.io~1uninitialized\"\
-          \n"
+        patchesJson6902: "- \"name\": \"update-rolebinding\"\n  \"op\": \"add\"\n\
+          \  \"path\": \"/subjects\"\n  \"value\":\n  - \"apiGroup\": \"rbac.authorization.k8s.io\"\
+          \n    \"kind\": \"Group\"\n    \"name\": \"{{organization}}\"\n- \"op\"\
+          : \"remove\"\n  \"path\": \"/metadata/labels/appuio.io~1uninitialized\""
       name: patch-uninitialized-default-rolebinding
     - generate:
         data:
