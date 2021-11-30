@@ -100,9 +100,11 @@ parameters:
         synchronize: true
         spec:
           hard:
-            limits.cpu: 1000m
-            limits.memory: 2Gi
+            limits.cpu: 4000m
+            limits.memory: 4Gi
             pods: "5"
+            requests.cpu: 500m
+            requests.memory: 2Gi
           scopes:
             - Terminating
 

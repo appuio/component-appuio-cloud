@@ -77,11 +77,15 @@ spec:
           spec:
             hard:
               limits.cpu: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute-terminating.limits.cpu"
-                || ''1000m'' }}'
+                || ''4000m'' }}'
               limits.memory: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute-terminating.limits.memory"
-                || ''2Gi'' }}'
+                || ''4Gi'' }}'
               pods: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute-terminating.pods"
                 || ''5'' }}'
+              requests.cpu: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute-terminating.requests.cpu"
+                || ''500m'' }}'
+              requests.memory: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute-terminating.requests.memory"
+                || ''2Gi'' }}'
             scopes:
               - Terminating
         kind: ResourceQuota
