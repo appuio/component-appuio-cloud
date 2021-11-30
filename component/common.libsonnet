@@ -54,6 +54,8 @@ local matchNamespaces(selector=null, names=null, match='all') = matchKinds(selec
 
 local matchProjectRequests(selector=null, names=null, match='all') = matchKinds(selector, names, match, kinds=[ 'ProjectRequest' ]);
 
+local matchRoleBindings(selector=null, names=null, match='all') = matchKinds(selector, names, match, kinds=[ 'rbac.authorization.k8s.io/v1/RoleBinding' ]);
+
 local matchOrgNamespaces = matchNamespaces(selector=orgLabelSelector);
 
 local kyvernoPatternToRegex = function(pattern)
@@ -66,5 +68,6 @@ local kyvernoPatternToRegex = function(pattern)
   MatchNamespaces: matchNamespaces,
   MatchOrgNamespaces: matchOrgNamespaces,
   MatchProjectRequests: matchProjectRequests,
+  MatchRoleBindings: matchRoleBindings,
   KyvernoPatternToRegex: kyvernoPatternToRegex,
 }

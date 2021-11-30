@@ -54,7 +54,7 @@ parameters:
       kyvernoMutateLabel: policies.kyverno.io/last-applied-patches
 
     generatedDefaultRoleBindingInNewNamespaces:
-      bindingName: organization-admin
+      bindingName: admin
       clusterRoleName: admin
 
     generatedNamespaceOwnerRole:
@@ -130,7 +130,7 @@ parameters:
     disallowDockerBuildStrategy: true
 
     projectTemplate:
-      enabled: false
+      enabled: true
       objects:
         project:
           apiVersion: project.openshift.io/v1
@@ -141,6 +141,24 @@ parameters:
               openshift.io/display-name: '\${PROJECT_DISPLAYNAME}'
               openshift.io/requester: '\${PROJECT_REQUESTING_USER}'
             name: '\${PROJECT_NAME}'
+
+        adminRoleBinding:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+            labels:
+              appuio.io/uninitialized: "true"
+            creationTimestamp: null
+            name: admin
+            namespace: '\${PROJECT_NAME}'
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: admin
+          subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: User
+              name: '\${PROJECT_ADMIN_USER}'
       parameters:
         PROJECT_NAME: {}
         PROJECT_DISPLAYNAME: {}
