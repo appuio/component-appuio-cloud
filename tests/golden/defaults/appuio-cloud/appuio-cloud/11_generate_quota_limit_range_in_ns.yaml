@@ -47,13 +47,13 @@ spec:
           spec:
             hard:
               limits.cpu: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.limits.cpu"
-                || ''2'' }}'
+                || ''8'' }}'
               limits.memory: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.limits.memory"
                 || ''20Gi'' }}'
               pods: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.pods"
                 || ''45'' }}'
               requests.cpu: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.requests.cpu"
-                || ''1000m'' }}'
+                || ''4'' }}'
               requests.memory: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-compute.requests.memory"
                 || ''4Gi'' }}'
             scopes:
