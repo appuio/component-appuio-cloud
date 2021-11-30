@@ -1,7 +1,8 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  annotations: {}
+  annotations:
+    pod-policies.kyverno.io/autogen-controllers: none
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore

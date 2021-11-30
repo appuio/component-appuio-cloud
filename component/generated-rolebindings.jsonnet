@@ -15,6 +15,15 @@ local params = inv.parameters.appuio_cloud;
   * - Also, the RoleBinding is mutable by the user.
   */
 local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-rolebinding-in-ns') {
+  metadata+: {
+    annotations+: {
+      // Kyverno somehow detects this rule as needing controller autogeneration.
+      // https://kyverno.io/docs/writing-policies/autogen/
+      // Explicitly disable autogen. We don't need it here
+      // since only Namespaces and RoleBinding are matched.
+      'pod-policies.kyverno.io/autogen-controllers': 'none',
+    },
+  },
   spec: {
     rules: [
       {
