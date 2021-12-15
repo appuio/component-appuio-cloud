@@ -17,7 +17,11 @@ parameters:
         syn-admin: syn-admin
         syn-argocd-application-controller: syn-argocd-application-controller
         syn-argocd-server: syn-argocd-server
-        syn-resource-locker-*: syn-resource-locker-*
+        syn-resource-locker:
+          # Created by openshift4-ingress
+          - syn-resource-locker-namespace-default-manager
+          # Created by openshift4-monitoring
+          - syn-resource-locker-namespace-openshift-monitoring-manager
         system:controller:generic-garbage-collector: system:controller:generic-garbage-collector
         system:controller:operator-lifecycle-manager: system:controller:operator-lifecycle-manager
         system:master: system:master
