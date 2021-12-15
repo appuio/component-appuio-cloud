@@ -56,10 +56,12 @@ local matchProjectRequestProjects = {
   } ],
 };
 
-local setDefaultOrgPolicy(name, match, exclude, username) = {
+
+local setDefaultOrgPolicy(name, match, exclude, preconditions, username) = {
   name: name,
   match: match,
   exclude: exclude,
+  preconditions: preconditions,
   context: [
     {
       name: 'ocpuser',
@@ -86,6 +88,42 @@ local setDefaultOrgPolicy(name, match, exclude, username) = {
   },
 };
 
+local notServiceAccount = {
+  all: [
+    {
+      key: '{{serviceAccountName}}',
+      operator: 'Equals',
+      value: '',
+    },
+  ],
+};
+
+local isServiceAccount = {
+  all: [
+    {
+      key: '{{serviceAccountName}}',
+      operator: 'NotEquals',
+      value: '',
+    },
+  ],
+};
+
+
+local organizationNamespaces = kyverno.ClusterPolicy('organization-projects') {
+  spec: {
+    validationFailureAction: 'enforce',
+    background: false,
+    rules: [
+      setDefaultOrgPolicy(
+        'set-default-organization',
+        matchProjectRequestProjects,
+        {},
+        {},
+        '{{request.object.metadata.annotations."openshift.io/requester"}}',
+      ),
+    ],
+  },
+};
 /**
   * Organization Namespaces
   * This policy will:
@@ -102,21 +140,17 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
     background: false,
     rules: [
       setDefaultOrgPolicy(
-        'set-default-organization-ns',
+        'set-default-organization',
         common.MatchNamespaces(),
         common.BypassNamespaceRestrictionsSubjects(),
+        notServiceAccount,
         '{{request.userInfo.username}}'
-      ),
-      setDefaultOrgPolicy(
-        'set-default-organization-project',
-        matchProjectRequestProjects,
-        {},
-        '{{request.object.metadata.annotations."openshift.io/requester"}}',
       ),
       {
         name: 'has-organization',
         match: common.MatchNamespaces(),
         exclude: common.BypassNamespaceRestrictionsSubjects(),
+        preconditions: notServiceAccount,
         validate: {
           message: 'Namespace must have organization',
           pattern: {
@@ -132,13 +166,16 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
         name: 'is-in-organization',
         match: common.MatchNamespaces(),
         exclude: common.BypassNamespaceRestrictionsSubjects(),
-        preconditions: [
-          {
-            key: '{{request.object.metadata.labels."appuio.io/organization"}}',
-            operator: 'NotEquals',
-            value: '',
-          },
-        ],
+        preconditions: notServiceAccount {
+          all+:
+            [
+              {
+                key: '{{request.object.metadata.labels."appuio.io/organization"}}',
+                operator: 'NotEquals',
+                value: '',
+              },
+            ],
+        },
         validate: {
           message: 'Creating namespace for {{request.object.metadata.labels."appuio.io/organization"}} but {{request.userInfo.username}} is not in organization',
           deny: {
