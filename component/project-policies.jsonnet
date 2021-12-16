@@ -25,7 +25,7 @@ local organizationInProject = kyverno.ClusterPolicy('organization-in-projectrequ
     background: false,
     rules: [
       {
-        name: 'user-has-default-organization',
+        name: 'set-default-organization',
         match: common.MatchProjectRequests(),
         exclude: common.BypassNamespaceRestrictionsSubjects(),
         context: [
@@ -42,14 +42,29 @@ local organizationInProject = kyverno.ClusterPolicy('organization-in-projectrequ
             },
           },
         ],
+        mutate: {
+          patchStrategicMerge: {
+            metadata: {
+              // In the case of a system user, with Kyverno 1.4.2+ the key will be empty
+              // if the annotations object is empty.
+              labels: {
+                '+(appuio.io/organization)':
+                  '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}',
+              },
+            },
+          },
+        },
+      },
+      {
+        name: 'user-has-default-organization',
+        match: common.MatchProjectRequests(),
+        exclude: common.BypassNamespaceRestrictionsSubjects(),
         validate: {
           message: 'You cannot create Projects without belonging to an organization',
           deny: {
             conditions: [
               {
-                // In the case of a system user, with Kyverno 1.4.2+ the key will be empty
-                // if the annotations object is empty.
-                key: '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}',
+                key: '{{request.object.metadata.labels."appuio.io/organization"}}',
                 operator: 'Equals',
                 value: '',
               },
@@ -60,7 +75,6 @@ local organizationInProject = kyverno.ClusterPolicy('organization-in-projectrequ
     ],
   },
 };
-
 
 // Define outputs below
 {

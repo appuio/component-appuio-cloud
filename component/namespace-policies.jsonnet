@@ -43,48 +43,6 @@ local appuioNsProvisionersRoleBinding = kube.ClusterRoleBinding('appuio-ns-provi
   ],
 };
 
-local matchProjectRequestProjects = {
-  all: [ {
-    resources: {
-      annotations: {
-        'openshift.io/requester': '?*',
-      },
-      kinds: [
-        'Project',
-      ],
-    },
-  } ],
-};
-
-local setDefaultOrgPolicy(name, match, exclude, username) = {
-  name: name,
-  match: match,
-  exclude: exclude,
-  context: [
-    {
-      name: 'ocpuser',
-      apiCall: {
-        urlPath: '/apis/user.openshift.io/v1/users/%s' % username,
-        // We want the full output of the API call. Despite the docs not
-        // saying anything, if we omit jmesPath here, we don't get the
-        // variable ocpuser in the resulting context at all. Instead, we
-        // provide '@' for jmesPath which responds to the current
-        // element, giving us the full response as ocpuser.
-        jmesPath: '@',
-      },
-    },
-  ],
-  mutate: {
-    patchStrategicMerge: {
-      metadata: {
-        labels: {
-          '+(appuio.io/organization)':
-            '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}',
-        },
-      },
-    },
-  },
-};
 
 /**
   * Organization Namespaces
@@ -101,18 +59,35 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
     validationFailureAction: 'enforce',
     background: false,
     rules: [
-      setDefaultOrgPolicy(
-        'set-default-organization-ns',
-        common.MatchNamespaces(),
-        common.BypassNamespaceRestrictionsSubjects(),
-        '{{request.userInfo.username}}'
-      ),
-      setDefaultOrgPolicy(
-        'set-default-organization-project',
-        matchProjectRequestProjects,
-        {},
-        '{{request.object.metadata.annotations."openshift.io/requester"}}',
-      ),
+      {
+        name: 'set-default-organization-ns',
+        match: common.MatchNamespaces(),
+        exclude: common.BypassNamespaceRestrictionsSubjects(),
+        context: [
+          {
+            name: 'ocpuser',
+            apiCall: {
+              urlPath: '/apis/user.openshift.io/v1/users/{{request.userInfo.username}}',
+              // We want the full output of the API call. Despite the docs not
+              // saying anything, if we omit jmesPath here, we don't get the
+              // variable ocpuser in the resulting context at all. Instead, we
+              // provide '@' for jmesPath which responds to the current
+              // element, giving us the full response as ocpuser.
+              jmesPath: '@',
+            },
+          },
+        ],
+        mutate: {
+          patchStrategicMerge: {
+            metadata: {
+              labels: {
+                '+(appuio.io/organization)':
+                  '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}',
+              },
+            },
+          },
+        },
+      },
       {
         name: 'has-organization',
         match: common.MatchNamespaces(),
