@@ -122,8 +122,8 @@ parameters:
             memory: "4Mi"
             ephemeral-storage: "100Ki"
           default:
-            cpu: "1"
-            memory: "1Gi"
+            cpu: "600m"
+            memory: "768Mi"
           defaultRequest:
             cpu: "100m"
             memory: "100Mi"
