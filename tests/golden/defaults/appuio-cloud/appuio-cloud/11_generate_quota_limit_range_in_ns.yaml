@@ -15,14 +15,11 @@ spec:
           spec:
             limits:
               - default:
-                  cpu: 200m
-                  memory: 200Mi
+                  cpu: 600m
+                  memory: 768Mi
                 defaultRequest:
                   cpu: 100m
                   memory: 100Mi
-                max:
-                  cpu: '1'
-                  memory: 4Gi
                 min:
                   cpu: 10m
                   ephemeral-storage: 100Ki
