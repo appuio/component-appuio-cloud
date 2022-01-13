@@ -109,7 +109,7 @@ local isServiceAccount = {
 };
 
 
-local organizationNamespaces = kyverno.ClusterPolicy('organization-projects') {
+local organizationProjects = kyverno.ClusterPolicy('organization-projects') {
   spec: {
     validationFailureAction: 'enforce',
     background: false,
@@ -184,6 +184,103 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
                 key: '{{request.object.metadata.labels."appuio.io/organization"}}',
                 operator: 'NotIn',
                 value: '{{request.userInfo.groups}}',
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+};
+
+local organizationSaNamespaces = kyverno.ClusterPolicy('organization-sa-namespaces') {
+  spec: {
+    validationFailureAction: 'enforce',
+    background: false,
+    rules: [
+      {
+        name: 'add-organization',
+        match: common.MatchNamespaces(),
+        exclude: common.BypassNamespaceRestrictionsSubjects(),
+        preconditions: isServiceAccount,
+        context: [
+          {
+            name: 'saNamespace',
+            apiCall: {
+              urlPath: '/apis/v1/namespaces/{{serviceAccountNamespace}}',
+              // We want the full output of the API call. Despite the docs not
+              // saying anything, if we omit jmesPath here, we don't get the
+              // variable ocpuser in the resulting context at all. Instead, we
+              // provide '@' for jmesPath which responds to the current
+              // element, giving us the full response as ocpuser.
+              jmesPath: '@',
+            },
+          },
+
+        ],
+        mutate: {
+          patchStrategicMerge: {
+            metadata: {
+              labels: {
+                '+(appuio.io/organization)':
+                  '{{saNamespace.metadata.labels."appuio.io/organization"}}',
+              },
+            },
+          },
+        },
+      },
+      {
+        name: 'has-organization',
+        match: common.MatchNamespaces(),
+        exclude: common.BypassNamespaceRestrictionsSubjects(),
+        preconditions: isServiceAccount,
+        validate: {
+          message: 'Namespace must have organization',
+          pattern: {
+            metadata: {
+              labels: {
+                'appuio.io/organization': '?*',
+              },
+            },
+          },
+        },
+      },
+      {
+        name: 'is-in-organization',
+        match: common.MatchNamespaces(),
+        exclude: common.BypassNamespaceRestrictionsSubjects(),
+        context: [
+          {
+            name: 'saNamespace',
+            apiCall: {
+              urlPath: '/apis/v1/namespaces/{{serviceAccountNamespace}}',
+              // We want the full output of the API call. Despite the docs not
+              // saying anything, if we omit jmesPath here, we don't get the
+              // variable ocpuser in the resulting context at all. Instead, we
+              // provide '@' for jmesPath which responds to the current
+              // element, giving us the full response as ocpuser.
+              jmesPath: '@',
+            },
+          },
+        ],
+        preconditions: isServiceAccount {
+          all+:
+            [
+              {
+                key: '{{request.object.metadata.labels."appuio.io/organization"}}',
+                operator: 'NotEquals',
+                value: '',
+              },
+            ],
+        },
+        validate: {
+          message: 'Creating namespace for {{request.object.metadata.labels."appuio.io/organization"}} but {{serviceAccountName}} is not in organization',
+          deny: {
+            conditions: [
+              {
+                key: '{{request.object.metadata.labels."appuio.io/organization"}}',
+                operator: 'NotIn',
+                value: '{{saNamespace.metadata.labels."appuio.io/organization"}}',
               },
             ],
           },
@@ -314,6 +411,8 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
   '01_appuio_ns_provisioner_role': appuioNsProvisionerRole + common.DefaultLabels,
   '01_appuio_ns_provisioners_crb': appuioNsProvisionersRoleBinding + common.DefaultLabels,
   '02_organization_namespaces': organizationNamespaces + common.DefaultLabels,
+  '02_organization_sa_namespaces': organizationSaNamespaces + common.DefaultLabels,
+  '02_organization_projects': organizationProjects + common.DefaultLabels,
   '02_disallow_reserved_namespaces': disallowReservedNamespaces + common.DefaultLabels,
   '02_validate_namespace_metadata': validateNamespaceMetadata + common.DefaultLabels,
 }
