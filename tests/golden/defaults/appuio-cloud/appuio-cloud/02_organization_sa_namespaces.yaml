@@ -6,16 +6,16 @@ metadata:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore
     app.kubernetes.io/name: appuio-cloud
-    name: organization-namespaces
-  name: organization-namespaces
+    name: organization-sa-namespaces
+  name: organization-sa-namespaces
 spec:
   background: false
   rules:
     - context:
         - apiCall:
             jmesPath: '@'
-            urlPath: /apis/user.openshift.io/v1/users/{{request.userInfo.username}}
-          name: ocpuser
+            urlPath: /apis/v1/namespaces/{{serviceAccountNamespace}}
+          name: saNamespace
       exclude:
         clusterRoles:
           - cluster-admin
@@ -49,12 +49,12 @@ spec:
         patchStrategicMerge:
           metadata:
             labels:
-              +(appuio.io/organization): '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}'
-      name: set-default-organization
+              +(appuio.io/organization): '{{saNamespace.metadata.labels."appuio.io/organization"}}'
+      name: add-organization
       preconditions:
         all:
           - key: '{{serviceAccountName}}'
-            operator: Equals
+            operator: NotEquals
             value: ''
     - exclude:
         clusterRoles:
@@ -89,7 +89,7 @@ spec:
       preconditions:
         all:
           - key: '{{serviceAccountName}}'
-            operator: Equals
+            operator: NotEquals
             value: ''
       validate:
         message: Namespace must have organization
@@ -97,7 +97,12 @@ spec:
           metadata:
             labels:
               appuio.io/organization: ?*
-    - exclude:
+    - context:
+        - apiCall:
+            jmesPath: '@'
+            urlPath: /apis/v1/namespaces/{{serviceAccountNamespace}}
+          name: saNamespace
+      exclude:
         clusterRoles:
           - cluster-admin
           - cluster-image-registry-operator
@@ -130,7 +135,7 @@ spec:
       preconditions:
         all:
           - key: '{{serviceAccountName}}'
-            operator: Equals
+            operator: NotEquals
             value: ''
           - key: '{{request.object.metadata.labels."appuio.io/organization"}}'
             operator: NotEquals
@@ -140,7 +145,7 @@ spec:
           conditions:
             - key: '{{request.object.metadata.labels."appuio.io/organization"}}'
               operator: NotIn
-              value: '{{request.userInfo.groups}}'
+              value: '{{saNamespace.metadata.labels."appuio.io/organization"}}'
         message: Creating namespace for {{request.object.metadata.labels."appuio.io/organization"}}
-          but {{request.userInfo.username}} is not in organization
+          but {{serviceAccountName}} is not in organization
   validationFailureAction: enforce
