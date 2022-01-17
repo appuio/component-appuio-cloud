@@ -15,3 +15,5 @@ roleRef:
 subjects:
   - kind: Group
     name: system:authenticated:oauth
+  - kind: Group
+    name: system:serviceaccounts
