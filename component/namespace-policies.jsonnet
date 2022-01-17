@@ -211,7 +211,7 @@ local organizationSaNamespaces = kyverno.ClusterPolicy('organization-sa-namespac
           {
             name: 'saNamespace',
             apiCall: {
-              urlPath: '/apis/v1/namespaces/{{serviceAccountNamespace}}',
+              urlPath: '/api/v1/namespaces/{{serviceAccountNamespace}}',
               // We want the full output of the API call. Despite the docs not
               // saying anything, if we omit jmesPath here, we don't get the
               // variable ocpuser in the resulting context at all. Instead, we
@@ -257,7 +257,7 @@ local organizationSaNamespaces = kyverno.ClusterPolicy('organization-sa-namespac
           {
             name: 'saNamespace',
             apiCall: {
-              urlPath: '/apis/v1/namespaces/{{serviceAccountNamespace}}',
+              urlPath: '/api/v1/namespaces/{{serviceAccountNamespace}}',
               // We want the full output of the API call. Despite the docs not
               // saying anything, if we omit jmesPath here, we don't get the
               // variable ocpuser in the resulting context at all. Instead, we
@@ -283,7 +283,7 @@ local organizationSaNamespaces = kyverno.ClusterPolicy('organization-sa-namespac
             conditions: [
               {
                 key: '{{request.object.metadata.labels."appuio.io/organization"}}',
-                operator: 'NotIn',
+                operator: 'NotEquals',
                 value: '{{saNamespace.metadata.labels."appuio.io/organization"}}',
               },
             ],
