@@ -40,6 +40,10 @@ local appuioNsProvisionersRoleBinding = kube.ClusterRoleBinding('appuio-ns-provi
       kind: 'Group',
       name: 'system:authenticated:oauth',
     },
+    {
+      kind: 'Group',
+      name: 'system:serviceaccounts',
+    },
   ],
 };
 
