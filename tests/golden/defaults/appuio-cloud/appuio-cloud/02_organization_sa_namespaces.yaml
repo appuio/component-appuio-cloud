@@ -14,7 +14,7 @@ spec:
     - context:
         - apiCall:
             jmesPath: '@'
-            urlPath: /apis/v1/namespaces/{{serviceAccountNamespace}}
+            urlPath: /api/v1/namespaces/{{serviceAccountNamespace}}
           name: saNamespace
       exclude:
         clusterRoles:
@@ -100,7 +100,7 @@ spec:
     - context:
         - apiCall:
             jmesPath: '@'
-            urlPath: /apis/v1/namespaces/{{serviceAccountNamespace}}
+            urlPath: /api/v1/namespaces/{{serviceAccountNamespace}}
           name: saNamespace
       exclude:
         clusterRoles:
@@ -144,7 +144,7 @@ spec:
         deny:
           conditions:
             - key: '{{request.object.metadata.labels."appuio.io/organization"}}'
-              operator: NotIn
+              operator: NotEquals
               value: '{{saNamespace.metadata.labels."appuio.io/organization"}}'
         message: Creating namespace for {{request.object.metadata.labels."appuio.io/organization"}}
           but {{serviceAccountName}} is not in organization
