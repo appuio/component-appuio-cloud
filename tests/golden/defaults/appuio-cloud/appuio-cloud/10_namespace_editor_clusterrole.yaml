@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
+    name: namespace-owner
+  name: namespace-owner
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - watch
+      - edit
+      - patch
+      - delete
