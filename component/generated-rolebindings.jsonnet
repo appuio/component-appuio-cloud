@@ -1,9 +1,43 @@
 local common = import 'common.libsonnet';
 local kap = import 'lib/kapitan.libjsonnet';
+local kube = import 'lib/kube.libjsonnet';
 local kyverno = import 'lib/kyverno.libsonnet';
 local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
+
+local roleName =
+  if std.objectHas(params, 'generatedNamespaceOwnerRole') then
+    std.trace(
+      (
+        '\nParameter `generatedNamespaceOwnerRole` is deprecated.\n' +
+        'Please update your config to use `generatedNamespaceOwnerClusterRole` instead.'
+      ),
+      params.generatedNamespaceOwnerRole.name
+    )
+  else
+    params.generatedNamespaceOwnerClusterRole.name;
+
+local namespaceEditorClusterRole =
+  kube.ClusterRole(roleName) {
+    rules: [
+      {
+        apiGroups: [
+          '',
+        ],
+        resources: [
+          'namespaces',
+        ],
+        verbs: [
+          'get',
+          'watch',
+          'edit',
+          'patch',
+          'delete',
+        ],
+      },
+    ],
+  };
 
 /**
   * This policy will:
@@ -93,47 +127,18 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
 
       },
       {
-        name: 'namespace-edit-role',
-        match: common.MatchOrgNamespaces,
-        generate: {
-          kind: 'Role',
-          synchronize: false,
-          name: params.generatedNamespaceOwnerRole.name,
-          namespace: '{{request.object.metadata.name}}',
-          data: {
-            rules: [
-              {
-                apiGroups: [
-                  '',
-                ],
-                resources: [
-                  'namespaces',
-                ],
-                verbs: [
-                  'get',
-                  'watch',
-                  'edit',
-                  'patch',
-                  'delete',
-                ],
-              },
-            ],
-          },
-        },
-      },
-      {
         name: 'namespace-edit-rolebinding',
         match: common.MatchOrgNamespaces,
         generate: {
           kind: 'RoleBinding',
           synchronize: false,
-          name: params.generatedNamespaceOwnerRole.name,
+          name: namespaceEditorClusterRole.metadata.name,
           namespace: '{{request.object.metadata.name}}',
           data: {
             roleRef: {
               apiGroup: 'rbac.authorization.k8s.io',
-              kind: 'Role',
-              name: params.generatedNamespaceOwnerRole.name,
+              kind: 'ClusterRole',
+              name: namespaceEditorClusterRole.metadata.name,
             },
             subjects: [
               {
@@ -150,5 +155,8 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
 
 // Define outputs below
 {
-  '10_generate_default_rolebinding_in_ns': generateDefaultRolebindingInNsPolicy + common.DefaultLabels,
+  '10_namespace_editor_clusterrole':
+    namespaceEditorClusterRole + common.DefaultLabels,
+  '10_generate_default_rolebinding_in_ns':
+    generateDefaultRolebindingInNsPolicy + common.DefaultLabels,
 }

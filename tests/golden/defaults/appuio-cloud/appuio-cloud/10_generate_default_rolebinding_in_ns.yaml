@@ -57,36 +57,9 @@ spec:
       name: patch-uninitialized-default-rolebinding
     - generate:
         data:
-          rules:
-            - apiGroups:
-                - ''
-              resources:
-                - namespaces
-              verbs:
-                - get
-                - watch
-                - edit
-                - patch
-                - delete
-        kind: Role
-        name: namespace-owner
-        namespace: '{{request.object.metadata.name}}'
-        synchronize: false
-      match:
-        all:
-          - resources:
-              kinds:
-                - Namespace
-              selector:
-                matchExpressions:
-                  - key: appuio.io/organization
-                    operator: Exists
-      name: namespace-edit-role
-    - generate:
-        data:
           roleRef:
             apiGroup: rbac.authorization.k8s.io
-            kind: Role
+            kind: ClusterRole
             name: namespace-owner
           subjects:
             - kind: Group

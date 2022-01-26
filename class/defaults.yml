@@ -61,7 +61,7 @@ parameters:
       bindingName: admin
       clusterRoleName: admin
 
-    generatedNamespaceOwnerRole:
+    generatedNamespaceOwnerClusterRole:
       name: namespace-owner
 
     maxNamespaceQuota: 25
