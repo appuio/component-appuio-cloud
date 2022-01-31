@@ -6,6 +6,11 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
+local filename =
+  local parts = std.split(std.thisFile, '/');
+  local pcount = std.length(parts);
+  '%s/%s' % [ parts[pcount - 2], parts[pcount - 1] ];
+
 local roleName =
   if std.objectHas(params, 'generatedNamespaceOwnerRole') then
     std.trace(
@@ -56,6 +61,21 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
       // Explicitly disable autogen. We don't need it here
       // since only Namespaces and RoleBinding are matched.
       'pod-policies.kyverno.io/autogen-controllers': 'none',
+      'policies.kyverno.io/title': 'Create default namespace ownership RoleBinding',
+      'policies.kyverno.io/category': 'Access Control',
+      'policies.kyverno.io/minversion': 'v1',
+      'policies.kyverno.io/subject': 'rbac',
+      'policies.kyverno.io/description': |||
+        This policy will:
+
+        - Generate a RoleBinding to ClusterRole 'admin' for the organization defined in a label of a namespace.
+        - For namespaces created through a project, it mutates the `admin` RoleBinding to reference the organization instead of the creating user.
+        - Generate a RoleBinding and Role 'namespace-owner' for the organization defined in a label of a namespace, which allows the edit and delete the namespace.
+        - Namespaces that do not have the 'appuio.io/organization' label are not affected.
+        - The RoleBinding is only created upon Namespace creation.
+        - Also, the RoleBinding is mutable by the user.
+      |||,
+      'policies.kyverno.io/jsonnet': filename,
     },
   },
   spec: {

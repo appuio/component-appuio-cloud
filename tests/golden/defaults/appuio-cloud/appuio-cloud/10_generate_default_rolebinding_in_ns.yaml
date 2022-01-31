@@ -3,6 +3,30 @@ kind: ClusterPolicy
 metadata:
   annotations:
     pod-policies.kyverno.io/autogen-controllers: none
+    policies.kyverno.io/category: Access Control
+    policies.kyverno.io/description: 'This policy will:
+
+
+      - Generate a RoleBinding to ClusterRole ''admin'' for the organization defined
+      in a label of a namespace.
+
+      - For namespaces created through a project, it mutates the `admin` RoleBinding
+      to reference the organization instead of the creating user.
+
+      - Generate a RoleBinding and Role ''namespace-owner'' for the organization defined
+      in a label of a namespace, which allows the edit and delete the namespace.
+
+      - Namespaces that do not have the ''appuio.io/organization'' label are not affected.
+
+      - The RoleBinding is only created upon Namespace creation.
+
+      - Also, the RoleBinding is mutable by the user.
+
+      '
+    policies.kyverno.io/jsonnet: component/generated-rolebindings.jsonnet
+    policies.kyverno.io/minversion: v1
+    policies.kyverno.io/subject: rbac
+    policies.kyverno.io/title: Create default namespace ownership RoleBinding
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore
