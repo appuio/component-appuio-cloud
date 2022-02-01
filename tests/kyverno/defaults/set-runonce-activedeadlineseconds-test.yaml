@@ -1,0 +1,37 @@
+name: test run-once activedeadline seconds injection
+policies:
+  - compiled/appuio-cloud/appuio-cloud/30_set_runonce_activedeadlineseconds.yaml
+resources:
+  - set-runonce-activedeadlineseconds/managed-pod.yaml
+  - set-runonce-activedeadlineseconds/existing-deadline-pod.yaml
+  - set-runonce-activedeadlineseconds/cm-http01-pod.yaml
+  - set-runonce-activedeadlineseconds/eligible-pod.yaml
+variables: set-runonce-activedeadlineseconds-variables.yaml
+# NOTE: We specify `patchedResource` for all test cases, even though it's not
+# used for the cases with `result=skip`. This ensures that we get nice errors
+# if a resource is not skipped even though it should be.
+results:
+  - policy: set-runonce-activedeadlineseconds
+    rule: set-runonce-activedeadlineseconds
+    resource: managed-pod
+    patchedResource: set-runonce-activedeadlineseconds/managed-pod.yaml
+    kind: Pod
+    result: skip
+  - policy: set-runonce-activedeadlineseconds
+    rule: set-runonce-activedeadlineseconds
+    resource: existing-deadline-pod
+    patchedResource: set-runonce-activedeadlineseconds/existing-deadline-pod.yaml
+    kind: Pod
+    result: skip
+  - policy: set-runonce-activedeadlineseconds
+    rule: set-runonce-activedeadlineseconds
+    resource: cm-http01-pod
+    patchedResource: set-runonce-activedeadlineseconds/cm-http01-pod.yaml
+    kind: Pod
+    result: skip
+  - policy: set-runonce-activedeadlineseconds
+    rule: set-runonce-activedeadlineseconds
+    resource: eligible-pod
+    patchedResource: set-runonce-activedeadlineseconds/eligible-pod-deadlineseconds.yaml
+    kind: Pod
+    result: pass
