@@ -1,0 +1,72 @@
+= Policy: `disallow-reserved-namespaces`
+
+[horizontal]
+Category:: 
+Minimum Kyverno version:: 
+subject:: 
+Policy type:: "generate"
+Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
+
+
+
+== Policy Definition
+
+.https://github.com/appuio/component-appuio-cloud/tree/master//tests/golden/defaults/appuio-cloud/appuio-cloud/02_disallow_reserved_namespaces.yaml[/tests/golden/defaults/appuio-cloud/appuio-cloud/02_disallow_reserved_namespaces.yaml,window=_blank]
+[source,yaml]
+----
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
+    name: disallow-reserved-namespaces
+  name: disallow-reserved-namespaces
+spec:
+  background: false
+  rules:
+    - exclude:
+        clusterRoles:
+          - cluster-admin
+          - cluster-image-registry-operator
+          - cluster-node-tuning-operator
+          - kyverno:generatecontroller
+          - kyverno:policycontroller
+          - multus-admission-controller-webhook
+          - openshift-dns-operator
+          - openshift-ingress-operator
+          - syn-admin
+          - syn-argocd-application-controller
+          - syn-argocd-server
+          - syn-resource-locker-namespace-default-manager
+          - syn-resource-locker-namespace-openshift-monitoring-manager
+          - system:controller:generic-garbage-collector
+          - system:controller:operator-lifecycle-manager
+          - system:master
+          - system:openshift:controller:namespace-security-allocation-controller
+        roles: []
+        subjects:
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
+      match:
+        all:
+          - resources:
+              kinds:
+                - Namespace
+              names:
+                - appuio-*
+                - cilium*
+                - default
+                - kube-*
+                - openshift-*
+                - syn-*
+      name: disallow-reserved-namespaces
+      validate:
+        deny: {}
+        message: Changing or creating reserved namespaces is not allowed.
+  validationFailureAction: enforce
+
+----
