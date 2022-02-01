@@ -32,9 +32,9 @@ func init() {
 	}
 }
 
-func validateAndParse(args []string) (*gitInfo, string, error) {
+func validateAndParse(args []string) (string, string, error) {
 	if len(args) != 2 {
-		return nil, "", fmt.Errorf("invalid arguments: %v", args)
+		return "", "", fmt.Errorf("invalid arguments: %v", args)
 	}
 
 	rawurl := args[0]
@@ -43,7 +43,7 @@ func validateAndParse(args []string) (*gitInfo, string, error) {
 		return nil, "", fmt.Errorf("failed to parse URL %s: %v", rawurl, err)
 	}
 
-	pathElems := strings.Split(u.Path[1:], "/")
+	pathElems := strings.SplitN(u.Path[1:], "/", 3)
 	if len(pathElems) != 3 {
 		err := fmt.Errorf("invalid URL path %s - expected https://github.com/:owner/:repository/:branch", u.Path)
 		return nil, "", err
