@@ -1,0 +1,10 @@
+globalValues:
+  request.operation: CREATE
+
+policies:
+  - name: set-runonce-activedeadlineseconds
+    rules:
+      - name: set-runonce-activedeadlineseconds
+        values:
+          activeDeadlineSeconds: '1800'
+          request.namespace: test-ns

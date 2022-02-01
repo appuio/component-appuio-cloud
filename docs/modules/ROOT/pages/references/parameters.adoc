@@ -361,3 +361,28 @@ type:: string
 default:: `appuio.io/active-deadline-seconds-override`
 
 The key of the namespace annotation which users can use to override the global default value for `.spec.activeDeadlineSeconds`.
+
+=== `runOnceActiveDeadlineSeconds.podMatchExpressions`
+
+[horizontal]
+type:: dict
+default:: `{}`
+example::
++
+[source,yaml]
+----
+podMatchExpressions:
+  # Don't set activeDeadlineSeconds for pods which have
+  # label `acme.cert-manager.io/http01-solver`
+  acme.cert-manager.io/http01-solver:
+    operator: DoesNotExist
+----
+
+The entries of the dict are expected to be of form `labelKey: <partial matchExpression>`.
+Each entry is transformed to a Kubernetes `matchExpression` entry by taking the key as value for field `key` of the resulting match expression.
+
+See the `matchExpressions` section in the https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/label-selector/#LabelSelector[Kubernetes LabelSelector] documentation for supported fields in a `matchExpressions` element.
+
+The field `activeDeadlineSeconds` will only be set for pods which match the provided expressions.
+
+Generally, we recommend adjusting the value for `activeDeadlineSeconds` by annotating namespaces as documented above or by setting `activeDeadlineSeconds` in the Pod spec, but in some cases it may be necessary to exclude pods from the policy.
