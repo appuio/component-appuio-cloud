@@ -1,2 +1,4 @@
 * xref:index.adoc[Home]
+.References
 * xref:references/parameters.adoc[Parameters]
+include::partial$nav-policy.adoc[]
