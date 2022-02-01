@@ -361,3 +361,16 @@ type:: string
 default:: `appuio.io/active-deadline-seconds-override`
 
 The key of the namespace annotation which users can use to override the global default value for `.spec.activeDeadlineSeconds`.
+
+=== `runOnceActiveDeadlineSeconds.podMatchExpressions`
+
+[horizontal]
+type:: dict
+default:: `{}`
+
+The entries of the dict are expected to be of form `labelKey: <partial matchExpression>`.
+Each entry is transformed to a Kubernetes `matchExpression` entry by taking the key as value for field `name` of the resulting match expression.
+
+See the `matchExpressions` section in the https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/label-selector/#LabelSelector[Kubernetes LabelSelector] documentation for supported fields in a `matchExpressions` element.
+
+The field `activeDeadlineSeconds` will only be set for pods which match the provided expressions.

@@ -33,5 +33,11 @@ parameters:
         - test.appuio.io/*
         - compute.test.appuio.io/cpu
 
+    runOnceActiveDeadlineSeconds:
+      podMatchExpressions:
+        acme.cert-manager.io/http01-solver:
+          operator: DoesNotExist
+        another: null
+
   resource_locker:
     namespace: syn-resource-locker

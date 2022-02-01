@@ -27,6 +27,10 @@ spec:
         resources:
           kinds:
             - Pod
+          selector:
+            matchExpressions:
+              - key: acme.cert-manager.io/http01-solver
+                operator: DoesNotExist
       mutate:
         patchStrategicMerge:
           spec:

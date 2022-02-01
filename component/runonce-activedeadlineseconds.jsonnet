@@ -17,6 +17,14 @@ local jmesPath =
     defaultDeadline,
   ];
 
+local matchExprs = std.prune([
+  if config.podMatchExpressions[name] != null then
+    {
+      key: name,
+    } + config.podMatchExpressions[name]
+  for name in std.objectFields(config.podMatchExpressions)
+]);
+
 local policy =
   kyverno.ClusterPolicy('set-runonce-activedeadlineseconds') {
     metadata+: {
@@ -52,6 +60,9 @@ local policy =
               kinds: [
                 'Pod',
               ],
+              [if std.length(matchExprs) > 0 then 'selector']: {
+                matchExpressions: matchExprs,
+              },
             },
           },
           mutate: {
