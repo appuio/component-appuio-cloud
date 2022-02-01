@@ -8,3 +8,9 @@ test:
 	@echo
 	@echo "Testing generated Kyverno policies"
 	$(KYVERNO_CLI_DOCKER) test $(KYVERNO_CLI_ARGS) tests/kyverno/$(instance)
+
+gen-policy-docs:
+	(cd tools/render; go build)
+	tools/render/render . docs/modules/ROOT
+
+docs-serve: gen-policy-docs
