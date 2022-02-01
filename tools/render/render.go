@@ -12,7 +12,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-git/v5"
 	kyvernov1 "github.com/kyverno/kyverno/pkg/api/kyverno/v1"
 	"k8s.io/apimachinery/pkg/util/yaml"
 )
@@ -82,21 +83,29 @@ func buildTitle(p *kyvernov1.ClusterPolicy) string {
 	return strings.Title(title)
 }
 
-func render(git *gitInfo, outdir string) error {
-	repoURL := git.u.String()
-	fs := memfs.New()
-	_, err := clone(repoURL, fs)
-	if err != nil {
-		return fmt.Errorf("failed to clone repository %s: %v", repoURL, err)
-	}
-
+func render(repodir, outdir string) error {
+	fs := osfs.New(repodir)
 	yamls, err := listYAMLs(fs, "/")
 	if err != nil {
-		return fmt.Errorf("failed to list YAMLs in repository %s: %v", repoURL, err)
+		return fmt.Errorf("failed to list YAMLs in repo %s: %v", repodir, err)
+	}
+
+	repo, err := git.PlainOpen(filepath.Join(repodir, ".git"))
+	if err != nil {
+		return fmt.Errorf("Unable to open git repo in %s: %v", repodir, err)
+	}
+	origin, err := repo.Remote("origin")
+	if err != nil {
+		return fmt.Errorf("Unable to lookup remote \"origin\" in %s: %v", repodir, err)
+	}
+	repourl := origin.Config().URLs[0]
+	git, err := newGitInfo(repourl)
+	if err != nil {
+		return fmt.Errorf("Unable to parse remote URL for %s: %v", repodir, err)
 	}
 
 	sort.Strings(yamls)
-	log.Printf("retrieved %d YAMLs in repository %s", len(yamls), repoURL)
+	log.Printf("retrieved %d YAMLs in repository directory %s", len(yamls), repodir)
 
 	t := template.New("policy")
 	t, err = t.Parse(policyTemplate)
