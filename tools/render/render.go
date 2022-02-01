@@ -26,12 +26,17 @@ type gitInfo struct {
 }
 
 type policyData struct {
-	Title  string
-	Policy *kyvernov1.ClusterPolicy
-	YAML   string
-	Type   string
-	RawURL string
-	Path   string
+	Title    string
+	Policy   *kyvernov1.ClusterPolicy
+	YAML     string
+	Type     string
+	BaseURL  string
+	Path     string
+	FileName string
+}
+
+type navData struct {
+	Policies []*policyData
 }
 
 func stringContains(rawString string, substring string) bool {
@@ -60,14 +65,15 @@ func getPolicyType(yaml string) string {
 	}
 }
 
-func newPolicyData(p *kyvernov1.ClusterPolicy, rawYAML, rawURL, path string) *policyData {
+func newPolicyData(p *kyvernov1.ClusterPolicy, rawYAML, baseURL, path string) *policyData {
 	return &policyData{
-		Title:  buildTitle(p),
-		Policy: p,
-		YAML:   rawYAML,
-		Type:   getPolicyType(rawYAML),
-		RawURL: rawURL,
-		Path:   path,
+		Title:    buildTitle(p),
+		Policy:   p,
+		YAML:     rawYAML,
+		Type:     getPolicyType(rawYAML),
+		BaseURL:  baseURL,
+		Path:     path,
+		FileName: strings.ReplaceAll(filepath.Base(path), filepath.Ext(path), ".adoc"),
 	}
 }
 
@@ -113,6 +119,9 @@ func render(repodir, outdir string) error {
 		return fmt.Errorf("failed to parse template: %v", err)
 	}
 
+	nd := navData{
+		Policies: []*policyData{},
+	}
 	for _, yamlFilePath := range yamls {
 		file, err := fs.Open(yamlFilePath)
 		if err != nil {
@@ -142,11 +151,11 @@ func render(repodir, outdir string) error {
 		}
 
 		relPath := strings.ReplaceAll(yamlFilePath, "\\", "/")
-		pathElems := []string{git.owner, git.repo, "raw", git.branch, relPath}
-		rawURL := "https://github.com/" + strings.Join(pathElems, "/")
+		pathElems := []string{git.owner, git.repo, "tree", git.branch}
+		baseURL := "https://github.com/" + strings.Join(pathElems, "/")
 
-		pd := newPolicyData(policy, string(bytes), rawURL, relPath)
-		outFile, err := createOutFile(filepath.Dir(yamlFilePath), outdir, filepath.Base(file.Name()))
+		pd := newPolicyData(policy, string(bytes), baseURL, relPath)
+		outFile, err := createOutFile(outdir, "pages/references/policies", filepath.Base(file.Name()))
 		if err != nil {
 			return err
 		}
@@ -156,19 +165,33 @@ func render(repodir, outdir string) error {
 			continue
 		}
 
+		nd.Policies = append(nd.Policies, pd)
 		log.Printf("rendered %s", outFile.Name())
+	}
+
+	nt := template.New("nav")
+	nt, err = t.Parse(navTemplate)
+	if err != nil {
+		return fmt.Errorf("failed to parse template: %v", err)
+	}
+	navFile, err := createOutFile(outdir, "partials", "nav-policy.adoc")
+	if err != nil {
+		return err
+	}
+	if err := nt.Execute(navFile, nd); err != nil {
+		log.Printf("ERROR: failed to render nav file: %v", err.Error())
 	}
 
 	return nil
 }
 
-func createOutFile(inDir, outDir, fileName string) (*os.File, error) {
-	path := filepath.Join(outDir, inDir)
+func createOutFile(docsDir, docsPath, fileName string) (*os.File, error) {
+	path := filepath.Join(docsDir, docsPath)
 	if err := os.MkdirAll(path, 0744); err != nil {
 		return nil, fmt.Errorf("failed to create path %s", path)
 	}
 
-	out := filepath.Join(path, strings.ReplaceAll(fileName, filepath.Ext(fileName), ".md"))
+	out := filepath.Join(path, strings.ReplaceAll(fileName, filepath.Ext(fileName), ".adoc"))
 	outFile, err := os.Create(out)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create file %s: %v", path, err)

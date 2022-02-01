@@ -16,3 +16,4 @@ Makefile:
   additionalEntries:
     - jsonnetfile.json
     - tests/kyverno/*/compiled
+    - tools/render/render
