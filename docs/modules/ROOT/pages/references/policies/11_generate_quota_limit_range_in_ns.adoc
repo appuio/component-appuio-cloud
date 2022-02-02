@@ -2,16 +2,23 @@
 
 [abstract]
 --
-Quota And Limit Range In Ns
+Create ResourceQuota and LimitRange objects in organization namespaces.
 --
 
 [horizontal]
-Category:: 
-Minimum Kyverno version:: 
-Subject:: 
+Category:: Resource Quota
+Minimum Kyverno version:: v1
+Subject:: APPUiO Organizations
 Policy type:: "generate"
-Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
+Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/quota-limitrange.jsonnet[component/quota-limitrange.jsonnet]
 
+This policy generates `ResourceQuota` and `LimitRange` objects in namespaces which have the `appuio.io/organization` label.
+
+The default values for the generated `ResourceQuota` and `LimitRange` objects are configured in component parameters xref:references/parameters.adoc#_generatedresourcequota[`generatedResourceQuota`] and xref:references/parameters.adoc#_generatedlimitrange[`generatedLimitRange`] respectively.
+
+Quota entries can be overridden for single namespaces by annotating the namespace, see the xref:references/parameters.adoc#_generatedresourcequota_spec[parameter docs] for an example.
+
+If field `synchronize` in the `ResourceQuota` or `LimitRange` component parameter is set to `true`, the policy is configured to continuously keep the generated objects in sync with the specification in the policy.
 
 
 == Policy Definition
@@ -22,7 +29,33 @@ Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  annotations: {}
+  annotations:
+    policies.kyverno.io/category: Resource Quota
+    policies.kyverno.io/description: 'This policy generates `ResourceQuota` and `LimitRange`
+      objects in namespaces which have the `appuio.io/organization` label.
+
+
+      The default values for the generated `ResourceQuota` and `LimitRange` objects
+      are configured in component parameters xref:references/parameters.adoc#_generatedresourcequota[`generatedResourceQuota`]
+      and xref:references/parameters.adoc#_generatedlimitrange[`generatedLimitRange`]
+      respectively.
+
+
+      Quota entries can be overridden for single namespaces by annotating the namespace,
+      see the xref:references/parameters.adoc#_generatedresourcequota_spec[parameter
+      docs] for an example.
+
+
+      If field `synchronize` in the `ResourceQuota` or `LimitRange` component parameter
+      is set to `true`, the policy is configured to continuously keep the generated
+      objects in sync with the specification in the policy.
+
+      '
+    policies.kyverno.io/jsonnet: component/quota-limitrange.jsonnet
+    policies.kyverno.io/minversion: v1
+    policies.kyverno.io/subject: APPUiO Organizations
+    policies.kyverno.io/title: Create ResourceQuota and LimitRange objects in organization
+      namespaces.
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore
