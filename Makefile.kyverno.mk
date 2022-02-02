@@ -14,4 +14,8 @@ gen-policy-docs: gen-golden
 	(cd tools/render; go build)
 	tools/render/render . tests/golden/$(instance)/appuio-cloud/appuio-cloud docs/modules/ROOT
 
+.PHONY: policy-docs-diff
+policy-docs-diff: gen-policy-docs
+	@git diff --exit-code --minimal -- docs/modules/ROOT/partials/nav-policy.adoc docs/modules/ROOT/pages/references/policies
+
 docs-serve: gen-policy-docs
