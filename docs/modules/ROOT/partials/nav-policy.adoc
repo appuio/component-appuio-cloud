@@ -1,4 +1,4 @@
-* Policies
+* xref:references/policies/index.adoc[Policies]
 ** xref:references/policies/02_disallow_reserved_namespaces.adoc[Policy: `disallow-reserved-namespaces`]
 ** xref:references/policies/02_organization_namespaces.adoc[Policy: `organization-namespaces`]
 ** xref:references/policies/02_organization_projects.adoc[Policy: `organization-projects`]
@@ -9,3 +9,4 @@
 ** xref:references/policies/11_generate_quota_limit_range_in_ns.adoc[Policy: `quota-and-limit-range-in-ns`]
 ** xref:references/policies/12_namespace_quota_per_zone.adoc[Policy: `check-namespace-quota`]
 ** xref:references/policies/30_set_runonce_activedeadlineseconds.adoc[Policy: `set-runonce-activedeadlineseconds`]
+
