@@ -42,10 +42,7 @@ type navData struct {
 func stringContains(rawString string, substring string) bool {
 	hasString := strings.Index(rawString, substring)
 
-	if hasString >= 0 {
-		return true
-	}
-	return false
+	return hasString >= 0
 }
 
 func getPolicyType(yaml string) string {
@@ -98,16 +95,16 @@ func render(repodir, policydir, outdir string) error {
 
 	repo, err := git.PlainOpen(filepath.Join(repodir, ".git"))
 	if err != nil {
-		return fmt.Errorf("Unable to open git repo in %s: %v", repodir, err)
+		return fmt.Errorf("unable to open git repo in %s: %v", repodir, err)
 	}
 	origin, err := repo.Remote("origin")
 	if err != nil {
-		return fmt.Errorf("Unable to lookup remote \"origin\" in %s: %v", repodir, err)
+		return fmt.Errorf("unable to lookup remote \"origin\" in %s: %v", repodir, err)
 	}
 	repourl := origin.Config().URLs[0]
 	git, err := newGitInfo(repourl)
 	if err != nil {
-		return fmt.Errorf("Unable to parse remote URL for %s: %v", repodir, err)
+		return fmt.Errorf("unable to parse remote URL for %s: %v", repodir, err)
 	}
 
 	sort.Strings(yamls)
@@ -170,7 +167,7 @@ func render(repodir, policydir, outdir string) error {
 	}
 
 	nt := template.New("nav")
-	nt, err = t.Parse(navTemplate)
+	nt, err = nt.Parse(navTemplate)
 	if err != nil {
 		return fmt.Errorf("failed to parse template: %v", err)
 	}
@@ -179,7 +176,7 @@ func render(repodir, policydir, outdir string) error {
 		return err
 	}
 	if err := nt.Execute(navFile, nd); err != nil {
-		log.Printf("ERROR: failed to render nav file: %v", err.Error())
+		log.Printf("ERROR: failed to render nav: %v", err.Error())
 	}
 
 	return nil
