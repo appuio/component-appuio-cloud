@@ -125,11 +125,11 @@ local commonDocAnnotations = {
 local organizationProjects = kyverno.ClusterPolicy('organization-projects') {
   metadata+: {
     annotations+: commonDocAnnotations {
-      'policies.kyverno.io/title': 'Ensure that all OpenShift Projects created by users have a label `appuio.io/organization` which is not empty.',
+      'policies.kyverno.io/title': "Ensure that all OpenShift Projects created by users have a label `appuio.io/organization` which isn't empty.",
       'policies.kyverno.io/description': |||
         This policy will:
 
-        - Check that each project created by a user without cluster-admin  permissions has a label appuio.io/organization which is not empty.
+        - Check that each project created by a user without cluster-admin  permissions has a label appuio.io/organization which isn't empty.
         - Check that the creating user is in the organization they try to create a project for.
 
         The user's organization membership is checked by:
@@ -140,7 +140,7 @@ local organizationProjects = kyverno.ClusterPolicy('organization-projects') {
 
         If a group matching the label value exists, the policy checks that the user which requested the project is a member of that group.
 
-        If the label `appuio.io/organization` is missing or empty or the user is not a member of the group, the request is denied.
+        If the label `appuio.io/organization` is missing or empty or the user isn't a member of the group, the request is denied.
       |||,
     },
   },
@@ -165,11 +165,11 @@ local organizationProjects = kyverno.ClusterPolicy('organization-projects') {
 local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') {
   metadata+: {
     annotations+: commonDocAnnotations {
-      'policies.kyverno.io/title': 'Ensure that all namespaces created by users have a label `appuio.io/organization` which is not empty.',
+      'policies.kyverno.io/title': "Ensure that all namespaces created by users have a label `appuio.io/organization` which isn't empty.",
       'policies.kyverno.io/description': |||
         This policy will:
 
-        - Check that each namespace created by a user without cluster-admin  permissions has a label appuio.io/organization which is not empty.
+        - Check that each namespace created by a user without cluster-admin  permissions has a label appuio.io/organization which isn't empty.
         - Check that the creating user is in the organization it tries to create a namespace for.
 
         The user's organization membership is checked by:
@@ -179,7 +179,7 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
 
         If a group matching the label value exists, the policy checks that the user which issued the request is a member of that group.
 
-        If the label `appuio.io/organization` is missing or empty or the user is not a member of the group, the request is denied.
+        If the label `appuio.io/organization` is missing or empty or the user isn't a member of the group, the request is denied.
 
         Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
       |||,
@@ -245,11 +245,11 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
 local organizationSaNamespaces = kyverno.ClusterPolicy('organization-sa-namespaces') {
   metadata+: {
     annotations+: commonDocAnnotations {
-      'policies.kyverno.io/title': 'Ensure that all namespaces created by organization serviceaccounts have a label `appuio.io/organization` which is not empty.',
+      'policies.kyverno.io/title': "Ensure that all namespaces created by organization serviceaccounts have a label `appuio.io/organization` which isn't empty.",
       'policies.kyverno.io/description': |||
         This policy will:
 
-        - Check that each namespace created by a serviceaccount without cluster-admin permissions has a label appuio.io/organization which is not empty.
+        - Check that each namespace created by a serviceaccount without cluster-admin permissions has a label appuio.io/organization which isn't empty.
         - Check that the creating serviceaccount is part of the organization it tries to create a namespace for.
 
         The serviceaccount's organization membership is checked by:

@@ -2,7 +2,7 @@
 
 [abstract]
 --
-Ensure that all namespaces created by users have a label `appuio.io/organization` which is not empty.
+Ensure that all namespaces created by users have a label `appuio.io/organization` which isn't empty.
 --
 
 [horizontal]
@@ -14,7 +14,7 @@ Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/co
 
 This policy will:
 
-- Check that each namespace created by a user without cluster-admin  permissions has a label appuio.io/organization which is not empty.
+- Check that each namespace created by a user without cluster-admin  permissions has a label appuio.io/organization which isn't empty.
 - Check that the creating user is in the organization it tries to create a namespace for.
 
 The user's organization membership is checked by:
@@ -24,7 +24,7 @@ The user's organization membership is checked by:
 
 If a group matching the label value exists, the policy checks that the user which issued the request is a member of that group.
 
-If the label `appuio.io/organization` is missing or empty or the user is not a member of the group, the request is denied.
+If the label `appuio.io/organization` is missing or empty or the user isn't a member of the group, the request is denied.
 
 Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
 
@@ -43,7 +43,7 @@ metadata:
 
 
       - Check that each namespace created by a user without cluster-admin  permissions
-      has a label appuio.io/organization which is not empty.
+      has a label appuio.io/organization which isn''t empty.
 
       - Check that the creating user is in the organization it tries to create a namespace
       for.
@@ -62,7 +62,7 @@ metadata:
       which issued the request is a member of that group.
 
 
-      If the label `appuio.io/organization` is missing or empty or the user is not
+      If the label `appuio.io/organization` is missing or empty or the user isn''t
       a member of the group, the request is denied.
 
 
@@ -74,7 +74,7 @@ metadata:
     policies.kyverno.io/minversion: v1
     policies.kyverno.io/subject: APPUiO Organizations
     policies.kyverno.io/title: Ensure that all namespaces created by users have a
-      label `appuio.io/organization` which is not empty.
+      label `appuio.io/organization` which isn't empty.
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore

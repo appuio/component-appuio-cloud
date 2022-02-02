@@ -7,7 +7,7 @@ metadata:
 
 
       - Check that each namespace created by a serviceaccount without cluster-admin
-      permissions has a label appuio.io/organization which is not empty.
+      permissions has a label appuio.io/organization which isn''t empty.
 
       - Check that the creating serviceaccount is part of the organization it tries
       to create a namespace for.
@@ -34,7 +34,7 @@ metadata:
     policies.kyverno.io/minversion: v1
     policies.kyverno.io/subject: APPUiO Organizations
     policies.kyverno.io/title: Ensure that all namespaces created by organization
-      serviceaccounts have a label `appuio.io/organization` which is not empty.
+      serviceaccounts have a label `appuio.io/organization` which isn't empty.
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore
