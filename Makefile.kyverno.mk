@@ -9,7 +9,8 @@ test:
 	@echo "Testing generated Kyverno policies"
 	$(KYVERNO_CLI_DOCKER) test $(KYVERNO_CLI_ARGS) tests/kyverno/$(instance)
 
-gen-policy-docs:
+.PHONY: gen-policy-docs
+gen-policy-docs: gen-golden
 	(cd tools/render; go build)
 	tools/render/render . tests/golden/$(instance)/appuio-cloud/appuio-cloud docs/modules/ROOT
 
