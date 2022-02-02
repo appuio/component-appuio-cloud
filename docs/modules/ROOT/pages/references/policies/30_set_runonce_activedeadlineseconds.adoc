@@ -4,9 +4,7 @@
 = Policy: `set-runonce-activedeadlineseconds`
 
 [abstract]
---
 Set `activeDeadlineSeconds` for run-once pods.
---
 
 [horizontal]
 Category:: Resource Quota

@@ -4,9 +4,7 @@
 = Policy: `organization-sa-namespaces`
 
 [abstract]
---
 Ensure that all namespaces created by organization serviceaccounts have a label `appuio.io/organization` which isn't empty.
---
 
 [horizontal]
 Category:: Namespace Ownership

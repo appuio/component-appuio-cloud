@@ -4,9 +4,7 @@
 = Policy: `check-namespace-quota`
 
 [abstract]
---
 Check and enforce namespace quotas for organizations
---
 
 [horizontal]
 Category:: Namespace Management

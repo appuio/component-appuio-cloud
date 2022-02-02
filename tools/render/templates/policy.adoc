@@ -7,9 +7,7 @@
 {{- $jsonnet := index $annotations "policies.kyverno.io/jsonnet" }}
 
 [abstract]
---
 {{ .Title }}
---
 
 [horizontal]
 Category:: {{ index $annotations "policies.kyverno.io/category" }}

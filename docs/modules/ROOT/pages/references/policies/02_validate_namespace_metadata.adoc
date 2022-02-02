@@ -4,9 +4,7 @@
 = Policy: `validate-namespace-metadata`
 
 [abstract]
---
 Disallow auxiliary labels and annotations
---
 
 [horizontal]
 Category:: Namespace Ownership

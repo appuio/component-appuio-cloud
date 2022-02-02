@@ -4,9 +4,7 @@
 = Policy: `default-rolebinding-in-ns`
 
 [abstract]
---
 Create default namespace ownership RoleBinding
---
 
 [horizontal]
 Category:: Access Control

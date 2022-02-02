@@ -4,9 +4,7 @@
 = Policy: `disallow-reserved-namespaces`
 
 [abstract]
---
 Disallow creation and editing of reserved namespaces
---
 
 [horizontal]
 Category:: Namespace Ownership

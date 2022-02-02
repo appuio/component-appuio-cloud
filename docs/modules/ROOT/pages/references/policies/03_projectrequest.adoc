@@ -4,9 +4,7 @@
 = Policy: `organization-in-projectrequests`
 
 [abstract]
---
 Check the requesting user's default organization for OpenShift ProjectRequests.
---
 
 [horizontal]
 Category:: Namespace Ownership
