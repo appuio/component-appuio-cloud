@@ -1,9 +1,14 @@
 = Policy: `organization-projects`
 
+[abstract]
+--
+Organization Projects
+--
+
 [horizontal]
 Category:: 
 Minimum Kyverno version:: 
-subject:: 
+Subject:: 
 Policy type:: "mutate"
 Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
 

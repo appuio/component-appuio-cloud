@@ -1,9 +1,14 @@
 = Policy: `default-rolebinding-in-ns`
 
+[abstract]
+--
+Create default namespace ownership RoleBinding
+--
+
 [horizontal]
 Category:: Access Control
 Minimum Kyverno version:: v1
-subject:: rbac
+Subject:: rbac
 Policy type:: "generate"
 Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/generated-rolebindings.jsonnet[component/generated-rolebindings.jsonnet]
 

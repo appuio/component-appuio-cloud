@@ -1,9 +1,14 @@
 = Policy: `quota-and-limit-range-in-ns`
 
+[abstract]
+--
+Quota And Limit Range In Ns
+--
+
 [horizontal]
 Category:: 
 Minimum Kyverno version:: 
-subject:: 
+Subject:: 
 Policy type:: "generate"
 Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
 
