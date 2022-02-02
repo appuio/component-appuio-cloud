@@ -166,6 +166,19 @@ func render(repodir, policydir, outdir string) error {
 		log.Printf("rendered %s", outFile.Name())
 	}
 
+	it := template.New("index")
+	it, err = it.Parse(indexTemplate)
+	if err != nil {
+		return fmt.Errorf("failed to parse template: %v", err)
+	}
+	indexFile, err := createOutFile(outdir, "pages/references/policies", "index.adoc")
+	if err != nil {
+		return err
+	}
+	if err := it.Execute(indexFile, nd); err != nil {
+		log.Printf("ERROR: failed to render index: %v", err.Error())
+	}
+
 	nt := template.New("nav")
 	nt, err = nt.Parse(navTemplate)
 	if err != nil {
