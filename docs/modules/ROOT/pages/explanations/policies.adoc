@@ -1,0 +1,125 @@
+= Policies
+
+[abstract]
+This documentation explains how the different policies interact to implement the requirements and architectural decisions for APPUiO Cloud.
+
+== Namespace ownership
+
+The architecture for namespace ownership is documented in https://kb.vshn.ch/appuio-cloud/references/architecture/namespace-ownership.html["kb.vshn.ch/appuio-cloud > Architecture > Namespace Ownership"]
+
+Most of the Kyverno policies managed by the component implement an aspect of namespace ownership.
+
+There's three main aspects to consider when implementing namespace ownership for APPUiO Cloud:
+
+* Users should be able to https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-arbitrary-name.html[create arbitrary namespaces directly with `kubectl create`].
+* Users should be able to https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/create-ns-with-oc-new-project.html[create arbitrary namespaces through OpenShift's Project mechanism], either on the web console or with `oc new-project`.
+* Any namespace created by a regular user must be https://kb.vshn.ch/appuio-cloud/references/quality-requirements/functional/namespace-organization.html[associated with an organization for billing purposes].
+
+Additionally, the policies dealing with namespace ownership need to consider the following APPUiO Cloud requirements:
+
+* A single organization can only https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/ns-quota.html[create a limited number of namespaces] on an APPUiO Cloud zone.
+* Users should be able to https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/create-ns-with-serviceaccount.html[use serviceaccount tokens to create namespaces] belonging to the same organization to which the serviceaccount belongs.
+* Users should be able to https://TODO[modify selected annotations and labels on namespaces] belonging to their organization(s).
+* By default, https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[the namespace's organization is granted role `admin`] in the namespace.
+
+=== Implementation
+
+*TODO: flow chart for namespace policies*
+
+=== Policies which are executed for all requests by unprivileged principals
+
+The following policies are executed for all namespaces which are created by an unprivileged principal:
+
+xref:references/policies/02_disallow_reserved_namespaces.adoc[`disallow-reserved-namespaces`]::
+This policy ensures that users can't create namespaces which match a pattern which is reserved for the system.
+We need this policy to ensure that users can't adversely impact the system by using namespace names which might be used by the system in the future.
+Effectively, this is a restriction of the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-arbitrary-name.html[users can choose arbitrary namespace names] to ensure overall system availability.
+The component allows operators to configure the set of disallowed patterns.
+
+xref:references/policies/02_validate_namespace_metadata.adoc[`validate-namespace-metadata`]::
+This policy ensures that users can only create or edit selected labels and annotations.
+We want to allow users to transfer namespace ownership between organizations of which they're members.
+Transferring a namespace boils down to changing the namespaces `appuio.io/organization` label to the organization which should receive ownership of the namespace.
+Since we need to ensure that users can't transfer namespaces to organizations to which they don't belong, we need to validate any mutations of namespace labels and annotations.
+Additionally, we need to ensure that users can't modify arbitrary labels or annotations on a namespaces, since OpenShift exposes a number of privileged operations (such as setting a namespace-wide node selector for workloads) as labels and annotations on namespace objects.
++
+TIP: This policy is executed when namespaces are created or updated.
+
+xref:references/policies/12_namespace_quota_per_zone.adoc[`check-namespace-quota`]::
+This policy denies creation of new namespaces for an organization which has used up their namespace quota on a zone.
+The component allows operators to adjust the global and per-organization namespace quota.
++
+This policy implements the requirement that a single organization can only https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/ns-quota.html[create a limited number of namespaces] on an APPUiO Cloud zone.
+
+xref:references/policies/10_generate_default_rolebinding_in_ns.adoc[`default-rolebinding-in-ns`]::
+This policy grants role `admin` to the organization to which the new namespace belongs.
++
+This policy implements the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[the namespace's organization is granted role `admin`].
+
+
+xref:references/policies/11_generate_quota_limit_range_in_ns.adoc[`quota-and-limit-range-in-ns`]::
+This policy generates default `ResourceQuota` and `LimitRange` objects in all namespaces belonging to an organization.
+The policy allows cluster operators to adjust the generated objects by adding appropriate annotations to namespaces.
++
+This policy implements the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html[the APPUiO Cloud zone is protected from abusive resource usage] for resource types which can be managed through Kubernetes `ResourceQuota` and `LimitRange` objects.
+Notably, we deploy a quota limiting the cumulative memory and CPU https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/[resource requests and limits] of all containers per namespace and a quota limiting the count of other Resources, such as `Service` and `Secret` objects, per namespace..
+
+=== Policies which are executed for requests to create a Namespace by specific unprivileged principals
+
+We handle actual validation of namespace creation by users and by ServiceAccounts in different policies:
+
+xref:references/policies/02_organization_namespaces.adoc[`organization-namespaces`]::
+This policy is executed when a namespace is created by a user.
+The policy denies the request if the user tries to create a namespace for an organization which they're not a member of, or when a user who doesn't have a default organization assigned tries to create a namespace without an explicit organization.
+If the user creates a namespace without an explicit `appuio.io/organization` label, their default organization is set as the value of the label.
++
+This policy implements the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-arbitrary-name.html[create arbitrary namespaces directly with `kubectl create`]
+Additionally, this policy ensures that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/functional/namespace-organization.html[user namespaces are associated with an organization for billing purposes] for those namespaces.
+
+xref:references/policies/02_organization_sa_namespaces.adoc[`organization-sa-namespaces`]::
+This policy is executed when a namespace is created by a ServiceAccount.
+The policy looks up the ServiceAccount's organization by looking up the organization to which the ServiceAccount's namespace belongs.
+The policy denies the request if the ServiceAccount tries to create a namespace for a different organization than the one to which it belongs.
+If the ServiceAccount creates a namespace without an explicit `appuio.io/organization` label, it's organization is set as the value of the label.
++
+This policy implements the requirement that users should be able to https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/create-ns-with-serviceaccount.html[use serviceaccount tokens to create namespaces].
+Additionally, this policy ensures that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/functional/namespace-organization.html[user namespaces are associated with an organization for billing purposes] for namespaces created by ServiceAccounts.
+
+=== Policies which are executed for requests to create a ProjectRequest resource
+
+xref:references/policies/03_projectrequest.adoc[`organization-in-projectrequests`]::
+This policy is executed when a user creates a `ProjectRequest` either with `oc new-project` or through the OpenShift webconsole.
+The policy checks whether the user has a default organization and denies the request if they don't.
++
+This policy implements the requirement that users can https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/create-ns-with-oc-new-project.html[create arbitrary namespaces through OpenShift's Project mechanism].
+
+=== Policies which are executed for requests to create a Project resource
+
+xref:references/policies/02_organization_projects.adoc[`organization-projects`]::
+This policy is executed when the control plane creates a `Project` resource based on a `ProjectRequest` created by a user.
+The policy reads the annotation `openshift.io/requester` on the `Project` and uses the value of that annotation to lookup the user which requested the project.
+The user's default organization is then injected as label `appuio.io/organization` on the `Project` resourcefootnote:[
+On OpenShift whenever a `Project` is created, the control plane automatically creates a `Namespace` in the background.
+Labels added on a `Project` by the policy are applied to the `Namespace` as well, ensuring that any projects created by a user belong to that user's default organization.
+].
++
+This policy ensures the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/functional/namespace-organization.html[user namespaces are associated with an organization for billing purposes] for namespaces created through an OpenShift project.
+
+== Policies which don't interact with organization namespaces
+
+The component also manages a number of Kyverno policies which implement other features than namespace ownership on APPUiO Cloud zones.
+
+xref:references/policies/30_set_runonce_activedeadlineseconds.adoc[`set-runonce-activedeadlineseconds`]::
+This policy injects a default value for `.spec.activeDeadlineSeconds` for run-once pods which don't have an explicit value for that field.
+The policy which validates mutations of annotations on namespaces allows users to override the default value which is injected for individual namespaces by annotating the namespace.
++
+This policy implements the linked requirement for pods which only run oncefootnote:[
+Usually, those are pods created by Kubernetes jobs or cronjobs.
+However, the policy also affects pods created directly without a controller, for example by applying a Pod manifest to the cluster.
+].
+This policy implements requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html[the APPUiO Cloud zone is protected from abusive resource usage] to protect the cluster from run once pods with unbounded runtime.
+
+== References
+
+* The xref:references/policies/index.adoc[policy reference documentation] shows what each policy does and how users can configure the policies through the component.
+* The APPUiO Cloud requirements implemented by the policies can be found in the VSHN Knowledge Base, in the section https://kb.vshn.ch/appuio-cloud/index.html[APPUiO Cloud for Engineers].
