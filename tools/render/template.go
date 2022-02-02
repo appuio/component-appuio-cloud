@@ -12,7 +12,7 @@ var policyTemplate = "= Policy: `{{ .Policy.ObjectMeta.Name }}`\n" +
 [horizontal]
 Category:: {{ index $annotations "policies.kyverno.io/category" }}
 Minimum Kyverno version:: {{ index $annotations "policies.kyverno.io/minversion" }}
-subject:: {{ index $annotations "policies.kyverno.io/subject" }}
+Subject:: {{ index $annotations "policies.kyverno.io/subject" }}
 Policy type:: "{{ .Type }}"
 Implementation:: {{ .BaseURL }}/{{ $jsonnet }}[{{ $jsonnet }}]
 
