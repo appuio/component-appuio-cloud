@@ -2,16 +2,31 @@
 
 [abstract]
 --
-Check Namespace Quota
+Check and enforce namespace quotas for organizations
 --
 
 [horizontal]
 Category:: Namespace Management
-Minimum Kyverno version:: 
-Subject:: 
+Minimum Kyverno version:: v1
+Subject:: APPUiO Organizations
 Policy type:: "generate"
-Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
+Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/namespace-quota.jsonnet[component/namespace-quota.jsonnet]
 
+This policy will deny creation of the new namespace if the number of existing namespaces for the requester's organization is greater or equal a certain number.
+
+The number of allowed namespaces is either the default defined in this component, or it can be overridden for a specific organization.
+
+To create an override, create a config map in the component namespace with name pattern `override-<organization-name>` with `.data.namespaceOverride` being the number.
+For example, to set the namespace quota for organization foo to `4`:
+
+[source,bash]
+----
+kubectl -n appuio-cloud create cm override-foo --from-literal=namespaceQuota=4
+----
+
+The default number of allowed namespaces per organization is configured with xref:references/parameters#_maxnamespacequota[component parameter `maxNamespaceQuota`].
+
+Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass this policy.
 
 
 == Policy Definition
@@ -23,7 +38,45 @@ apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
   annotations:
+    pod-policies.kyverno.io/autogen-controllers: none
     policies.kyverno.io/category: Namespace Management
+    policies.kyverno.io/description: 'This policy will deny creation of the new namespace
+      if the number of existing namespaces for the requester''s organization is greater
+      or equal a certain number.
+
+
+      The number of allowed namespaces is either the default defined in this component,
+      or it can be overridden for a specific organization.
+
+
+      To create an override, create a config map in the component namespace with name
+      pattern `override-<organization-name>` with `.data.namespaceOverride` being
+      the number.
+
+      For example, to set the namespace quota for organization foo to `4`:
+
+
+      [source,bash]
+
+      ----
+
+      kubectl -n appuio-cloud create cm override-foo --from-literal=namespaceQuota=4
+
+      ----
+
+
+      The default number of allowed namespaces per organization is configured with
+      xref:references/parameters#_maxnamespacequota[component parameter `maxNamespaceQuota`].
+
+
+      Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component
+      parameter `bypassNamespaceRestrictions`] are allowed to bypass this policy.
+
+      '
+    policies.kyverno.io/jsonnet: component/namespace-quota.jsonnet
+    policies.kyverno.io/minversion: v1
+    policies.kyverno.io/subject: APPUiO Organizations
+    policies.kyverno.io/title: Check and enforce namespace quotas for organizations
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore
