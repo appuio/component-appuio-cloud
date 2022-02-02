@@ -11,6 +11,6 @@ test:
 
 gen-policy-docs:
 	(cd tools/render; go build)
-	tools/render/render . docs/modules/ROOT
+	tools/render/render . tests/golden/$(instance)/appuio-cloud/appuio-cloud docs/modules/ROOT
 
 docs-serve: gen-policy-docs

@@ -89,9 +89,9 @@ func buildTitle(p *kyvernov1.ClusterPolicy) string {
 	return strings.Title(title)
 }
 
-func render(repodir, outdir string) error {
+func render(repodir, policydir, outdir string) error {
 	fs := osfs.New(repodir)
-	yamls, err := listYAMLs(fs, "/")
+	yamls, err := listYAMLs(fs, filepath.Join("/", policydir))
 	if err != nil {
 		return fmt.Errorf("failed to list YAMLs in repo %s: %v", repodir, err)
 	}

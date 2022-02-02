@@ -14,16 +14,16 @@ func init() {
 	rootCmd = &cobra.Command{
 		Use:   "render <URL> <dir>",
 		Short: "render converts Kyverno policies in the filesystem from YAML to asciidoc files in the supplied directory",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
-			repoDir, outDir, err := validateAndParse(args)
+			repoDir, policyDir, outDir, err := validateAndParse(args)
 			if err != nil {
 				log.Println(err)
 				_ = rootCmd.Usage()
 				return
 			}
 
-			if err := render(repoDir, outDir); err != nil {
+			if err := render(repoDir, policyDir, outDir); err != nil {
 				log.Println(err)
 				return
 			}
@@ -31,16 +31,21 @@ func init() {
 	}
 }
 
-func validateAndParse(args []string) (string, string, error) {
-	if len(args) != 2 {
-		return "", "", fmt.Errorf("invalid arguments: %v", args)
+func validateAndParse(args []string) (string, string, string, error) {
+	if len(args) != 3 {
+		return "", "", "", fmt.Errorf("invalid arguments: %v", args)
 	}
 
 	repoDir := args[0]
 	if info, err := os.Stat(repoDir); err != nil || !info.IsDir() {
-		return "", "", fmt.Errorf("repoDir must be a git repository")
+		return "", "", "", fmt.Errorf("repoDir must be a directory")
 	}
 
-	outDir := args[1]
-	return repoDir, outDir, nil
+	policyDir := args[1]
+	if info, err := os.Stat(repoDir); err != nil || !info.IsDir() {
+		return "", "", "", fmt.Errorf("policyDir must be directory")
+	}
+
+	outDir := args[2]
+	return repoDir, policyDir, outDir, nil
 }
