@@ -2,16 +2,30 @@
 
 [abstract]
 --
-Organization Projects
+Ensure that all OpenShift Projects created by users have a label `appuio.io/organization` which is not empty.
 --
 
 [horizontal]
-Category:: 
-Minimum Kyverno version:: 
-Subject:: 
+Category:: Namespace Ownership
+Minimum Kyverno version:: v1
+Subject:: APPUiO Organizations
 Policy type:: "mutate"
-Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
+Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/namespace-policies.jsonnet[component/namespace-policies.jsonnet]
 
+This policy will:
+
+- Check that each project created by a user without cluster-admin  permissions has a label appuio.io/organization which is not empty.
+- Check that the creating user is in the organization they try to create a project for.
+
+The user's organization membership is checked by:
+
+- Reading the project's annotation `openshift.io/requester` which contains the username of the user who originally requested the project.
+- Fetching all OpenShift groups
+- Reading the `appuio.io/organization` label of the request and finding a group with the same name
+
+If a group matching the label value exists, the policy checks that the user which requested the project is a member of that group.
+
+If the label `appuio.io/organization` is missing or empty or the user is not a member of the group, the request is denied.
 
 
 == Policy Definition
@@ -22,7 +36,43 @@ Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  annotations: {}
+  annotations:
+    policies.kyverno.io/category: Namespace Ownership
+    policies.kyverno.io/description: 'This policy will:
+
+
+      - Check that each project created by a user without cluster-admin  permissions
+      has a label appuio.io/organization which is not empty.
+
+      - Check that the creating user is in the organization they try to create a project
+      for.
+
+
+      The user''s organization membership is checked by:
+
+
+      - Reading the project''s annotation `openshift.io/requester` which contains
+      the username of the user who originally requested the project.
+
+      - Fetching all OpenShift groups
+
+      - Reading the `appuio.io/organization` label of the request and finding a group
+      with the same name
+
+
+      If a group matching the label value exists, the policy checks that the user
+      which requested the project is a member of that group.
+
+
+      If the label `appuio.io/organization` is missing or empty or the user is not
+      a member of the group, the request is denied.
+
+      '
+    policies.kyverno.io/jsonnet: component/namespace-policies.jsonnet
+    policies.kyverno.io/minversion: v1
+    policies.kyverno.io/subject: APPUiO Organizations
+    policies.kyverno.io/title: Ensure that all OpenShift Projects created by users
+      have a label `appuio.io/organization` which is not empty.
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore

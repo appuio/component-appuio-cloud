@@ -112,8 +112,38 @@ local isServiceAccount = {
   ],
 };
 
+local commonDocAnnotations = {
+  'policies.kyverno.io/category': 'Namespace Ownership',
+  'policies.kyverno.io/minversion': 'v1',
+  'policies.kyverno.io/subject': 'APPUiO Organizations',
+  'policies.kyverno.io/jsonnet': common.JsonnetFile(std.thisFile),
+};
 
+/**
+  * Organization Projects
+  */
 local organizationProjects = kyverno.ClusterPolicy('organization-projects') {
+  metadata+: {
+    annotations+: commonDocAnnotations {
+      'policies.kyverno.io/title': 'Ensure that all OpenShift Projects created by users have a label `appuio.io/organization` which is not empty.',
+      'policies.kyverno.io/description': |||
+        This policy will:
+
+        - Check that each project created by a user without cluster-admin  permissions has a label appuio.io/organization which is not empty.
+        - Check that the creating user is in the organization they try to create a project for.
+
+        The user's organization membership is checked by:
+
+        - Reading the project's annotation `openshift.io/requester` which contains the username of the user who originally requested the project.
+        - Fetching all OpenShift groups
+        - Reading the `appuio.io/organization` label of the request and finding a group with the same name
+
+        If a group matching the label value exists, the policy checks that the user which requested the project is a member of that group.
+
+        If the label `appuio.io/organization` is missing or empty or the user is not a member of the group, the request is denied.
+      |||,
+    },
+  },
   spec: {
     validationFailureAction: 'enforce',
     background: false,
@@ -128,17 +158,33 @@ local organizationProjects = kyverno.ClusterPolicy('organization-projects') {
     ],
   },
 };
+
 /**
   * Organization Namespaces
-  * This policy will:
-  * - Check that each namespace created by a user/serviceaccount without cluster-admin  permissions has a label appuio.io/organization which is not empty.
-  * - Check that the creating user is in the organization it tries to create a namespace for. It does this by:
-  * - Fetch all openshift groups
-  * - Get the appuio.io/organization label and find a group with the same name
-  * - If it exists, check that the creating user is in the user list of this group
-  * - Deny if it is not
   */
 local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') {
+  metadata+: {
+    annotations+: commonDocAnnotations {
+      'policies.kyverno.io/title': 'Ensure that all namespaces created by users have a label `appuio.io/organization` which is not empty.',
+      'policies.kyverno.io/description': |||
+        This policy will:
+
+        - Check that each namespace created by a user without cluster-admin  permissions has a label appuio.io/organization which is not empty.
+        - Check that the creating user is in the organization it tries to create a namespace for.
+
+        The user's organization membership is checked by:
+
+        - Fetching all OpenShift groups
+        - Reading the `appuio.io/organization` label of the request and finding a group with the same name
+
+        If a group matching the label value exists, the policy checks that the user which issued the request is a member of that group.
+
+        If the label `appuio.io/organization` is missing or empty or the user is not a member of the group, the request is denied.
+
+        Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
+      |||,
+    },
+  },
   spec: {
     validationFailureAction: 'enforce',
     background: false,
@@ -196,8 +242,27 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
     ],
   },
 };
-
 local organizationSaNamespaces = kyverno.ClusterPolicy('organization-sa-namespaces') {
+  metadata+: {
+    annotations+: commonDocAnnotations {
+      'policies.kyverno.io/title': 'Ensure that all namespaces created by organization serviceaccounts have a label `appuio.io/organization` which is not empty.',
+      'policies.kyverno.io/description': |||
+        This policy will:
+
+        - Check that each namespace created by a serviceaccount without cluster-admin permissions has a label appuio.io/organization which is not empty.
+        - Check that the creating serviceaccount is part of the organization it tries to create a namespace for.
+
+        The serviceaccount's organization membership is checked by:
+
+        - Fetching the serviceaccount's namespace
+        - Comparing that namespace's `appuio.io/organization` label value with the request's `appuio.io/organization` label value.
+
+        If the label `appuio.io/organization` is missing or empty or the serviceaccount's organization doesn't match the request's organization the request is denied.
+
+        Serviceaccounts which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
+      |||,
+    },
+  },
   spec: {
     validationFailureAction: 'enforce',
     background: false,
@@ -296,12 +361,25 @@ local organizationSaNamespaces = kyverno.ClusterPolicy('organization-sa-namespac
 
 /**
   * Disallow the creation and edit of reserved namespaces
-  * This policy will:
-  * - Check if namespace name matches one of the disallowed namespace patterns
-  * - Check if user has cluster role that allows them to create reserved namespaces
-  * - Deny namespace creation or modification
   */
 local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-namespaces') {
+  metadata+: {
+    annotations+: commonDocAnnotations {
+      'policies.kyverno.io/title': 'Disallow creation and editing of reserved namespaces',
+      'policies.kyverno.io/description': |||
+        This policy will:
+
+        - Check if the namespace name of the request matches one of the disallowed namespace patterns.
+        - Check if the requesting user/serviceaccount has a cluster role that allows them to create reserved namespaces.
+
+        If the namespace matches a disallowed pattern and the requester doesn't have a cluster role which allows them to bypass the policy, the request is denied.
+
+        The list of reserved namespace patterns is configured with xref:references/parameters#_reservednamespaces[component parameter `reservedNamespaces`].
+
+        Requesters which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
+      |||,
+    },
+  },
   spec: {
     validationFailureAction: 'enforce',
     background: false,
@@ -392,12 +470,24 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
     },
   },
   metadata+: {
-    annotations+: {
+    annotations+: commonDocAnnotations {
       // Kyverno somehow detects this rule as needing controller autogeneration.
       // https://kyverno.io/docs/writing-policies/autogen/
       // Explicitly disable autogen. Autogen interferes with ArgoCD and we don't need it here
       // since only Namespaces are validated anyway.
       'pod-policies.kyverno.io/autogen-controllers': 'none',
+      'policies.kyverno.io/title': 'Disallow auxiliary labels and annotations',
+      'policies.kyverno.io/description': |||
+        This policy will:
+
+        - Check annotations and labels on new and modified namespaces against a whitelist.
+
+        If the namespace has an annotation or label which isn't whitelisted and the requester doesn't have a cluster role which allows them to bypass the policy, the request is denied.
+
+        The list of allowed namespace annotations and labels is configured with xref:references/parameters#_allowednamespaceannotations[component parameter `allowedNamespaceAnnotations`] and xref:references/parameters#_allowednamespacelabels[component parameter `allowedNamespaceLabels`] respectively.
+
+        Requesters which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
+      |||,
     },
   },
   spec: {

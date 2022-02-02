@@ -2,16 +2,25 @@
 
 [abstract]
 --
-Validate Namespace Metadata
+Disallow auxiliary labels and annotations
 --
 
 [horizontal]
-Category:: 
-Minimum Kyverno version:: 
-Subject:: 
+Category:: Namespace Ownership
+Minimum Kyverno version:: v1
+Subject:: APPUiO Organizations
 Policy type:: "generate"
-Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
+Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/namespace-policies.jsonnet[component/namespace-policies.jsonnet]
 
+This policy will:
+
+- Check annotations and labels on new and modified namespaces against a whitelist.
+
+If the namespace has an annotation or label which isn't whitelisted and the requester doesn't have a cluster role which allows them to bypass the policy, the request is denied.
+
+The list of allowed namespace annotations and labels is configured with xref:references/parameters#_allowednamespaceannotations[component parameter `allowedNamespaceAnnotations`] and xref:references/parameters#_allowednamespacelabels[component parameter `allowedNamespaceLabels`] respectively.
+
+Requesters which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
 
 
 == Policy Definition
@@ -24,6 +33,31 @@ kind: ClusterPolicy
 metadata:
   annotations:
     pod-policies.kyverno.io/autogen-controllers: none
+    policies.kyverno.io/category: Namespace Ownership
+    policies.kyverno.io/description: 'This policy will:
+
+
+      - Check annotations and labels on new and modified namespaces against a whitelist.
+
+
+      If the namespace has an annotation or label which isn''t whitelisted and the
+      requester doesn''t have a cluster role which allows them to bypass the policy,
+      the request is denied.
+
+
+      The list of allowed namespace annotations and labels is configured with xref:references/parameters#_allowednamespaceannotations[component
+      parameter `allowedNamespaceAnnotations`] and xref:references/parameters#_allowednamespacelabels[component
+      parameter `allowedNamespaceLabels`] respectively.
+
+
+      Requesters which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component
+      parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
+
+      '
+    policies.kyverno.io/jsonnet: component/namespace-policies.jsonnet
+    policies.kyverno.io/minversion: v1
+    policies.kyverno.io/subject: APPUiO Organizations
+    policies.kyverno.io/title: Disallow auxiliary labels and annotations
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore
