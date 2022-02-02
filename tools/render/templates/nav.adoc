@@ -1,0 +1,4 @@
+* xref:references/policies/index.adoc[Policies]
+{{range .Policies -}}
+** xref:references/policies/{{ .FileName }}[Policy: `{{ .Policy.ObjectMeta.Name }}`]
+{{end}}
