@@ -6,11 +6,6 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
-local filename =
-  local parts = std.split(std.thisFile, '/');
-  local pcount = std.length(parts);
-  '%s/%s' % [ parts[pcount - 2], parts[pcount - 1] ];
-
 local roleName =
   if std.objectHas(params, 'generatedNamespaceOwnerRole') then
     std.trace(
@@ -66,7 +61,7 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
         - The RoleBinding is only created upon Namespace creation.
         - Also, the RoleBinding is mutable by the user.
       |||,
-      'policies.kyverno.io/jsonnet': filename,
+      'policies.kyverno.io/jsonnet': common.JsonnetFile(std.thisFile),
     },
   },
   spec: {

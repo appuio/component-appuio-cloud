@@ -61,6 +61,11 @@ local matchOrgNamespaces = matchNamespaces(selector=orgLabelSelector);
 local kyvernoPatternToRegex = function(pattern)
   '^%s$' % std.strReplace(std.strReplace(pattern, '?', '.'), '*', '.*');
 
+local jsonnetFile(filename) =
+  local parts = std.split(filename, '/');
+  local pcount = std.length(parts);
+  '%s/%s' % [ parts[pcount - 2], parts[pcount - 1] ];
+
 {
   DefaultLabels: defaultLabels,
   FlattenSet: flattenSet,
@@ -70,4 +75,5 @@ local kyvernoPatternToRegex = function(pattern)
   MatchProjectRequests: matchProjectRequests,
   MatchRoleBindings: matchRoleBindings,
   KyvernoPatternToRegex: kyvernoPatternToRegex,
+  JsonnetFile: jsonnetFile,
 }
