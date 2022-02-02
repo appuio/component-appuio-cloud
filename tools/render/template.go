@@ -4,6 +4,11 @@ var policyTemplate = "= Policy: `{{ .Policy.ObjectMeta.Name }}`\n" +
 	`{{- $annotations := .Policy.ObjectMeta.Annotations }}
 {{- $jsonnet := index $annotations "policies.kyverno.io/jsonnet" }}
 
+[abstract]
+--
+{{ .Title }}
+--
+
 [horizontal]
 Category:: {{ index $annotations "policies.kyverno.io/category" }}
 Minimum Kyverno version:: {{ index $annotations "policies.kyverno.io/minversion" }}
