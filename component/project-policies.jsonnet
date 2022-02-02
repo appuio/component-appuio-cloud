@@ -12,7 +12,14 @@ local params = inv.parameters.appuio_cloud;
 // -> This is an important side effect as failed variable substitutions will result in empty strings.
 
 
+local commonDocAnnotations = {
+  'policies.kyverno.io/category': 'Namespace Ownership',
+  'policies.kyverno.io/minversion': 'v1',
+  'policies.kyverno.io/subject': 'APPUiO Organizations',
+  'policies.kyverno.io/jsonnet': common.JsonnetFile(std.thisFile),
+};
 /**
+
   * Organization in ProjectRequests
   * This policy will:
   * - Check that the requesting user has the "appuio.io/default-organization" annotation.
@@ -20,6 +27,20 @@ local params = inv.parameters.appuio_cloud;
   *   It is assumed that the default organization is valid at the user object.
   */
 local organizationInProject = kyverno.ClusterPolicy('organization-in-projectrequests') {
+  metadata+: {
+    annotations+: commonDocAnnotations {
+      'policies.kyverno.io/title': "Check the requesting user's default organization for OpenShift ProjectRequests.",
+      'policies.kyverno.io/description': |||
+        This policy will check that the requesting user has the `appuio.io/default-organization` annotation.
+        The content of the annotation isn't validated.
+        Instead the policy assumes that any default organization annotations which are present on user objects are valid.
+
+        If the requesting user doesn't have the `appuio.io/default-organization` annotation, the project request is denied.
+
+        Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
+      |||,
+    },
+  },
   spec: {
     validationFailureAction: 'enforce',
     background: false,

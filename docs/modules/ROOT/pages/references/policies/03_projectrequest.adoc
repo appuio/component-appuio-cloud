@@ -2,16 +2,23 @@
 
 [abstract]
 --
-Organization In Projectrequests
+Check the requesting user's default organization for OpenShift ProjectRequests.
 --
 
 [horizontal]
-Category:: 
-Minimum Kyverno version:: 
-Subject:: 
+Category:: Namespace Ownership
+Minimum Kyverno version:: v1
+Subject:: APPUiO Organizations
 Policy type:: "generate"
-Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
+Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/project-policies.jsonnet[component/project-policies.jsonnet]
 
+This policy will check that the requesting user has the `appuio.io/default-organization` annotation.
+The content of the annotation isn't validated.
+Instead the policy assumes that any default organization annotations which are present on user objects are valid.
+
+If the requesting user doesn't have the `appuio.io/default-organization` annotation, the project request is denied.
+
+Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
 
 
 == Policy Definition
@@ -22,7 +29,30 @@ Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/[]
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  annotations: {}
+  annotations:
+    policies.kyverno.io/category: Namespace Ownership
+    policies.kyverno.io/description: 'This policy will check that the requesting user
+      has the `appuio.io/default-organization` annotation.
+
+      The content of the annotation isn''t validated.
+
+      Instead the policy assumes that any default organization annotations which are
+      present on user objects are valid.
+
+
+      If the requesting user doesn''t have the `appuio.io/default-organization` annotation,
+      the project request is denied.
+
+
+      Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component
+      parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
+
+      '
+    policies.kyverno.io/jsonnet: component/project-policies.jsonnet
+    policies.kyverno.io/minversion: v1
+    policies.kyverno.io/subject: APPUiO Organizations
+    policies.kyverno.io/title: Check the requesting user's default organization for
+      OpenShift ProjectRequests.
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore
