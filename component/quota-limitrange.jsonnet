@@ -34,6 +34,24 @@ local quotaSpec(rn, rq) =
 
 
 local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit-range-in-ns') {
+  metadata+: {
+    annotations+: {
+      'policies.kyverno.io/title': 'Create ResourceQuota and LimitRange objects in organization namespaces.',
+      'policies.kyverno.io/category': 'Resource Quota',
+      'policies.kyverno.io/minversion': 'v1',
+      'policies.kyverno.io/subject': 'APPUiO Organizations',
+      'policies.kyverno.io/jsonnet': common.JsonnetFile(std.thisFile),
+      'policies.kyverno.io/description': |||
+        This policy generates `ResourceQuota` and `LimitRange` objects in namespaces which have the `appuio.io/organization` label.
+
+        The default values for the generated `ResourceQuota` and `LimitRange` objects are configured in component parameters xref:references/parameters.adoc#_generatedresourcequota[`generatedResourceQuota`] and xref:references/parameters.adoc#_generatedlimitrange[`generatedLimitRange`] respectively.
+
+        Quota entries can be overridden for single namespaces by annotating the namespace, see the xref:references/parameters.adoc#_generatedresourcequota_spec[parameter docs] for an example.
+
+        If field `synchronize` in the `ResourceQuota` or `LimitRange` component parameter is set to `true`, the policy is configured to continuously keep the generated objects in sync with the specification in the policy.
+      |||,
+    },
+  },
   spec: {
     rules: [
       {

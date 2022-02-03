@@ -39,15 +39,6 @@ local namespaceEditorClusterRole =
     ],
   };
 
-/**
-  * This policy will:
-  * - Generate a RoleBinding to ClusterRole 'admin' for the organization defined in a label of a namespace.
-  * - For namespaces created through a project, it mutates the `admin` RoleBinding to reference the organization instead of the creating user.
-  * - Generate a RoleBinding and Role 'namespace-owner' for the organization defined in a label of a namespace, which allows the edit and delete the namespace.
-  * - Namespaces that do not have the 'appuio.io/organization' label are not affected.
-  * - The RoleBinding is only created upon Namespace creation.
-  * - Also, the RoleBinding is mutable by the user.
-  */
 local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-rolebinding-in-ns') {
   metadata+: {
     annotations+: {
@@ -56,6 +47,21 @@ local generateDefaultRolebindingInNsPolicy = kyverno.ClusterPolicy('default-role
       // Explicitly disable autogen. We don't need it here
       // since only Namespaces and RoleBinding are matched.
       'pod-policies.kyverno.io/autogen-controllers': 'none',
+      'policies.kyverno.io/title': 'Create default namespace ownership RoleBinding',
+      'policies.kyverno.io/category': 'Access Control',
+      'policies.kyverno.io/minversion': 'v1',
+      'policies.kyverno.io/subject': 'rbac',
+      'policies.kyverno.io/description': |||
+        This policy will:
+
+        - Generate a RoleBinding to ClusterRole 'admin' for the organization defined in a label of a namespace.
+        - For namespaces created through a project, it mutates the `admin` RoleBinding to reference the organization instead of the creating user.
+        - Generate a RoleBinding and Role 'namespace-owner' for the organization defined in a label of a namespace, which allows the edit and delete the namespace.
+        - Namespaces that don't have the 'appuio.io/organization' label aren't affected.
+        - The RoleBinding is only created upon Namespace creation.
+        - Also, the RoleBinding is mutable by the user.
+      |||,
+      'policies.kyverno.io/jsonnet': common.JsonnetFile(std.thisFile),
     },
   },
   spec: {

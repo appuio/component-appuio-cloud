@@ -61,6 +61,37 @@ local orgLabelVar = '{{request.object.metadata.labels."appuio.io/organization"}}
   *   For example: kubectl -n appuio-cloud create cm override-foo --from-literal=namespaceQuota=4
   */
 local namespaceQuotaPolicy = kyverno.ClusterPolicy('check-namespace-quota') {
+  metadata+: {
+    annotations+: {
+      // Kyverno somehow detects this rule as needing controller autogeneration.
+      // https://kyverno.io/docs/writing-policies/autogen/
+      // Explicitly disable autogen. Autogen interferes with ArgoCD and we don't need it here
+      // since only Namespaces are validated anyway.
+      'pod-policies.kyverno.io/autogen-controllers': 'none',
+      'policies.kyverno.io/title': 'Check and enforce namespace quotas for organizations',
+      'policies.kyverno.io/category': 'Namespace Management',
+      'policies.kyverno.io/minversion': 'v1',
+      'policies.kyverno.io/subject': 'APPUiO Organizations',
+      'policies.kyverno.io/jsonnet': common.JsonnetFile(std.thisFile),
+      'policies.kyverno.io/description': |||
+        This policy will deny creation of the new namespace if the number of existing namespaces for the requester's organization is greater or equal a certain number.
+
+        The number of allowed namespaces is either the default defined in this component, or it can be overridden for a specific organization.
+
+        To create an override, create a config map in the component namespace with name pattern `override-<organization-name>` with `.data.namespaceOverride` being the number.
+        For example, to set the namespace quota for organization foo to `4`:
+
+        [source,bash]
+        ----
+        kubectl -n appuio-cloud create cm override-foo --from-literal=namespaceQuota=4
+        ----
+
+        The default number of allowed namespaces per organization is configured with xref:references/parameters#_maxnamespacequota[component parameter `maxNamespaceQuota`].
+
+        Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass this policy.
+      |||,
+    },
+  },
   spec: {
     validationFailureAction: 'enforce',
     background: false,
@@ -95,15 +126,6 @@ local namespaceQuotaPolicy = kyverno.ClusterPolicy('check-namespace-quota') {
         preconditions: operationPrecondition(),
       },
     ],
-  },
-  metadata+: {
-    annotations+: {
-      // Workaround for bug in `kyverno-cli test` command.
-      // Commodore generates an empty annotation object (`annotations: {}`) which trips up Kyverno.
-      // A non empty object or `annotations: null` is valid.
-      // Ensure a label to not have an empty object.
-      'policies.kyverno.io/category': 'Namespace Management',
-    },
   },
 };
 

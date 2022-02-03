@@ -164,6 +164,7 @@ The bug will cause the `ResourceQuota` to be updated if the `Namespace` or `Clus
 
 [horizontal]
 type:: dict
+default:: https://github.com/appuio/component-appuio-cloud/blob/master/class/defaults.yml[See `class/defaults.yml`]
 
 The desired contents of field `spec` of the ResourceQuota that should be generated.
 The component doesn't validate the contents of this field.
@@ -179,7 +180,14 @@ For resources containing a forward slash, you will need to substitute it for an 
 For example: `resourcequota.appuio.io/organization-objects.openshift.io_imagestreams: "40"`.
 ====
 
-== `generatedLimitRange.name`
+== `generatedLimitRange`
+
+[horizontal]
+type:: dict
+
+This parameter defines a `LimitRange` object.
+
+=== `generatedLimitRange.name`
 
 [horizontal]
 type:: string
@@ -187,7 +195,7 @@ default:: `organization`
 
 The `metadata.name` of the `LimitRange` that gets generated in the new `Namespace` created by the user.
 
-== `generatedResourceQuota.synchronize`
+=== `generatedLimitRange.synchronize`
 
 [horizontal]
 type:: bool
@@ -203,7 +211,7 @@ The bug has been fixed, but as of writing this the fix hasn't been released.
 The bug will cause the `LimitRange` to be updated if the `Namespace` or `ClusterPolicy` changes, even if `synchronize` has been disabled.
 ====
 
-== `generatedLimitRange.limits`
+=== `generatedLimitRange.limits`
 
 [horizontal]
 type:: dict
