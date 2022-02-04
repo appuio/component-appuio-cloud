@@ -10,7 +10,7 @@ Create ResourceQuota and LimitRange objects in organization namespaces.
 Category:: Resource Quota
 Minimum Kyverno version:: v1
 Subject:: APPUiO Organizations
-Policy type:: "generate"
+Policy types:: `generate`
 Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/quota-limitrange.jsonnet[component/quota-limitrange.jsonnet]
 
 This policy generates `ResourceQuota` and `LimitRange` objects in namespaces which have the `appuio.io/organization` label.

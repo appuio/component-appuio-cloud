@@ -10,7 +10,7 @@ Ensure that all OpenShift Projects created by users have a label `appuio.io/orga
 Category:: Namespace Ownership
 Minimum Kyverno version:: v1
 Subject:: APPUiO Organizations
-Policy type:: "mutate"
+Policy types:: `mutate`
 Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/namespace-policies.jsonnet[component/namespace-policies.jsonnet]
 
 This policy will:
