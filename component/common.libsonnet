@@ -58,6 +58,9 @@ local matchRoleBindings(selector=null, names=null, match='all') = matchKinds(sel
 
 local matchOrgNamespaces = matchNamespaces(selector=orgLabelSelector);
 
+local matchNamespacesAndProjectRequests(selector=null, names=null, match='all') =
+  matchKinds(selector, names, match, kinds=[ 'Namespace', 'ProjectRequest' ]);
+
 local kyvernoPatternToRegex = function(pattern)
   '^%s$' % std.strReplace(std.strReplace(pattern, '?', '.'), '*', '.*');
 
@@ -71,6 +74,7 @@ local jsonnetFile(filename) =
   FlattenSet: flattenSet,
   BypassNamespaceRestrictionsSubjects: bypassNamespaceRestrictionsSubjects,
   MatchNamespaces: matchNamespaces,
+  MatchNamespacesAndProjectRequests: matchNamespacesAndProjectRequests,
   MatchOrgNamespaces: matchOrgNamespaces,
   MatchProjectRequests: matchProjectRequests,
   MatchRoleBindings: matchRoleBindings,

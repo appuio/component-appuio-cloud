@@ -373,6 +373,8 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
         - Check if the requesting user/serviceaccount has a cluster role that allows them to create reserved namespaces.
 
         If the namespace matches a disallowed pattern and the requester doesn't have a cluster role which allows them to bypass the policy, the request is denied.
+        The policy is applied for requests to create `Namespace` and `ProjectRequest` resources.
+        This ensures that unprivileged users can't use disallowed patterns regardless of whether they use `oc new-project`, `kubectl create ns` or the OpenShift web console.
 
         The list of reserved namespace patterns is configured with xref:references/parameters#_reservednamespaces[component parameter `reservedNamespaces`].
 
@@ -386,7 +388,7 @@ local disallowReservedNamespaces = kyverno.ClusterPolicy('disallow-reserved-name
     rules: [
       {
         name: 'disallow-reserved-namespaces',
-        match: common.MatchNamespaces(
+        match: common.MatchNamespacesAndProjectRequests(
           names=common.FlattenSet(params.reservedNamespaces),
         ),
         exclude: common.BypassNamespaceRestrictionsSubjects(),
