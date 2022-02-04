@@ -22,21 +22,195 @@ Additionally, the policies dealing with namespace ownership need to consider the
 * Users should be able to https://TODO[modify selected annotations and labels on namespaces] belonging to their organization(s).
 * By default, https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[the namespace's organization is granted role `admin`] in the namespace.
 
-=== Implementation
+=== Request flow and policy execution
 
-*TODO: flow chart for namespace policies*
+The diagram shows how the Kyverno policies interact with a request to create a `Namespace`, `Project` or `ProjectRequest`.
+
+[IMPORTANT]
+====
+We only show interactions which are relevant to `CREATE` requests.
+Some policies, such as `validate-namespace-metadata` are also executed on `UPDATE` requests.
+
+See the detailed policy explanations or the policy reference documentation for details.
+====
+
+[ditaa, namespace-policies, svg]
+....
+                      /---------------\
+                      | cFD0          |
+                      | CREATE        |
+                      | Namespace,    |
+                      | ProjectRequest|
+                      |               |
+                      \-------+-------/
+                              |
+                              |
+                   PRIV       v
+                   +---------------------+
+                   |  +---------------+  |
+                   |  |cBLUVALIDATE   |  |
+                   |  +---------------+  |    yes
+                   | Principal is allowed+------------------------------------------+
+                   |  to bypass policies |                                          |
+                   | {d}                 |                                          |
+                   +----------+----------+                                          |
+                              |                                                     |
+                              |no                                                   |
+                              |                                                     |
+                   RSVD       v                                                     |
+                   +---------------------+                                          |
+                   |  +---------------+  |                                          |
+                   |  |cBLUVALIDATE   |  |                                          |
+                   |  +---------------+  |                                          |
+                   | Check that requested|                                          |
+                   | namespace/project   |                                          |
+                   | name doesn't match a|                                          |
+                   | reserved prefix     |                                          |
+                   | {d}                 |                                          |
+                   +----------+----------+                                          |
+                              |                                                     |
+            +-----------------+-----------------------+                             |
+            |                                         |                             |
+            |CREATE                                   |CREATE                       |
+            |ProjectRequest                           |Namespace                    |
+            |                                         |                             |
+            |                          +--------------+--------------+              |
+  PRJREQ_ORGv                          |                             |              |
+  +-----------------+                  |Principal           Principal|              |
+  |+---------------+|                  |is User                 is SA|              |
+  ||cBLUVALIDATE   ||                  v                             v              |
+  |+---------------+|       +----------------------+     +----------------------+   |
+  |  Check that user| no    :USR_NS_ORG            |     :SA_NS_ORG             |   |
+  |  has default    +----+  | +-----------------+  |     |  +----------------+  |   |
+  |  organization   |    |  | | +-------------+ |  |     |  | +-------------+|  |   |
+  | {d}             |    |  | | |cPNKMUTATE   | |  |     |  | |cPNKMUTATE   ||  |   |
+  +-----------------+    |  | | +-------------+ |  |     |  | +-------------+|  |   |
+          |              |  | |    Inject user's|  |     |  |    Inject SA's |  |   |
+          |yes           |  | |    default      |  |     |  |    organization|  |   |
+          |              |  | |    organization |  |     |  |    if no label |  |   |
+          v              |  | |    if no label  |  |     |  |    in request  |  |   |
+      +--------+         |  | |    in request   |  |     |  | {d}            |  |   |
+      |  c2A2  |         |  | | {d}             |  |     |  +----------------+  |   |
+      |  ALLOW |         |  | +-----------------+  |     |           |          |   |
+      | request|         |  |          |           |     |           v          |   |
+      |        |         |  |          v           |     | +------------------+ |   |
+      +---+----+         |  | +------------------+ |     | |+---------------+ | |   |
+          |              |  | |+---------------+ | |     | ||cBLUVALIDATE   | | |   |
+          |              |  | ||cBLUVALIDATE   | | |     | |+---------------+ | |   |
+          v              |  | |+---------------+ | |     | |    Check that NS | |   |
+ /------------------\    |  | |    Check that NS | |     | |    belongs to    | |   |
+ |      cFD0        |    |  | |    belongs to    | |     | |    organization  | |   |
+ | CREATE Project[1]|    |  | |    organization  | |     | |    and that it   | |   |
+ |                  |    |  | |    and user is   | |     | |    matches SA's  | |   |
+ \--------+---------/    |  | |    member of it  | |     | |    organization  | |   |
+          |              |  | | {d}              | |     | | {d}              | |   |
+          |              |  | +------------------+ |     | +------------------+ |   |
+  PRJ_ORG v              |  |                      |     |                      |   |
+  +---------------+      |  +-------+------+-------+     +-------+------+-------+   |
+  |+-------------+|      |          |      |                     |      |           |
+  ||cPNKMUTATE   ||      |          |      |                     |      |           |
+  |+-------------+|      |          |      |                     |      |           |
+  | Inject        |      |          |      |                     |      |           |
+  | organization  |      |          |      |                     |      |           |
+  | from project  |      |     no   |      |                     |      |           |
+  | annotation    |      +----------|------+---------------------|------+           |
+  | {d}           |      |          |                            |                  |
+  +-------+-------+      |          |                            |                  |
+          |              |          |           yes              |                  |
+          |              |          +------------+---------------+                  |
+          v              |                       |                                  |
+/--------------------\   |                       |                                  |
+|  cFD0              |   |                       |                                  |
+|      triggers      |   |                       |                                  |
+| CREATE Namespace[2]|   |                       |                                  |
+|                    |   |              NS_QUOT  v                                  |
+\---------+----------/   |              +-----------------+                         |
+          |              |              |+---------------+|                         |
+          |              |              ||cBLUVALIDATE   ||                         |
+          |              |              |+---------------+|                         |
+          |              |         no   |  Check if       |                         |
+          |              +--------------+  organization   |                         |
+          |              |              |  can create     |                         |
+          |              |              |  more namespaces|                         |
+          |              |              | {d}             |                         |
+          |              |              +--------+--------+                         |
+          |              |                       |                                  |
+          |              |                       |yes                               |
+          |              |                       |                                  |
+          |              |              NS_LBL   v                                  |
+          |              |              +-----------------+                         |
+          |              |              |+---------------+|                         |
+          |              |              ||cBLUVALIDATE   ||                         |
+          |              |              |+---------------+|                         |
+          |              |         no   | Check if        |                         |
+          |              +--------------+ the request only|                         |
+          |              |              | contains allowed|                         |
+          |              |              | labels and      |                         |
+          |              |              | annotations     |                         |
+          |              |              |{d}              |                         |
+          |              |              +--------+--------+                         |
+          |              |                       |                                  |
+          |              |                       |yes                               |
+          |              |                       |                                  |
+          |              v                       v                                  |
+          |          +--------+              +--------+                             |
+          |          |  cRED  |              |  c2A2  |                             |
+          |          |  DENY  |              |  ALLOW |<----------------------------+
+          |          | request|              | request|
+          |          |        |              |        |
+          |          +--------+              +---+----+
+          |                                      |
+          |                                      |
+          |                                      v
+          |                              /----------------\
+          |                              | cFD0           |
+          |                              | CREATE         |
+          +----------------------------->| Namespace with |
+                                         | organization   |
+                                         | label          |
+                                         |                |
+                                         \-------+--------/
+                                                 |
+                                                 |
+                                  +--------------+--------------+
+                                  |                             |
+                         ORG_RBAC v                  RES_QUOT   v
+                         +-----------------+         +---------------------+
+                         |+---------------+|         |  +---------------+  |
+                         ||cGREGENERATE   ||         |  |cGREGENERATE   |  |
+                         |+---------------+|         |  +---------------+  |
+                         |    Grant the    |         |   Create            |
+                         |    organization |         |   ResourceQuota and |
+                         |    Role "admin" |         |   LimitRange objects|
+                         |    in the NS    |         |   in the namespace  |
+                         |{d}              |         |{d}                  |
+                         +-----------------+         +---------------------+
+....
+<1> `Project` resources can't be created directly by users.
+<2> `Namespace` resources which are created from a `ProjectRequest` always originate from a privileged system principal which can bypass the namespace restrictions.
+
+[NOTE]
+====
+Checking whether a principal is allowed to bypass the namespace policies is implemented as exclude rules in the other validating policies.
+However, to better illustrate the flow of a request in the diagram, we pretend it's a separate validating policy (labeled `PRIV`).
+====
+
+[TIP]
+====
+Generally, Kyverno policies are evaluated in parallel, but we organize them in a flow-chart style to better illustrate how they interact.
+====
 
 === Policies which are executed for all requests by unprivileged principals
 
 The following policies are executed for all namespaces which are created by an unprivileged principal:
 
-xref:references/policies/02_disallow_reserved_namespaces.adoc[`disallow-reserved-namespaces`]::
+xref:references/policies/02_disallow_reserved_namespaces.adoc[`disallow-reserved-namespaces` (labeled `RSVD`)]::
 This policy ensures that users can't create namespaces which match a pattern which is reserved for the system.
 We need this policy to ensure that users can't adversely impact the system by using namespace names which might be used by the system in the future.
 Effectively, this is a restriction of the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-arbitrary-name.html[users can choose arbitrary namespace names] to ensure overall system availability.
 The component allows operators to configure the set of disallowed patterns.
 
-xref:references/policies/02_validate_namespace_metadata.adoc[`validate-namespace-metadata`]::
+xref:references/policies/02_validate_namespace_metadata.adoc[`validate-namespace-metadata`, labeled `NS_LBL`]::
 This policy ensures that users can only create or edit selected labels and annotations.
 We want to allow users to transfer namespace ownership between organizations of which they're members.
 Transferring a namespace boils down to changing the namespaces `appuio.io/organization` label to the organization which should receive ownership of the namespace.
@@ -45,19 +219,18 @@ Additionally, we need to ensure that users can't modify arbitrary labels or anno
 +
 TIP: This policy is executed when namespaces are created or updated.
 
-xref:references/policies/12_namespace_quota_per_zone.adoc[`check-namespace-quota`]::
+xref:references/policies/12_namespace_quota_per_zone.adoc[`check-namespace-quota` (labeled `NS_QUOT`)]::
 This policy denies creation of new namespaces for an organization which has used up their namespace quota on a zone.
 The component allows operators to adjust the global and per-organization namespace quota.
 +
 This policy implements the requirement that a single organization can only https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/ns-quota.html[create a limited number of namespaces] on an APPUiO Cloud zone.
 
-xref:references/policies/10_generate_default_rolebinding_in_ns.adoc[`default-rolebinding-in-ns`]::
+xref:references/policies/10_generate_default_rolebinding_in_ns.adoc[`default-rolebinding-in-ns` (labeled `ORG_RBAC`)]::
 This policy grants role `admin` to the organization to which the new namespace belongs.
 +
 This policy implements the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[the namespace's organization is granted role `admin`].
 
-
-xref:references/policies/11_generate_quota_limit_range_in_ns.adoc[`quota-and-limit-range-in-ns`]::
+xref:references/policies/11_generate_quota_limit_range_in_ns.adoc[`quota-and-limit-range-in-ns` (labeled `RES_QUOT`)]::
 This policy generates default `ResourceQuota` and `LimitRange` objects in all namespaces belonging to an organization.
 The policy allows cluster operators to adjust the generated objects by adding appropriate annotations to namespaces.
 +
@@ -68,7 +241,7 @@ Notably, we deploy a quota limiting the cumulative memory and CPU https://kubern
 
 We handle actual validation of namespace creation by users and by ServiceAccounts in different policies:
 
-xref:references/policies/02_organization_namespaces.adoc[`organization-namespaces`]::
+xref:references/policies/02_organization_namespaces.adoc[`organization-namespaces` (labeled `USR_NS_ORG`)]::
 This policy is executed when a namespace is created by a user.
 The policy denies the request if the user tries to create a namespace for an organization which they're not a member of, or when a user who doesn't have a default organization assigned tries to create a namespace without an explicit organization.
 If the user creates a namespace without an explicit `appuio.io/organization` label, their default organization is set as the value of the label.
@@ -76,7 +249,7 @@ If the user creates a namespace without an explicit `appuio.io/organization` lab
 This policy implements the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-arbitrary-name.html[create arbitrary namespaces directly with `kubectl create`]
 Additionally, this policy ensures that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/functional/namespace-organization.html[user namespaces are associated with an organization for billing purposes] for those namespaces.
 
-xref:references/policies/02_organization_sa_namespaces.adoc[`organization-sa-namespaces`]::
+xref:references/policies/02_organization_sa_namespaces.adoc[`organization-sa-namespaces` (labeled `SA_NS_ORG`)]::
 This policy is executed when a namespace is created by a ServiceAccount.
 The policy looks up the ServiceAccount's organization by looking up the organization to which the ServiceAccount's namespace belongs.
 The policy denies the request if the ServiceAccount tries to create a namespace for a different organization than the one to which it belongs.
@@ -87,7 +260,7 @@ Additionally, this policy ensures that https://kb.vshn.ch/appuio-cloud/reference
 
 === Policies which are executed for requests to create a ProjectRequest resource
 
-xref:references/policies/03_projectrequest.adoc[`organization-in-projectrequests`]::
+xref:references/policies/03_projectrequest.adoc[`organization-in-projectrequests` (labeled `PRJREQ_ORG`)]::
 This policy is executed when a user creates a `ProjectRequest` either with `oc new-project` or through the OpenShift webconsole.
 The policy checks whether the user has a default organization and denies the request if they don't.
 +
@@ -95,7 +268,7 @@ This policy implements the requirement that users can https://kb.vshn.ch/appuio-
 
 === Policies which are executed for requests to create a Project resource
 
-xref:references/policies/02_organization_projects.adoc[`organization-projects`]::
+xref:references/policies/02_organization_projects.adoc[`organization-projects` (labeled `PRJ_ORG`)]::
 This policy is executed when the control plane creates a `Project` resource based on a `ProjectRequest` created by a user.
 The policy reads the annotation `openshift.io/requester` on the `Project` and uses the value of that annotation to lookup the user which requested the project.
 The user's default organization is then injected as label `appuio.io/organization` on the `Project` resourcefootnote:[
