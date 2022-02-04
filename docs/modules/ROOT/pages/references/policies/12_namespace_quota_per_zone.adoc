@@ -10,7 +10,7 @@ Check and enforce namespace quotas for organizations
 Category:: Namespace Management
 Minimum Kyverno version:: v1
 Subject:: APPUiO Organizations
-Policy type:: "generate"
+Policy types:: `validate`
 Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/namespace-quota.jsonnet[component/namespace-quota.jsonnet]
 
 This policy will deny creation of the new namespace if the number of existing namespaces for the requester's organization is greater or equal a certain number.

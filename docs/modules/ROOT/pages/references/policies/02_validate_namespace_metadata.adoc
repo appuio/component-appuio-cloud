@@ -10,7 +10,7 @@ Disallow auxiliary labels and annotations
 Category:: Namespace Ownership
 Minimum Kyverno version:: v1
 Subject:: APPUiO Organizations
-Policy type:: "generate"
+Policy types:: `validate`
 Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/namespace-policies.jsonnet[component/namespace-policies.jsonnet]
 
 This policy will:

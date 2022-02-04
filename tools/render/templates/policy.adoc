@@ -13,7 +13,7 @@
 Category:: {{ index $annotations "policies.kyverno.io/category" }}
 Minimum Kyverno version:: {{ index $annotations "policies.kyverno.io/minversion" }}
 Subject:: {{ index $annotations "policies.kyverno.io/subject" }}
-Policy type:: "{{ .Type }}"
+Policy types:: {{ range $i, $e := .Types }}{{ if $i }}, {{end}}`{{ $e }}`{{ end }}
 Implementation:: {{ .BaseURL }}/{{ $jsonnet }}[{{ $jsonnet }}]
 
 {{ index $annotations "policies.kyverno.io/description" }}

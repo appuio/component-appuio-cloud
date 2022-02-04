@@ -29,7 +29,7 @@ type policyData struct {
 	Title    string
 	Policy   *kyvernov1.ClusterPolicy
 	YAML     string
-	Type     string
+	Types    []string
 	BaseURL  string
 	Path     string
 	FileName string
@@ -39,27 +39,31 @@ type navData struct {
 	Policies []*policyData
 }
 
-func stringContains(rawString string, substring string) bool {
-	hasString := strings.Index(rawString, substring)
-
-	return hasString >= 0
-}
-
-func getPolicyType(yaml string) string {
-	generate := "generate"
-	mutate := "mutate"
-	validate := "validate"
-	verifyImages := "verifyImages"
-
-	if stringContains(yaml, generate) {
-		return generate
-	} else if stringContains(yaml, mutate) {
-		return mutate
-	} else if stringContains(yaml, validate) {
-		return validate
-	} else {
-		return verifyImages
+func getPolicyTypes(p *kyvernov1.ClusterPolicy) []string {
+	ptypes := map[string]bool{
+		"generate": false,
+		"mutate":   false,
+		"validate": false,
 	}
+	for _, rule := range p.Spec.Rules {
+		if rule.Generation.ResourceSpec.Kind != "" {
+			ptypes["generate"] = true
+		}
+		if rule.Mutation.PatchStrategicMerge != nil || rule.Mutation.PatchesJSON6902 != "" {
+			ptypes["mutate"] = true
+		}
+		if rule.Validation.Message != "" {
+			ptypes["validate"] = true
+		}
+	}
+	etypes := []string{}
+	for t, e := range ptypes {
+		if e {
+			etypes = append(etypes, t)
+		}
+	}
+	sort.Strings(etypes)
+	return etypes
 }
 
 func newPolicyData(p *kyvernov1.ClusterPolicy, rawYAML, baseURL, path string) *policyData {
@@ -67,7 +71,7 @@ func newPolicyData(p *kyvernov1.ClusterPolicy, rawYAML, baseURL, path string) *p
 		Title:    buildTitle(p),
 		Policy:   p,
 		YAML:     rawYAML,
-		Type:     getPolicyType(rawYAML),
+		Types:    getPolicyTypes(p),
 		BaseURL:  baseURL,
 		Path:     path,
 		FileName: strings.ReplaceAll(filepath.Base(path), filepath.Ext(path), ".adoc"),

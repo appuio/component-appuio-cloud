@@ -10,7 +10,7 @@ Set `activeDeadlineSeconds` for run-once pods.
 Category:: Resource Quota
 Minimum Kyverno version:: v1
 Subject:: APPUiO Organizations
-Policy type:: "mutate"
+Policy types:: `mutate`
 Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/runonce-activedeadlineseconds.jsonnet[component/runonce-activedeadlineseconds.jsonnet]
 
 This policy ensures that all "runonce" pods have `.spec.activeDeadlineSeconds` set.

@@ -10,7 +10,7 @@ Create default namespace ownership RoleBinding
 Category:: Access Control
 Minimum Kyverno version:: v1
 Subject:: rbac
-Policy type:: "generate"
+Policy types:: `generate`, `mutate`
 Implementation:: https://github.com/appuio/component-appuio-cloud/tree/master/component/generated-rolebindings.jsonnet[component/generated-rolebindings.jsonnet]
 
 This policy will:
