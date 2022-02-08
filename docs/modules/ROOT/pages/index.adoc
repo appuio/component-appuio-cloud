@@ -1,5 +1,5 @@
 = appuio-cloud
 
-appuio-cloud is a Commodore component to manage appuio-cloud.
+`appuio-cloud` is a Commodore component to deploy configurations related to https://kb.vshn.ch/appuio-cloud/[APPUiO Cloud] on an OpenShift 4 cluster.
 
-See the xref:references/parameters.adoc[parameters] reference for further details.
+See the xref:references/parameters.adoc[parameters] reference for details on how to configure the component.
