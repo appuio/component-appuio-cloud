@@ -1,4 +1,4 @@
-module github.com/kyverno/website/render
+module github.com/appuio/component-appuio-cloud/tools/render
 
 go 1.17
 
