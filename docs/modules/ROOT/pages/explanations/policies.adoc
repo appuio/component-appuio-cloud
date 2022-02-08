@@ -38,155 +38,157 @@ See the detailed policy explanations or the policy reference documentation for d
 
 [ditaa, namespace-policies, svg]
 ....
-                      /---------------\
-                      | cFD0          |
-                      | CREATE        |
-                      | Namespace,    |
-                      | ProjectRequest|
-                      |               |
-                      \-------+-------/
-                              |
-                              |
-                   PRIV       v
-                   +---------------------+
-                   |  +---------------+  |
-                   |  |cBLUVALIDATE   |  |
-                   |  +---------------+  |    yes
-                   | Principal is allowed+------------------------------------------+
-                   |  to bypass policies |                                          |
-                   | {d}                 |                                          |
-                   +----------+----------+                                          |
-                              |                                                     |
-                              |no                                                   |
-                              |                                                     |
-                   RSVD       v                                                     |
-                   +---------------------+                                          |
-                   |  +---------------+  |                                          |
-                   |  |cBLUVALIDATE   |  |                                          |
-                   |  +---------------+  |                                          |
-                   | Check that requested|                                          |
-                   | namespace/project   |                                          |
-                   | name doesn't match a|                                          |
-                   | reserved prefix     |                                          |
-                   | {d}                 |                                          |
-                   +----------+----------+                                          |
-                              |                                                     |
-            +-----------------+-----------------------+                             |
-            |                                         |                             |
-            |CREATE                                   |CREATE                       |
-            |ProjectRequest                           |Namespace                    |
-            |                                         |                             |
-            |                          +--------------+--------------+              |
-  PRJREQ_ORGv                          |                             |              |
-  +-----------------+                  |Principal           Principal|              |
-  |+---------------+|                  |is User                 is SA|              |
-  ||cBLUVALIDATE   ||                  v                             v              |
-  |+---------------+|       +----------------------+     +----------------------+   |
-  |  Check that user| no    :USR_NS_ORG            |     :SA_NS_ORG             |   |
-  |  has default    +----+  | +-----------------+  |     |  +----------------+  |   |
-  |  organization   |    |  | | +-------------+ |  |     |  | +-------------+|  |   |
-  | {d}             |    |  | | |cPNKMUTATE   | |  |     |  | |cPNKMUTATE   ||  |   |
-  +-----------------+    |  | | +-------------+ |  |     |  | +-------------+|  |   |
-          |              |  | |    Inject user's|  |     |  |    Inject SA's |  |   |
-          |yes           |  | |    default      |  |     |  |    organization|  |   |
-          |              |  | |    organization |  |     |  |    if no label |  |   |
-          v              |  | |    if no label  |  |     |  |    in request  |  |   |
-      +--------+         |  | |    in request   |  |     |  | {d}            |  |   |
-      |  c2A2  |         |  | | {d}             |  |     |  +----------------+  |   |
-      |  ALLOW |         |  | +-----------------+  |     |           |          |   |
-      | request|         |  |          |           |     |           v          |   |
-      |        |         |  |          v           |     | +------------------+ |   |
-      +---+----+         |  | +------------------+ |     | |+---------------+ | |   |
-          |              |  | |+---------------+ | |     | ||cBLUVALIDATE   | | |   |
-          |              |  | ||cBLUVALIDATE   | | |     | |+---------------+ | |   |
-          v              |  | |+---------------+ | |     | |    Check that NS | |   |
- /------------------\    |  | |    Check that NS | |     | |    belongs to    | |   |
- |      cFD0        |    |  | |    belongs to    | |     | |    organization  | |   |
- | CREATE Project[1]|    |  | |    organization  | |     | |    and that it   | |   |
- |                  |    |  | |    and user is   | |     | |    matches SA's  | |   |
- \--------+---------/    |  | |    member of it  | |     | |    organization  | |   |
-          |              |  | | {d}              | |     | | {d}              | |   |
-          |              |  | +------------------+ |     | +------------------+ |   |
-  PRJ_ORG v              |  |                      |     |                      |   |
-  +---------------+      |  +-------+------+-------+     +-------+------+-------+   |
-  |+-------------+|      |          |      |                     |      |           |
-  ||cPNKMUTATE   ||      |          |      |                     |      |           |
-  |+-------------+|      |          |      |                     |      |           |
-  | Inject        |      |          |      |                     |      |           |
-  | organization  |      |          |      |                     |      |           |
-  | from project  |      |     no   |      |                     |      |           |
-  | annotation    |      +----------|------+---------------------|------+           |
-  | {d}           |      |          |                            |                  |
-  +-------+-------+      |          |                            |                  |
-          |              |          |           yes              |                  |
-          |              |          +------------+---------------+                  |
-          v              |                       |                                  |
-/--------------------\   |                       |                                  |
-|  cFD0              |   |                       |                                  |
-|      triggers      |   |                       |                                  |
-| CREATE Namespace[2]|   |                       |                                  |
-|                    |   |              NS_QUOT  v                                  |
-\---------+----------/   |              +-----------------+                         |
-          |              |              |+---------------+|                         |
-          |              |              ||cBLUVALIDATE   ||                         |
-          |              |              |+---------------+|                         |
-          |              |         no   |  Check if       |                         |
-          |              +--------------+  organization   |                         |
-          |              |              |  can create     |                         |
-          |              |              |  more namespaces|                         |
-          |              |              | {d}             |                         |
-          |              |              +--------+--------+                         |
-          |              |                       |                                  |
-          |              |                       |yes                               |
-          |              |                       |                                  |
-          |              |              NS_LBL   v                                  |
-          |              |              +-----------------+                         |
-          |              |              |+---------------+|                         |
-          |              |              ||cBLUVALIDATE   ||                         |
-          |              |              |+---------------+|                         |
-          |              |         no   | Check if        |                         |
-          |              +--------------+ the request only|                         |
-          |              |              | contains allowed|                         |
-          |              |              | labels and      |                         |
-          |              |              | annotations     |                         |
-          |              |              |{d}              |                         |
-          |              |              +--------+--------+                         |
-          |              |                       |                                  |
-          |              |                       |yes                               |
-          |              |                       |                                  |
-          |              v                       v                                  |
-          |          +--------+              +--------+                             |
-          |          |  cRED  |              |  c2A2  |                             |
-          |          |  DENY  |              |  ALLOW |<----------------------------+
-          |          | request|              | request|
-          |          |        |              |        |
-          |          +--------+              +---+----+
-          |                                      |
-          |                                      |
-          |                                      v
-          |                              /----------------\
-          |                              | cFD0           |
-          |                              | CREATE         |
-          +----------------------------->| Namespace with |
-                                         | organization   |
-                                         | label          |
-                                         |                |
-                                         \-------+--------/
-                                                 |
-                                                 |
-                                  +--------------+--------------+
-                                  |                             |
-                         ORG_RBAC v                  RES_QUOT   v
-                         +-----------------+         +---------------------+
-                         |+---------------+|         |  +---------------+  |
-                         ||cGREGENERATE   ||         |  |cGREGENERATE   |  |
-                         |+---------------+|         |  +---------------+  |
-                         |    Grant the    |         |   Create            |
-                         |    organization |         |   ResourceQuota and |
-                         |    Role "admin" |         |   LimitRange objects|
-                         |    in the NS    |         |   in the namespace  |
-                         |{d}              |         |{d}                  |
-                         +-----------------+         +---------------------+
+                               /---------------\
+                               | cFD0          |
+                               | CREATE        |
+                               | Namespace,    |
+                               | ProjectRequest|
+                               |               |
+                               \-------+-------/
+                                       |
+                                       |
+                            PRIV       v
+                            +---------------------+
+                            |  +---------------+  |
+                            |  |cBLUVALIDATE   |  |
+                            |  +---------------+  |    yes
+                            | Principal is allowed+------------------------------------+
+                            |  to bypass policies |                                    |
+                            | {d}                 |                                    |
+                            +----------+----------+                                    |
+                                       |                                               |
+                                       |no                                             |
+                                       |                                               |
+                            RSVD       v                                               |
+                            +--------------------+                                     |
+                            |  +---------------+ |                                     |
+                            |  |cBLUVALIDATE   | |                                     |
+                            |  +---------------+ |                                     |
+                        yes |  Check if requested|                                     |
++---------------------------+  namespace/project |                                     |
+|                           |  name matches a    |                                     |
+|                           |  reserved prefix   |                                     |
+|                           | {d}                |                                     |
+|                           +----------+---------+                                     |
+|                                      |                                               |
+|                                      |no                                             |
+|                                      |                                               |
+|              +-----------------------+-----------------+                             |
+|              |                                         |                             |
+|              |CREATE                                   |CREATE                       |
+|              |ProjectRequest                           |Namespace                    |
+|              |                                         |                             |
+|              |                          +--------------+--------------+              |
+|    PRJREQ_ORGv                          |                             |              |
+|    +-----------------+                  |Principal           Principal|              |
+|    |+---------------+|                  |is User                 is SA|              |
+|    ||cBLUVALIDATE   ||                  v                             v              |
+|    |+---------------+|       +----------------------+     +----------------------+   |
+|    |  Check that user| no    :USR_NS_ORG            |     :SA_NS_ORG             |   |
+|    |  has default    +----+  | +-----------------+  |     |  +----------------+  |   |
+|    |  organization   |    |  | | +-------------+ |  |     |  | +-------------+|  |   |
+|    | {d}             |    |  | | |cPNKMUTATE   | |  |     |  | |cPNKMUTATE   ||  |   |
+|    +-----------------+    |  | | +-------------+ |  |     |  | +-------------+|  |   |
+|            |              |  | |    Inject user's|  |     |  |    Inject SA's |  |   |
+|            |yes           |  | |    default      |  |     |  |    organization|  |   |
+|            |              |  | |    organization |  |     |  |    if no label |  |   |
+|            v              |  | |    if no label  |  |     |  |    in request  |  |   |
+|        +--------+         |  | |    in request   |  |     |  | {d}            |  |   |
+|        |  c2A2  |         |  | | {d}             |  |     |  +----------------+  |   |
+|        |  ALLOW |         |  | +-----------------+  |     |           |          |   |
+|        | request|         |  |          |           |     |           v          |   |
+|        |        |         |  |          v           |     | +------------------+ |   |
+|        +---+----+         |  | +------------------+ |     | |+---------------+ | |   |
+|            |              |  | |+---------------+ | |     | ||cBLUVALIDATE   | | |   |
+|            |              |  | ||cBLUVALIDATE   | | |     | |+---------------+ | |   |
+|            v              |  | |+---------------+ | |     | |    Check that NS | |   |
+|   /------------------\    |  | |    Check that NS | |     | |    belongs to    | |   |
+|   |      cFD0        |    |  | |    belongs to    | |     | |    organization  | |   |
+|   | CREATE Project[1]|    |  | |    organization  | |     | |    and that it   | |   |
+|   |                  |    |  | |    and user is   | |     | |    matches SA's  | |   |
+|   \--------+---------/    |  | |    member of it  | |     | |    organization  | |   |
+|            |              |  | | {d}              | |     | | {d}              | |   |
+|            |              |  | +------------------+ |     | +------------------+ |   |
+|    PRJ_ORG v              |  |                      |     |                      |   |
+|    +---------------+      |  +-------+------+-------+     +-------+------+-------+   |
+|    |+-------------+|      |          |      |                     |      |           |
+|    ||cPNKMUTATE   ||      |          |      |                     |      |           |
+|    |+-------------+|      |          |      |                     |      |           |
+|    | Inject        |      |          |      |                     |      |           |
+|    | organization  |      |          |      |                     |      |           |
+|    | from project  |      |     no   |      |                     |      |           |
+|    | annotation    |      +----------|------+---------------------|------+           |
+|    | {d}           |      |          |                            |                  |
+|    +-------+-------+      |          |                            |                  |
+|            |              |          |           yes              |                  |
+|            |              |          +------------+---------------+                  |
+|            v              |                       |                                  |
+|  /--------------------\   |                       |                                  |
+|  |  cFD0              |   |                       |                                  |
+|  |      triggers      |   |                       |                                  |
+|  | CREATE Namespace[2]|   |                       |                                  |
+|  |                    |   |              NS_QUOT  v                                  |
+|  \---------+----------/   |              +-----------------+                         |
+|            |              |              |+---------------+|                         |
+|            |              |              ||cBLUVALIDATE   ||                         |
+|            |              |              |+---------------+|                         |
+|            |              |         no   |  Check if       |                         |
+|            |              +--------------+  organization   |                         |
+|            |              |              |  can create     |                         |
+|            |              |              |  more namespaces|                         |
+|            |              |              | {d}             |                         |
+|            |              |              +--------+--------+                         |
+|            |              |                       |                                  |
+|            |              |                       |yes                               |
+|            |              |                       |                                  |
+|            |              |              NS_LBL   v                                  |
+|            |              |              +-----------------+                         |
+|            |              |              |+---------------+|                         |
+|            |              |              ||cBLUVALIDATE   ||                         |
+|            |              |              |+---------------+|                         |
+|            |              |         no   | Check if        |                         |
+|            |              +--------------+ the request only|                         |
+|            |              |              | contains allowed|                         |
+|            |              |              | labels and      |                         |
+|            |              |              | annotations     |                         |
+|            |              |              |{d}              |                         |
+|            |              |              +--------+--------+                         |
+|            |              |                       |                                  |
+|            |              |                       |yes                               |
+|            |              |                       |                                  |
+|            |              v                       v                                  |
+|            |          +--------+              +--------+                             |
+|            |          |  cRED  |              |  c2A2  |                             |
++------------|--------->|  DENY  |              |  ALLOW |<----------------------------+
+             |          | request|              | request|
+             |          |        |              |        |
+             |          +--------+              +---+----+
+             |                                      |
+             |                                      |
+             |                                      v
+             |                              /----------------\
+             |                              | cFD0           |
+             |                              | CREATE         |
+             +----------------------------->| Namespace with |
+                                            | organization   |
+                                            | label          |
+                                            |                |
+                                            \-------+--------/
+                                                    |
+                                                    |
+                                     +--------------+--------------+
+                                     |                             |
+                            ORG_RBAC v                  RES_QUOT   v
+                            +-----------------+         +---------------------+
+                            |+---------------+|         |  +---------------+  |
+                            ||cGREGENERATE   ||         |  |cGREGENERATE   |  |
+                            |+---------------+|         |  +---------------+  |
+                            |    Grant the    |         |   Create            |
+                            |    organization |         |   ResourceQuota and |
+                            |    Role "admin" |         |   LimitRange objects|
+                            |    in the NS    |         |   in the namespace  |
+                            |{d}              |         |{d}                  |
+                            +-----------------+         +---------------------+
 ....
 <1> `Project` resources can't be created directly by users.
 <2> `Namespace` resources which are created from a `ProjectRequest` always originate from a privileged system principal which can bypass the namespace restrictions.
