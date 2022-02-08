@@ -236,6 +236,8 @@ This policy is applied to any namespace which is created with an organization la
 It grants role `admin` to the organization to which the new namespace belongs.
 +
 This fulfils the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[namespaces are owned by organizations].
++
+TIP: For namespaces created through OpenShift projects, the policy mutates the `RoleBinding` which is created by OpenShift to grant the organization role `admin`.
 
 xref:references/policies/11_generate_quota_limit_range_in_ns.adoc[`quota-and-limit-range-in-ns` (labeled `RES_QUOT`)]::
 This policy is applied to any namespace which is created with an organization label.
