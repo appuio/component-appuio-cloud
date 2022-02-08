@@ -1,4 +1,6 @@
 * xref:index.adoc[Home]
-.References
-* xref:references/parameters.adoc[Parameters]
+* References
+** xref:references/parameters.adoc[Parameters]
 include::partial$nav-policy.adoc[]
+* Explanations
+** xref:explanations/policies.adoc[Policies]
