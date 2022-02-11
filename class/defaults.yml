@@ -22,6 +22,8 @@ parameters:
           - syn-resource-locker-namespace-default-manager
           # Created by openshift4-monitoring
           - syn-resource-locker-namespace-openshift-monitoring-manager
+          # Created by openshift4-console
+          - syn-resource-locker-namespace-openshift-config-manager
         system:controller:generic-garbage-collector: system:controller:generic-garbage-collector
         system:controller:operator-lifecycle-manager: system:controller:operator-lifecycle-manager
         system:master: system:master
