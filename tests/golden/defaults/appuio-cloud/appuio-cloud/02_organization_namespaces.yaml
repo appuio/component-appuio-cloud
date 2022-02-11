@@ -68,6 +68,7 @@ spec:
           - syn-argocd-server
           - syn-resource-locker-namespace-default-manager
           - syn-resource-locker-namespace-openshift-monitoring-manager
+          - syn-resource-locker-namespace-openshift-config-manager
           - system:controller:generic-garbage-collector
           - system:controller:operator-lifecycle-manager
           - system:master
@@ -108,6 +109,7 @@ spec:
           - syn-argocd-server
           - syn-resource-locker-namespace-default-manager
           - syn-resource-locker-namespace-openshift-monitoring-manager
+          - syn-resource-locker-namespace-openshift-config-manager
           - system:controller:generic-garbage-collector
           - system:controller:operator-lifecycle-manager
           - system:master
@@ -149,6 +151,7 @@ spec:
           - syn-argocd-server
           - syn-resource-locker-namespace-default-manager
           - syn-resource-locker-namespace-openshift-monitoring-manager
+          - syn-resource-locker-namespace-openshift-config-manager
           - system:controller:generic-garbage-collector
           - system:controller:operator-lifecycle-manager
           - system:master
