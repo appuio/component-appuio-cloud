@@ -11,6 +11,44 @@ parameters:
         output_path: vendor/lib/resource-locker.libjsonnet
 
   appuio_cloud:
+    agent:
+      webhook:
+        tls:
+          caCertificate: ${appuio_cloud:agent:webhook:tls:certificate}
+          certificate: |-
+            -----BEGIN CERTIFICATE-----
+            MIIFeDCCA2CgAwIBAgIUH+xWxqMcAYp2t9jmRZ8SlZ3mkNswDQYJKoZIhvcNAQEL
+            BQAwMTEvMC0GA1UEAwwmd2ViaG9vay1zZXJ2aWNlLmFwcHVpby1jb250cm9sLWFw
+            aS5zdmMwHhcNMjIwMzI5MDkyNTM1WhcNMzIwMzI2MDkyNTM1WjAxMS8wLQYDVQQD
+            DCZ3ZWJob29rLXNlcnZpY2UuYXBwdWlvLWNvbnRyb2wtYXBpLnN2YzCCAiIwDQYJ
+            KoZIhvcNAQEBBQADggIPADCCAgoCggIBANuLXjhC1YyO4AjKRdrKa4aYIr93wtQU
+            FhGavZU5+NsD4DaeuBtAylnQ2i2y6ltUlX8LWTwDKGYa2zLiWONXdZMXXad+hYz6
+            fVTJ681GH4/ko2dMcU7IAIRKDQ8cL8rb3GUXsOGRLQM1E4fNCbGi6oURyxcAGRqQ
+            Ym18PfGfqjXC0HUVjkWAPQuc9lGzKjFTR58pVEo5po4gShrG7QOdZosVxVrI8qHY
+            ZTgKeZseoDWo4IeHpke9uZg20K/mPYSWyA4Q1C1bhXyvbAonhz0eE0jzRoyNlRfg
+            0gJFDo8HcaPLgS3xGNxIQtHXF4gZv8VhVjM4CALEp4M4j3bNJ2MN+tBoEvy7eaa5
+            HDnFRbskTrgaSO6GVdH2QNeYQw1wxf1WzBL/GftARn8maRyzJe4/piKykx6+U51S
+            ozwvExvc7UOnuALFKhzZMZyiSRDR+ryhMskvk4zPzlYq246ssCSnfdos2ChMivhq
+            /Hfs57R6UjC3H2aLypdyx3aifAJwZiDwZ0LijcoWfXfHsjk+F9a1+vtGAxFft5Ao
+            dDswcet4gnzR2lDpIha0f6Q7065sEgWQA/Xz0ghiGg94UsBJTk8U6qGrsngafxHh
+            rmCFZOOexn2v6FpkYaNFHSvJ8fckWYR7MlTZi3ihv2OdZUS8MtnZqgzrDfjWZ/oh
+            yr6V7Hj1r1ttAgMBAAGjgYcwgYQwHQYDVR0OBBYEFCfDCDwxYs3XeeW45jEU+B6K
+            H3M0MB8GA1UdIwQYMBaAFCfDCDwxYs3XeeW45jEU+B6KH3M0MA8GA1UdEwEB/wQF
+            MAMBAf8wMQYDVR0RBCowKIImd2ViaG9vay1zZXJ2aWNlLmFwcHVpby1jb250cm9s
+            LWFwaS5zdmMwDQYJKoZIhvcNAQELBQADggIBAIeZ9lJhPyA7FI98Z8bLP3kC/a6n
+            pbzt9exkzc+ERiNmUy9n3Q1ykIDpMMlDmtzci3EejuHL82i/A4Jtuj+B/iRgIkGY
+            L3Ph8BsJNSZhsvEvhqJU02/Nr04SYify4dqe4SjZLnvd45wdHNaCmloRcKtz0QTN
+            E0tnbJISvpTlR8patftEN4ru1amd+GMUPunoykERZTftHw0SO/lVOlVATDjLpNJP
+            0IWbBrZJTLSF7uhkGfpR2aIukqUi0QvDRQJ4D77Va3DqwetmWSEABlg1rfxuvP0k
+            3kbD1/JX1I3A26Sqs9X5lSqXTq1sTKzd+2gtEulIJ5z0Et2y0rOWnPvXxJ4Ld4C/
+            zAcro9aM11yqP/BjmdL+l3rYRj8N38s39EzhAY3MvYnSy1P2RmL/p4BsrOEvN5Mq
+            /E9zKEXsTQXviZc56J+iCrMAuRfQHXDIkwtID2oRuP0t4xtatQorf4JV/PRMAw0i
+            ZvrGMzX61r0eqn1t3bEJ49P+YvzawErH/l3zdITMc13sOWZQ1NayekxeVIOa6hyd
+            SFObMdLVJCUWcdz52EAk4jlqN0vN8iMSFnB8mBT4X+8reauopfWAnFH8VWfN8tyN
+            m2j6L7Lb2uwBCq2NaOY9HNSi52N/J6DnQZegogQxCUiT7YJr4Xtkabv99c6mn230
+            al+L9+1VcdfaZsPI
+            -----END CERTIFICATE-----
+
     bypassNamespaceRestrictions:
       subjects:
         argocd:
