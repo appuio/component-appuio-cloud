@@ -25,9 +25,9 @@ local deployment = loadManifest('manager/manager.yaml') {
     namespace: params.namespace,
   },
   spec+: {
+    replicas: params.agent.replicas,
     template+: {
       spec+: {
-        replicas: params.agent.replicas,
         containers: [
           if c.name == 'manager' then
             c {
