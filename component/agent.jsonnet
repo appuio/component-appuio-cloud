@@ -29,7 +29,7 @@ local deployment = loadManifest('manager/manager.yaml') {
     template+: {
       spec+: {
         containers: [
-          if c.name == 'manager' then
+          if c.name == 'agent' then
             c {
               image: '%(registry)s/%(repository)s:%(tag)s' % image,
               args: [

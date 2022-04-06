@@ -5,7 +5,7 @@ parameters:
         output_path: dependencies/appuio-cloud/agent/manifests/${appuio_cloud:images:agent:tag}/
         source: https://github.com/appuio/appuio-cloud-agent.git
         subdir: config
-        ref: feat/deploy
+        ref: ${appuio_cloud:images:agent:tag}
     compile:
       - input_paths:
           - appuio-cloud/component/app.jsonnet
