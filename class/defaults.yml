@@ -18,7 +18,7 @@ parameters:
           certSecretName: webhook-service-tls
           caCertificate: ""
           certificate: ""
-          key: "?{vaultkv:${customer:name}/${cluster:name}/${_instance}/webhook-key}"
+          key: "?{vaultkv:${cluster:tenant}/${cluster:name}/${_instance}/webhook-key}"
         namespaceSelector:
           matchExpressions:
             - key: appuio.io/organization
