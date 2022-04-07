@@ -3,6 +3,27 @@ parameters:
     =_metadata: {}
     namespace: appuio-cloud
 
+    images:
+      agent:
+        registry: ghcr.io
+        repository: appuio/appuio-cloud-agent
+        tag: v0.1.2
+
+    agent:
+      replicas: 3
+      resourceRatio:
+        memoryPerCore: 4Gi
+      webhook:
+        tls:
+          certSecretName: webhook-service-tls
+          caCertificate: ""
+          certificate: ""
+          key: "?{vaultkv:${cluster:tenant}/${cluster:name}/${_instance}/webhook-key}"
+        namespaceSelector:
+          matchExpressions:
+            - key: appuio.io/organization
+              operator: Exists
+
     bypassNamespaceRestrictions:
       roles: {}
       clusterRoles:

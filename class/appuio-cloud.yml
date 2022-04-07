@@ -1,5 +1,11 @@
 parameters:
   kapitan:
+    dependencies:
+      - type: git
+        output_path: dependencies/appuio-cloud/agent/manifests/${appuio_cloud:images:agent:tag}/
+        source: https://github.com/appuio/appuio-cloud-agent.git
+        subdir: config
+        ref: ${appuio_cloud:images:agent:tag}
     compile:
       - input_paths:
           - appuio-cloud/component/app.jsonnet
@@ -17,3 +23,7 @@ parameters:
           - appuio-cloud/component/runonce-activedeadlineseconds.jsonnet
         input_type: jsonnet
         output_path: appuio-cloud/
+      - input_paths:
+          - appuio-cloud/component/agent.jsonnet
+        input_type: jsonnet
+        output_path: appuio-cloud/01_agent/

@@ -10,6 +10,86 @@ default:: `appuio-cloud`
 
 The namespace in which to deploy this component.
 
+== `images`
+[horizontal]
+type:: dict
+default:: https://github.com/appuio/component-appuio-cloud/blob/master/class/defaults.yml[See `class/defaults.yml`]
+
+This parameter allows selecting the Docker images to us.
+Each image is specified using keys `registry`, `repository` and `tag`.
+This structure allows easily injecting a registry mirror, if required.
+
+== `agent.replicas`
+
+[horizontal]
+type:: int
+default:: 3
+
+With how many replicas the APPUiO Cloud Agent should run.
+
+
+== `agent.resourceRatio.memoryPerCore`
+type:: string
+default:: `4Gi`
+
+The "fair-use" limit of memory to CPU request.
+That means, if a namespace requests less than `4Gi` of memory per requested CPU core, the APPUiO Cloud Agent will warn the user that they exceed the "fair-use" limit and will potentially generate additional costs.
+
+
+== `agent.webhook.tls`
+
+This key configures encryption of traffic to the controller's admission webhook server.
+The Kubernetes API server only communicates with admission webhooks over HTTPS.
+Therefore, the component requires that both `agent.webhook.tls.certificate` and `agent.webhook.tls.key` are configured.
+
+=== `agent.webhook.tls.certSecretName`
+
+[horizontal]
+type:: string
+default:: `webhook-service-tls`
+
+The name of the secret containing the TLS certificate and key for the agent's webhook server.
+
+=== `agent.webhook.tls.caCertificate`
+
+[horizontal]
+type:: string
+default:: `""`
+
+The CA certificate used to sign the webhook service certificate.
+If left empty, the component assumes that the provided certificate can be verified using the cluster's default CA bundle.
+
+If you deploy a self-signed certificate, set this parameter to `${appuio_cloud:agent:webhook:tls:certificate}`.
+
+=== `agent.webhook.tls.certificate`
+
+[horizontal]
+type:: string
+default:: `""`
+
+The certificate to use for the agent's admission webhook server.
+Users must provide this parameter, since Kubernetes doesn't support admission webhooks which aren't secured with TLS.
+
+=== `agent.webhook.tls.key`
+
+[horizontal]
+type:: string
+default:: `?{vaultkv:${cluster:tenant}/${cluster:name}/${_instance}/webhook-key}`
+
+The private key to use for the agent's admission webhook server.
+
+== `agent.webhook.namespaceSelector`
+[horizontal]
+type:: dict
+
+NamespaceSelector that's applied to every webhook installed by the APPUiO Cloud Agent
+The namespaceSelector decides whether to run the webhook on a request for a namespaced resource (or a Namespace object), based on whether the namespace's labels match the selector.
+If the object itself is a namespace, the matching is performed on object.metadata.labels.
+If the object is a cluster scoped resource other than a Namespace, namespaceSelector has no effect.
+
+See the https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector[upstream documentation] on these selectors.
+
+
 == `reservedNamespaces`
 
 [horizontal]
