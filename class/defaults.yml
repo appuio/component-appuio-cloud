@@ -11,8 +11,8 @@ parameters:
 
     agent:
       replicas: 3
-      resource-ratio:
-        memory-per-core: 4Gi
+      resourceRatio:
+        memoryPerCore: 4Gi
       webhook:
         tls:
           certSecretName: webhook-service-tls

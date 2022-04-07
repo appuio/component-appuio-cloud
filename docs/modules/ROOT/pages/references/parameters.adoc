@@ -27,7 +27,7 @@ default:: 3
 With how many replicas the APPUiO Cloud Agent should run.
 
 
-== `agent.resource-ratio.memory-per-core`
+== `agent.resourceRatio.memoryPerCore`
 type:: string
 default:: `4Gi`
 

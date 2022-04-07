@@ -35,7 +35,7 @@ local deployment = loadManifest('manager/manager.yaml') {
               args: [
                 '--leader-elect',
                 '--webhook-cert-dir=' + webhookCertDir,
-                '--memory-per-core-limit=' + params.agent['resource-ratio']['memory-per-core'],
+                '--memory-per-core-limit=' + params.agent.resourceRatio.memoryPerCore,
               ],
               volumeMounts+: [
                 {
