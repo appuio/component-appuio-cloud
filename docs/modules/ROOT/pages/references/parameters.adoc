@@ -19,6 +19,14 @@ This parameter allows selecting the Docker images to us.
 Each image is specified using keys `registry`, `repository` and `tag`.
 This structure allows easily injecting a registry mirror, if required.
 
+== `monitoring.enabled`
+
+[horizontal]
+type:: boolean
+default:: `true`
+
+Controls if `ServiceMonitor` object is created to scrape the APPUiO Cloud Agent metrics.
+
 == `agent.replicas`
 
 [horizontal]

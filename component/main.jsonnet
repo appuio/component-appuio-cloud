@@ -6,7 +6,22 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
-// Define outputs below
+local isOpenshift = std.startsWith(inv.parameters.facts.distribution, 'openshift');
+local monitoringLabel =
+  if isOpenshift then
+    {
+      'openshift.io/cluster-monitoring': 'true',
+    }
+  else
+    {
+      SYNMonitoring: 'main',
+    };
+
+
 {
-  '00_namespace': kube.Namespace(params.namespace) + common.DefaultLabels,
+  '00_namespace': kube.Namespace(params.namespace) {
+    metadata+: {
+      labels+: monitoringLabel,
+    },
+  } + common.DefaultLabels,
 }

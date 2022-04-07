@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  annotations: {}
+  labels:
+    control-plane: appuio-cloud-agent
+    name: appuio-cloud-agent
+    service: metrics
+  name: appuio-cloud-agent
+  namespace: appuio-cloud
+spec:
+  endpoints:
+    - port: metrics-port
+  namespaceSelector:
+    matchNames:
+      - appuio-cloud
+  selector:
+    matchLabels:
+      control-plane: appuio-cloud-agent
+      service: metrics

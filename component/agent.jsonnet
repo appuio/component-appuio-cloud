@@ -101,6 +101,16 @@ local admissionWebhookService = loadManifest('webhook/service.yaml') {
   },
 };
 
+local metricsService = loadManifest('manager/service.yaml') {
+  metadata+: {
+    namespace: params.namespace,
+    labels+: {
+      'control-plane': 'appuio-cloud-agent',
+      service: 'metrics',
+    },
+  },
+};
+
 {
   '01_role': role,
   '01_leader_election_role': leaderElectionRole,
@@ -140,4 +150,5 @@ local admissionWebhookService = loadManifest('webhook/service.yaml') {
   '02_deployment': deployment,
   '10_webhook_config': admissionWebhook,
   '11_webhook_service': admissionWebhookService,
+  '20_metrics_service': metricsService,
 }
