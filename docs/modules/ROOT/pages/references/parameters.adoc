@@ -13,6 +13,7 @@ The namespace in which to deploy this component.
 == `images`
 [horizontal]
 type:: dict
+default:: https://github.com/appuio/component-appuio-cloud/blob/master/class/defaults.yml[See `class/defaults.yml`]
 
 This parameter allows selecting the Docker images to us.
 Each image is specified using keys `registry`, `repository` and `tag`.
