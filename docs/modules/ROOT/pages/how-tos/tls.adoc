@@ -1,0 +1,72 @@
+= Setup TLS certificates for the APPUiO Cloud Agent
+
+This guide provides an example how to setup TLS certificates for the APPUiO Cloud Agent admission webhook server.
+
+====
+Requirements
+
+* `kubectl`
+* `openssl`
+* `vault`
+* `yq`
+====
+
+. Compile the cluster
++
+[source,bash]
+----
+commodore catalog compile ${CLUSTER_ID}"
+----
+
+. Prepare certificate files
++
+[source,bash]
+----
+# Adjust the lifetime as necessary
+lifetime=3650
+
+# Adjust admission webhook servicename if the namespace differs
+servicename=webhook-service.appuio-cloud.svc
+openssl req -x509 -newkey rsa:4096 -nodes -keyout webhook.key -out webhook.crt -days ${lifetime} -subj "/CN=$servicename" -addext "subjectAltName = DNS:$servicename"
+----
+
+. Store keys in Vault
++
+[source,bash]
+----
+instance=appuio-cloud
+parent="clusters/kv/${TENANT_ID}/${CLUSTER_ID}"
+
+# Use the 'patch' subcommand to add to existing secret
+vault kv patch "${parent}/${instance}" webhook-key=@webhook.key
+----
+
+. Add certificates to cluster config
++
+[source,bash]
+----
+
+webhookcert=$(cat webhook.crt)
+yq eval -i ".parameters.appuio_cloud.agent.webhook.tls.certificate = \"${webhookcert}\"" \
+  inventory/classes/${TENANT_ID}/${CLUSTER_ID}.yml
+yq eval -i '.parameters.appuio_cloud.agent.webhook.tls.caCertificate = "${appuio_cloud:agent:webhook.tls:certificate}"' \
+  inventory/classes/${TENANT_ID}/${CLUSTER_ID}.yml
+----
+
+. Commit and push configuration change
++
+[source,bash]
+----
+cd inventory/classes/${TENANT_ID}
+git add ${CLUSTER_ID}.yml
+git commit -m "Configure APPUiO Cloud admission webhook certificates"
+git push origin master
+popd
+----
+
+. Remove temporary files
++
+[source,bash]
+----
+rm webhook.{key,crt}
+----
