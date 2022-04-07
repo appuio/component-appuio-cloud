@@ -9,8 +9,13 @@ parameters:
       - type: https
         source: https://raw.githubusercontent.com/projectsyn/component-resource-locker/v2.0.1/lib/resource-locker.libjsonnet
         output_path: vendor/lib/resource-locker.libjsonnet
+      - type: https
+        source: https://raw.githubusercontent.com/appuio/component-openshift4-monitoring/v1.13.0/lib/openshift4-monitoring-prom.libsonnet
+        output_path: vendor/lib/prom.libsonnet
 
   appuio_cloud:
+    metrics:
+      enabled: true
     agent:
       webhook:
         tls:
