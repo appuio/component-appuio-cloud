@@ -151,7 +151,7 @@ parameters:
             cpu: "600m"
             memory: "768Mi"
           defaultRequest:
-            cpu: "25m"
+            cpu: "10m"
             memory: "100Mi"
 
     disallowDockerBuildStrategy: true
