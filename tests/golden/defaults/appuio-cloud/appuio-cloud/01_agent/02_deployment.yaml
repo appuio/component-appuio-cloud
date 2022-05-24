@@ -24,7 +24,7 @@ spec:
             - --memory-per-core-limit=4Gi
           command:
             - appuio-cloud-agent
-          image: ghcr.io/appuio/appuio-cloud-agent:v0.4.0
+          image: ghcr.io/appuio/appuio-cloud-agent:v0.4.1
           livenessProbe:
             httpGet:
               path: /healthz
