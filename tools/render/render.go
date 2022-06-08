@@ -49,7 +49,7 @@ func getPolicyTypes(p *kyvernov1.ClusterPolicy) []string {
 		if rule.Generation.ResourceSpec.Kind != "" {
 			ptypes["generate"] = true
 		}
-		if rule.Mutation.PatchStrategicMerge != nil || rule.Mutation.PatchesJSON6902 != "" {
+		if rule.Mutation.RawPatchStrategicMerge != nil || rule.Mutation.PatchesJSON6902 != "" {
 			ptypes["mutate"] = true
 		}
 		if rule.Validation.Message != "" {
