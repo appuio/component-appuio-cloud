@@ -338,6 +338,8 @@ github.com/kyverno/go-wildcard v1.0.4 h1:uoIWLnywcLED/nXeNVDj4U7OvNW1O3N4+emC5gK
 github.com/kyverno/go-wildcard v1.0.4/go.mod h1:sZkBvzy+au8C1uiqOH+SdN4psOL+0nhfWgsZzzJKwbs=
 github.com/kyverno/kyverno v1.7.0 h1:gp+t1ThTAMmXF1jcEie+ZHvLnOuwwRS6Upq5KzS52z4=
 github.com/kyverno/kyverno v1.7.0/go.mod h1:4twhW8CcubmLZ7lQF4+1pYXYTn0GJIiBUyHxsdl86mM=
+github.com/kyverno/kyverno v1.7.1 h1:YykyefFmlET8uYrQvOw+/Ki//9RmERcz8BwNPhQabZ8=
+github.com/kyverno/kyverno v1.7.1/go.mod h1:4twhW8CcubmLZ7lQF4+1pYXYTn0GJIiBUyHxsdl86mM=
 github.com/magiconair/properties v1.8.1/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.5/go.mod h1:y3VJvCyxH9uVvJTWEGAELF3aiYNyPKd5NZ3oSwXrF60=
 github.com/mailru/easyjson v0.0.0-20190614124828-94de47d64c63/go.mod h1:C1wdFJiN94OJF2b5HbByQZoLdCWB1Yqtg26g4irojpc=
