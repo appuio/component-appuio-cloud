@@ -130,7 +130,8 @@ spec:
           spec:
             hard:
               cephfs-fspool-cluster.storageclass.storage.k8s.io/requests.storage: '{{
-                request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.cephfs-fspool-cluster.storageclass.storage.k8s.io_requests.storage"
+                parse_json(request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.storageclasses"
+                || ''{}'')."cephfs-fspool-cluster.storageclass.storage.k8s.io/requests.storage"
                 || ''25Gi'' }}'
               count/configmaps: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_configmaps"
                 || ''150'' }}'
@@ -147,7 +148,8 @@ spec:
               limits.ephemeral-storage: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.limits.ephemeral-storage"
                 || ''500Mi'' }}'
               localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims: '{{
-                request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.localblock-storage.storageclass.storage.k8s.io_persistentvolumeclaims"
+                parse_json(request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.storageclasses"
+                || ''{}'')."localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims"
                 || ''0'' }}'
               openshift.io/imagestreams: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.openshift.io_imagestreams"
                 || ''20'' }}'
@@ -156,7 +158,8 @@ spec:
               persistentvolumeclaims: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.persistentvolumeclaims"
                 || ''10'' }}'
               rbd-storagepool-cluster.storageclass.storage.k8s.io/requests.storage: '{{
-                request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.rbd-storagepool-cluster.storageclass.storage.k8s.io_requests.storage"
+                parse_json(request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.storageclasses"
+                || ''{}'')."rbd-storagepool-cluster.storageclass.storage.k8s.io/requests.storage"
                 || ''25Gi'' }}'
               requests.ephemeral-storage: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.requests.ephemeral-storage"
                 || ''250Mi'' }}'
