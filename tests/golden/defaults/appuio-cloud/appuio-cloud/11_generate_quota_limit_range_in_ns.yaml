@@ -129,6 +129,9 @@ spec:
         data:
           spec:
             hard:
+              cephfs-fspool-cluster.storageclass.storage.k8s.io/requests.storage: '{{
+                request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.cephfs-fspool-cluster.storageclass.storage.k8s.io_requests.storage"
+                || ''25Gi'' }}'
               count/configmaps: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_configmaps"
                 || ''150'' }}'
               count/replicationcontrollers: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_replicationcontrollers"
@@ -152,6 +155,9 @@ spec:
                 || ''50'' }}'
               persistentvolumeclaims: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.persistentvolumeclaims"
                 || ''10'' }}'
+              rbd-storagepool-cluster.storageclass.storage.k8s.io/requests.storage: '{{
+                request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.rbd-storagepool-cluster.storageclass.storage.k8s.io_requests.storage"
+                || ''25Gi'' }}'
               requests.ephemeral-storage: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.requests.ephemeral-storage"
                 || ''250Mi'' }}'
               requests.storage: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.requests.storage"
