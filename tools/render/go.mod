@@ -7,7 +7,7 @@ require (
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/kyverno/kyverno v1.7.1
 	github.com/spf13/cobra v1.4.0
-	k8s.io/apimachinery v0.24.1
+	k8s.io/apimachinery v0.24.2
 )
 
 require (
