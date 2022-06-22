@@ -266,6 +266,12 @@ For example `resourcequota.appuio.io/organization-compute.limits.cpu: "1337"` wi
 
 For resources containing a forward slash, you will need to substitute it for an underline.
 For example: `resourcequota.appuio.io/organization-objects.openshift.io_imagestreams: "40"`.
+
+The exception is that for customizing storage class quotas you need to set annotation `resourcequota.appuio.io/<name>.storageclasses`.
+This is because the regular annotations for storageclass-specific resources are generally too long to be accepted as annotation keys by Kubernetes.
+The value of the `resourcequota.appuio.io/<name>.storageclasses` annotation is parsed as JSON by Kyverno.
+The policy expects that the parsed JSON is a single object.
+For quota keys of the resource quota `<name>` which match the prefix `<storageclass>.storageclass.storage.k8s.io` the policy checks that JSON object instead of a plain annotation for overrides.
 ====
 
 == `generatedLimitRange`

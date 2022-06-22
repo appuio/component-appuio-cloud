@@ -7,6 +7,8 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
 
+local quotaAnnotationPrefix = 'resourcequota.appuio.io';
+
 local quotaSpec(rn, rq) =
   local hard = com.getValueOrDefault(rq, 'hard', {});
   local scopes = com.getValueOrDefault(rq, 'scopes', []);
@@ -28,7 +30,11 @@ local quotaSpec(rn, rq) =
     };
   spec {
     hard: std.foldl(function(x, k) x {
-      [k]: "{{ request.object.metadata.annotations.\"%s/%s.%s\" || '%s' }}" % [ 'resourcequota.appuio.io', rn, std.strReplace(k, '/', '_'), x[k] ],
+      [k]:
+        if std.length(std.findSubstr('storageclass.storage.k8s.io', k)) > 0 then
+          "{{ parse_json(request.object.metadata.annotations.\"%s/%s.storageclasses\" || '{}').\"%s\" || '%s' }}" % [ quotaAnnotationPrefix, rn, k, x[k] ]
+        else
+          "{{ request.object.metadata.annotations.\"%s/%s.%s\" || '%s' }}" % [ quotaAnnotationPrefix, rn, std.strReplace(k, '/', '_'), x[k] ],
     }, std.objectFields(spec.hard), spec.hard),
   };
 
