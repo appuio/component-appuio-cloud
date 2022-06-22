@@ -114,6 +114,11 @@ parameters:
             requests.ephemeral-storage: "250Mi"
             limits.ephemeral-storage: "500Mi"
 
+            # Limit the total amount of Rook-Ceph backed storage which can be
+            # requested per namespace
+            cephfs-fspool-cluster.storageclass.storage.k8s.io/requests.storage: 25Gi
+            rbd-storagepool-cluster.storageclass.storage.k8s.io/requests.storage: 25Gi
+
       organization-compute:
         synchronize: true
         spec:
