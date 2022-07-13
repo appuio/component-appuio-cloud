@@ -21,7 +21,13 @@ local monitoringLabel =
 {
   '00_namespace': kube.Namespace(params.namespace) {
     metadata+: {
-      labels+: monitoringLabel,
+      labels+: monitoringLabel {
+        // Ensure the default network policies are not created in the
+        // namespace, as we need to allow access to the validating webhook
+        // from various agreggated API servers.
+        'network-policies.syn.tools/no-defaults': 'true',
+        'network-policies.syn.tools/purge-defaults': 'true',
+      },
     },
   } + common.DefaultLabels,
 }
