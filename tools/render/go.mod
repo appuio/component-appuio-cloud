@@ -1,6 +1,6 @@
 module github.com/appuio/component-appuio-cloud/tools/render
 
-go 1.18
+go 1.19
 
 require (
 	github.com/go-git/go-billy/v5 v5.3.1
