@@ -1,4 +1,4 @@
-KYVERNO_CLI_IMAGE  ?= ghcr.io/kyverno/kyverno-cli:latest
+KYVERNO_CLI_IMAGE  ?= ghcr.io/kyverno/kyverno-cli:v1.6.2
 KYVERNO_CLI_DOCKER ?= $(DOCKER_CMD) $(DOCKER_ARGS) $(root_volume) --entrypoint=/kyverno $(KYVERNO_CLI_IMAGE)
 KYVERNO_CLI_ARGS   ?= -v2
 
