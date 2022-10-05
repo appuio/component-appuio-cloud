@@ -50,9 +50,6 @@ spec:
           - syn-admin
           - syn-argocd-application-controller
           - syn-argocd-server
-          - syn-resource-locker-namespace-default-d6a0af6dd07e8a3-manager
-          - syn-resource-locker-penshift-monitoring-c4273dc15ddfdf7-manager
-          - syn-resource-locker-ce-openshift-config-2c8343f13594d63-manager
           - system:controller:generic-garbage-collector
           - system:controller:operator-lifecycle-manager
           - system:master
@@ -62,6 +59,15 @@ spec:
           - kind: ServiceAccount
             name: argocd-application-controller
             namespace: argocd
+          - kind: ServiceAccount
+            name: namespace-openshift-config-2c8343f13594d63-manager
+            namespace: syn-resource-locker
+          - kind: ServiceAccount
+            name: namespace-default-d6a0af6dd07e8a3-manager
+            namespace: syn-resource-locker
+          - kind: ServiceAccount
+            name: namespace-openshift-monitoring-c4273dc15ddfdf7-manager
+            namespace: syn-resource-locker
       match:
         all:
           - resources:
@@ -114,9 +120,6 @@ spec:
           - syn-admin
           - syn-argocd-application-controller
           - syn-argocd-server
-          - syn-resource-locker-namespace-default-d6a0af6dd07e8a3-manager
-          - syn-resource-locker-penshift-monitoring-c4273dc15ddfdf7-manager
-          - syn-resource-locker-ce-openshift-config-2c8343f13594d63-manager
           - system:controller:generic-garbage-collector
           - system:controller:operator-lifecycle-manager
           - system:master
@@ -126,6 +129,15 @@ spec:
           - kind: ServiceAccount
             name: argocd-application-controller
             namespace: argocd
+          - kind: ServiceAccount
+            name: namespace-openshift-config-2c8343f13594d63-manager
+            namespace: syn-resource-locker
+          - kind: ServiceAccount
+            name: namespace-default-d6a0af6dd07e8a3-manager
+            namespace: syn-resource-locker
+          - kind: ServiceAccount
+            name: namespace-openshift-monitoring-c4273dc15ddfdf7-manager
+            namespace: syn-resource-locker
       match:
         all:
           - resources:
