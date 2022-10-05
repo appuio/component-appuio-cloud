@@ -23,7 +23,7 @@ spec:
             - --webhook-cert-dir=/var/run/webhook-service-tls
           command:
             - appuio-cloud-agent
-          image: ghcr.io/appuio/appuio-cloud-agent:node-selector-validator
+          image: ghcr.io/appuio/appuio-cloud-agent:v0.5.0-dev
           livenessProbe:
             httpGet:
               path: /healthz
