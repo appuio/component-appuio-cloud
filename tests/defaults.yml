@@ -56,10 +56,7 @@ parameters:
 
     bypassNamespaceRestrictions:
       subjects:
-        argocd:
-          kind: ServiceAccount
-          name: argocd-application-controller
-          namespace: argocd
+        argocd: "system:serviceaccount:argocd:argocd-application-controller"
 
     maxNamespaceQuota: 3
     namespaceQuotaOverrides:

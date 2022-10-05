@@ -10,7 +10,7 @@ parameters:
       agent:
         registry: ghcr.io
         repository: appuio/appuio-cloud-agent
-        tag: v0.4.1
+        tag: node-selector-validator
 
     agent:
       replicas: 3
@@ -26,6 +26,16 @@ parameters:
           matchExpressions:
             - key: appuio.io/organization
               operator: Exists
+      config:
+        MemoryPerCoreLimit: ${appuio_cloud:agent:resourceRatio:memoryPerCore}
+        OrganizationLabel: appuio.io/organization
+
+        PrivilegedGroups: {}
+        PrivilegedUsers: ${appuio_cloud:bypassNamespaceRestrictions:subjects}
+        PrivilegedRoles: ${appuio_cloud:bypassNamespaceRestrictions:roles}
+        PrivilegedClusterRoles: ${appuio_cloud:bypassNamespaceRestrictions:clusterRoles}
+
+        AllowedNodeSelectors: {}
 
     bypassNamespaceRestrictions:
       roles: {}

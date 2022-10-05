@@ -21,10 +21,9 @@ spec:
         - args:
             - --leader-elect
             - --webhook-cert-dir=/var/run/webhook-service-tls
-            - --memory-per-core-limit=4Gi
           command:
             - appuio-cloud-agent
-          image: ghcr.io/appuio/appuio-cloud-agent:v0.4.1
+          image: ghcr.io/appuio/appuio-cloud-agent:node-selector-validator
           livenessProbe:
             httpGet:
               path: /healthz
@@ -50,13 +49,20 @@ spec:
               memory: 128Mi
           securityContext:
             allowPrivilegeEscalation: false
+          terminationMessagePolicy: FallbackToLogsOnError
           volumeMounts:
+            - mountPath: /config/config.yaml
+              name: config
+              subPath: config.yaml
             - mountPath: /var/run/webhook-service-tls
               name: webhook-service-tls
               readOnly: true
       serviceAccountName: appuio-cloud-agent
       terminationGracePeriodSeconds: 10
       volumes:
+        - configMap:
+            name: appuio-cloud-agent-config
+          name: config
         - name: webhook-service-tls
           secret:
             secretName: webhook-service-tls

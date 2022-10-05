@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  config.yaml: "\"AllowedNodeSelectors\": {}\n\"MemoryPerCoreLimit\": \"4Gi\"\n\"\
+    OrganizationLabel\": \"appuio.io/organization\"\n\"PrivilegedClusterRoles\":\n\
+    - \"cluster-admin\"\n- \"cluster-image-registry-operator\"\n- \"cluster-node-tuning-operator\"\
+    \n- \"kyverno:generatecontroller\"\n- \"kyverno:policycontroller\"\n- \"multus-admission-controller-webhook\"\
+    \n- \"openshift-dns-operator\"\n- \"openshift-ingress-operator\"\n- \"syn-admin\"\
+    \n- \"syn-argocd-application-controller\"\n- \"syn-argocd-server\"\n- \"system:controller:generic-garbage-collector\"\
+    \n- \"system:controller:operator-lifecycle-manager\"\n- \"system:master\"\n- \"\
+    system:openshift:controller:namespace-security-allocation-controller\"\n\"PrivilegedGroups\"\
+    : []\n\"PrivilegedRoles\": []\n\"PrivilegedUsers\":\n- \"system:serviceaccount:argocd:argocd-application-controller\"\
+    \n- \"kind\": \"ServiceAccount\"\n  \"name\": \"namespace-openshift-config-2c8343f13594d63-manager\"\
+    \n  \"namespace\": \"syn-resource-locker\"\n- \"kind\": \"ServiceAccount\"\n \
+    \ \"name\": \"namespace-default-d6a0af6dd07e8a3-manager\"\n  \"namespace\": \"\
+    syn-resource-locker\"\n- \"kind\": \"ServiceAccount\"\n  \"name\": \"namespace-openshift-monitoring-c4273dc15ddfdf7-manager\"\
+    \n  \"namespace\": \"syn-resource-locker\""
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    name: appuio-cloud-agent-config
+  name: appuio-cloud-agent-config
+  namespace: appuio-cloud

@@ -6,6 +6,7 @@ local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
 local params = inv.parameters.appuio_cloud;
+local common = import 'common.libsonnet';
 
 local image = params.images.agent;
 local loadManifest(manifest) = std.parseJson(kap.yaml_load('appuio-cloud/agent/manifests/' + image.tag + '/' + manifest));
@@ -19,6 +20,20 @@ local role = com.namespaced(params.namespace, loadManifest('rbac/role.yaml'));
 local leaderElectionRole = com.namespaced(params.namespace, loadManifest('rbac/leader_election_role.yaml'));
 
 local webhookCertDir = '/var/run/webhook-service-tls';
+
+local configMap = kube.ConfigMap('appuio-cloud-agent-config') {
+  metadata+: {
+    namespace: params.namespace,
+  },
+  data: {
+    'config.yaml': std.manifestYamlDoc(params.agent.config {
+      PrivilegedGroups: common.FlattenSet(super.PrivilegedGroups),
+      PrivilegedUsers: common.FlattenSet(super.PrivilegedUsers),
+      PrivilegedRoles: common.FlattenSet(super.PrivilegedRoles),
+      PrivilegedClusterRoles: common.FlattenSet(super.PrivilegedClusterRoles),
+    }),
+  },
+};
 
 local deployment = loadManifest('manager/manager.yaml') {
   metadata+: {
@@ -35,7 +50,6 @@ local deployment = loadManifest('manager/manager.yaml') {
               args: [
                 '--leader-elect',
                 '--webhook-cert-dir=' + webhookCertDir,
-                '--memory-per-core-limit=' + params.agent.resourceRatio.memoryPerCore,
               ],
               volumeMounts+: [
                 {
@@ -146,6 +160,7 @@ local metricsService = loadManifest('manager/service.yaml') {
     ],
   },
   '01_service_account': serviceAccount,
+  '01_config_map': configMap,
   '02_webhook_cert_secret': admissionWebhookTlsSecret,
   '02_deployment': deployment,
   '10_webhook_config': admissionWebhook,
