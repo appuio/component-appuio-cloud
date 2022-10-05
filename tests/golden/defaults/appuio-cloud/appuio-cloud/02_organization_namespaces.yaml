@@ -72,7 +72,9 @@ spec:
           - system:openshift:controller:namespace-security-allocation-controller
         roles: []
         subjects:
-          - system:serviceaccount:argocd:argocd-application-controller
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
           - kind: ServiceAccount
             name: namespace-openshift-config-2c8343f13594d63-manager
             namespace: syn-resource-locker
@@ -117,7 +119,9 @@ spec:
           - system:openshift:controller:namespace-security-allocation-controller
         roles: []
         subjects:
-          - system:serviceaccount:argocd:argocd-application-controller
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
           - kind: ServiceAccount
             name: namespace-openshift-config-2c8343f13594d63-manager
             namespace: syn-resource-locker
@@ -163,7 +167,9 @@ spec:
           - system:openshift:controller:namespace-security-allocation-controller
         roles: []
         subjects:
-          - system:serviceaccount:argocd:argocd-application-controller
+          - kind: ServiceAccount
+            name: argocd-application-controller
+            namespace: argocd
           - kind: ServiceAccount
             name: namespace-openshift-config-2c8343f13594d63-manager
             namespace: syn-resource-locker

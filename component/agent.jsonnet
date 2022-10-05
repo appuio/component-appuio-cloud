@@ -21,14 +21,33 @@ local leaderElectionRole = com.namespaced(params.namespace, loadManifest('rbac/l
 
 local webhookCertDir = '/var/run/webhook-service-tls';
 
+local mapSubjects = function(subjMap)
+  std.foldl(
+    function(subjects, ks)
+      local s = subjMap[ks];
+      if s.kind == 'Group' then
+        subjects { groups+: [ s.name ] }
+      else if s.kind == 'User' then
+        subjects { users+: [ s.name ] }
+      else if s.kind == 'ServiceAccount' then
+        local name = 'system:serviceaccount:%s:%s' % [ s.namespace, s.name ];
+        subjects { users+: [ name ] }
+      else
+        subjects,
+    std.objectFields(subjMap),
+    { groups: [], users: [] }
+  );
+
 local configMap = kube.ConfigMap('appuio-cloud-agent-config') {
   metadata+: {
     namespace: params.namespace,
   },
   data: {
     'config.yaml': std.manifestYamlDoc(params.agent.config {
-      PrivilegedGroups: common.FlattenSet(super.PrivilegedGroups),
-      PrivilegedUsers: common.FlattenSet(super.PrivilegedUsers),
+      local subjects = mapSubjects(super._subjects),
+      _subjects:: null,
+      PrivilegedGroups: subjects.groups,
+      PrivilegedUsers: subjects.users,
       PrivilegedRoles: common.FlattenSet(super.PrivilegedRoles),
       PrivilegedClusterRoles: common.FlattenSet(super.PrivilegedClusterRoles),
     }),

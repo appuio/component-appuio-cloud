@@ -30,8 +30,8 @@ parameters:
         MemoryPerCoreLimit: ${appuio_cloud:agent:resourceRatio:memoryPerCore}
         OrganizationLabel: appuio.io/organization
 
-        PrivilegedGroups: {}
-        PrivilegedUsers: ${appuio_cloud:bypassNamespaceRestrictions:subjects}
+        _subjects: ${appuio_cloud:bypassNamespaceRestrictions:subjects}
+
         PrivilegedRoles: ${appuio_cloud:bypassNamespaceRestrictions:roles}
         PrivilegedClusterRoles: ${appuio_cloud:bypassNamespaceRestrictions:clusterRoles}
 
