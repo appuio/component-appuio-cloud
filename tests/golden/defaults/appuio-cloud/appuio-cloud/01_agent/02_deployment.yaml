@@ -20,6 +20,7 @@ spec:
       containers:
         - args:
             - --leader-elect
+            - --config-file=/config/config.yaml
             - --webhook-cert-dir=/var/run/webhook-service-tls
           command:
             - appuio-cloud-agent
