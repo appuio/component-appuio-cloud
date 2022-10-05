@@ -98,6 +98,42 @@ If the object is a cluster scoped resource other than a Namespace, namespaceSele
 See the https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector[upstream documentation] on these selectors.
 
 
+=== `agent.config`
+
+[horizontal]
+type:: dict
+default:: https://github.com/appuio/component-appuio-cloud/blob/master/class/defaults.yml[See `class/defaults.yml`]
+
+This parameter allows configuring the APPUiO Cloud Agent.
+See the https://github.com/appuio/appuio-cloud-agent/blob/HEAD/config.go[Agent repository] for an overview of the available configuration options.
+
+
+==== `agent.config._subjects`
+
+[horizontal]
+type:: dict
+default:: `${appuio_cloud:bypassNamespaceRestrictions:subjects}`
+example::
++
+[source,yaml]
+----
+_subjects:
+  argocd:
+    kind: ServiceAccount
+    name: argocd-application-controller
+    namespace: argocd
+  admin:
+    kind: User
+    name: admin
+  admins:
+    kind: Group
+    name: admins
+----
+
+A special key to map between the Kyverno way of specifying subjects and the APPUiO Cloud Agent way.
+The key is omitted from the final configuration.
+
+
 == `reservedNamespaces`
 
 [horizontal]
