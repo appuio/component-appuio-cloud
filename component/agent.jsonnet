@@ -6,6 +6,7 @@ local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
 local params = inv.parameters.appuio_cloud;
+local common = import 'common.libsonnet';
 
 local image = params.images.agent;
 local loadManifest(manifest) = std.parseJson(kap.yaml_load('appuio-cloud/agent/manifests/' + image.tag + '/' + manifest));
@@ -20,6 +21,38 @@ local leaderElectionRole = com.namespaced(params.namespace, loadManifest('rbac/l
 
 local webhookCertDir = '/var/run/webhook-service-tls';
 
+local mapSubjects = function(subjMap)
+  std.foldl(
+    function(subjects, ks)
+      local s = subjMap[ks];
+      if s.kind == 'Group' then
+        subjects { groups+: [ s.name ] }
+      else if s.kind == 'User' then
+        subjects { users+: [ s.name ] }
+      else if s.kind == 'ServiceAccount' then
+        local name = 'system:serviceaccount:%s:%s' % [ s.namespace, s.name ];
+        subjects { users+: [ name ] }
+      else
+        subjects,
+    std.objectFields(subjMap),
+    { groups: [], users: [] }
+  );
+
+local configMap = kube.ConfigMap('appuio-cloud-agent-config') {
+  metadata+: {
+    namespace: params.namespace,
+  },
+  data: {
+    'config.yaml': std.manifestYamlDoc(params.agent.config {
+      local subjects = mapSubjects(super._subjects),
+      _subjects:: null,
+      PrivilegedGroups: subjects.groups,
+      PrivilegedUsers: subjects.users,
+      PrivilegedClusterRoles: common.FlattenSet(super.PrivilegedClusterRoles),
+    }),
+  },
+};
+
 local deployment = loadManifest('manager/manager.yaml') {
   metadata+: {
     namespace: params.namespace,
@@ -27,15 +60,18 @@ local deployment = loadManifest('manager/manager.yaml') {
   spec+: {
     replicas: params.agent.replicas,
     template+: {
+      metadata+: {
+        annotations+: {
+          'checksum/config': std.md5(std.manifestJsonMinified(configMap.data)),
+        },
+      },
       spec+: {
         containers: [
           if c.name == 'agent' then
             c {
               image: '%(registry)s/%(repository)s:%(tag)s' % image,
-              args: [
-                '--leader-elect',
+              args+: [
                 '--webhook-cert-dir=' + webhookCertDir,
-                '--memory-per-core-limit=' + params.agent.resourceRatio.memoryPerCore,
               ],
               volumeMounts+: [
                 {
@@ -146,6 +182,7 @@ local metricsService = loadManifest('manager/service.yaml') {
     ],
   },
   '01_service_account': serviceAccount,
+  '01_config_map': configMap,
   '02_webhook_cert_secret': admissionWebhookTlsSecret,
   '02_deployment': deployment,
   '10_webhook_config': admissionWebhook,

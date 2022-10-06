@@ -1,0 +1,60 @@
+apiVersion: v1
+data:
+  config.yaml: '"AllowedNodeSelectors": {}
+
+    "MemoryPerCoreLimit": "4Gi"
+
+    "NamespaceDenyEmptyNodeSelector": false
+
+    "OrganizationLabel": "appuio.io/organization"
+
+    "PrivilegedClusterRoles":
+
+    - "cluster-admin"
+
+    - "cluster-image-registry-operator"
+
+    - "cluster-node-tuning-operator"
+
+    - "kyverno:generatecontroller"
+
+    - "kyverno:policycontroller"
+
+    - "multus-admission-controller-webhook"
+
+    - "openshift-dns-operator"
+
+    - "openshift-ingress-operator"
+
+    - "syn-admin"
+
+    - "syn-argocd-application-controller"
+
+    - "syn-argocd-server"
+
+    - "system:controller:generic-garbage-collector"
+
+    - "system:controller:operator-lifecycle-manager"
+
+    - "system:master"
+
+    - "system:openshift:controller:namespace-security-allocation-controller"
+
+    "PrivilegedGroups": []
+
+    "PrivilegedUsers":
+
+    - "system:serviceaccount:argocd:argocd-application-controller"
+
+    - "system:serviceaccount:syn-resource-locker:namespace-openshift-config-2c8343f13594d63-manager"
+
+    - "system:serviceaccount:syn-resource-locker:namespace-default-d6a0af6dd07e8a3-manager"
+
+    - "system:serviceaccount:syn-resource-locker:namespace-openshift-monitoring-c4273dc15ddfdf7-manager"'
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    name: appuio-cloud-agent-config
+  name: appuio-cloud-agent-config
+  namespace: appuio-cloud

@@ -10,7 +10,7 @@ parameters:
       agent:
         registry: ghcr.io
         repository: appuio/appuio-cloud-agent
-        tag: v0.4.1
+        tag: v0.5.0
 
     agent:
       replicas: 3
@@ -26,9 +26,25 @@ parameters:
           matchExpressions:
             - key: appuio.io/organization
               operator: Exists
+      config:
+        MemoryPerCoreLimit: ${appuio_cloud:agent:resourceRatio:memoryPerCore}
+        OrganizationLabel: appuio.io/organization
+
+        _subjects: ${appuio_cloud:bypassNamespaceRestrictions:subjects}
+
+        PrivilegedClusterRoles: ${appuio_cloud:bypassNamespaceRestrictions:clusterRoles}
+
+        AllowedNodeSelectors: {}
+        # If true this will reject a { "openshift.io/node-selector": "" } annotation.
+        NamespaceDenyEmptyNodeSelector: false
 
     bypassNamespaceRestrictions:
+      # Roles are not supported for the APPUiO Cloud Agent. Should be left empty.
       roles: {}
+      # In APPUiO Cloud Agent ClusterRoles are only ever matched if they are bound through a ClusterRoleBinding,
+      # this is different from the behavior of Kyverno.
+      # This is done to prevent a user from wrongly configuring a low-privileged ClusterRole which users
+      # can then bind to themselves to bypass the restrictions.
       clusterRoles:
         cluster-admin: cluster-admin
         cluster-image-registry-operator: cluster-image-registry-operator
@@ -87,6 +103,9 @@ parameters:
       # - The annotation is only for debugging and not referenced elsewhere.
       # - The mutating policies are validated with a validation rule too.
       kyvernoMutateLabel: policies.kyverno.io/last-applied-patches
+      # Node selectors are validated by the agent
+      nodeSelector:
+        - openshift.io/node-selector
 
     generatedDefaultRoleBindingInNewNamespaces:
       bindingName: admin
