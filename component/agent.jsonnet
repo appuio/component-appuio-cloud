@@ -48,7 +48,6 @@ local configMap = kube.ConfigMap('appuio-cloud-agent-config') {
       _subjects:: null,
       PrivilegedGroups: subjects.groups,
       PrivilegedUsers: subjects.users,
-      PrivilegedRoles: common.FlattenSet(super.PrivilegedRoles),
       PrivilegedClusterRoles: common.FlattenSet(super.PrivilegedClusterRoles),
     }),
   },

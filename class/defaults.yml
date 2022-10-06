@@ -32,13 +32,17 @@ parameters:
 
         _subjects: ${appuio_cloud:bypassNamespaceRestrictions:subjects}
 
-        PrivilegedRoles: ${appuio_cloud:bypassNamespaceRestrictions:roles}
         PrivilegedClusterRoles: ${appuio_cloud:bypassNamespaceRestrictions:clusterRoles}
 
         AllowedNodeSelectors: {}
 
     bypassNamespaceRestrictions:
+      # Roles are not supported for the APPUiO Cloud Agent. Should be left empty.
       roles: {}
+      # In APPUiO Cloud Agent ClusterRoles are only ever matched if they are bound through a ClusterRoleBinding,
+      # this is different from the behavior of Kyverno.
+      # This is done to prevent a user from wrongly configuring a low-privileged ClusterRole which users
+      # can then bind to themselves to bypass the restrictions.
       clusterRoles:
         cluster-admin: cluster-admin
         cluster-image-registry-operator: cluster-image-registry-operator

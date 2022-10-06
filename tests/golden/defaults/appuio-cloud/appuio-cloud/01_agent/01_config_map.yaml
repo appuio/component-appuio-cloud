@@ -40,8 +40,6 @@ data:
 
     "PrivilegedGroups": []
 
-    "PrivilegedRoles": []
-
     "PrivilegedUsers":
 
     - "system:serviceaccount:argocd:argocd-application-controller"
