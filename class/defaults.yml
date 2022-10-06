@@ -35,6 +35,8 @@ parameters:
         PrivilegedClusterRoles: ${appuio_cloud:bypassNamespaceRestrictions:clusterRoles}
 
         AllowedNodeSelectors: {}
+        # If true this will reject a { "openshift.io/node-selector": "" } annotation.
+        NamespaceDenyEmptyNodeSelector: false
 
     bypassNamespaceRestrictions:
       # Roles are not supported for the APPUiO Cloud Agent. Should be left empty.

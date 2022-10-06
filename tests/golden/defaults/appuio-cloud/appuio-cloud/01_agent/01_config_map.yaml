@@ -4,6 +4,8 @@ data:
 
     "MemoryPerCoreLimit": "4Gi"
 
+    "NamespaceDenyEmptyNodeSelector": true
+
     "OrganizationLabel": "appuio.io/organization"
 
     "PrivilegedClusterRoles":

@@ -60,12 +60,17 @@ local deployment = loadManifest('manager/manager.yaml') {
   spec+: {
     replicas: params.agent.replicas,
     template+: {
+      metadata+: {
+        annotations+: {
+          'checksum/config': std.md5(std.manifestJsonMinified(configMap.data)),
+        },
+      },
       spec+: {
         containers: [
           if c.name == 'agent' then
             c {
               image: '%(registry)s/%(repository)s:%(tag)s' % image,
-              imagePullPolicy: "Always",
+              imagePullPolicy: 'Always',
               args+: [
                 '--webhook-cert-dir=' + webhookCertDir,
               ],
