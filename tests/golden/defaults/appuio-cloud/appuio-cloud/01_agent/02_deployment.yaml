@@ -25,6 +25,7 @@ spec:
           command:
             - appuio-cloud-agent
           image: ghcr.io/appuio/appuio-cloud-agent:v0.5.0-dev
+          imagePullPolicy: Always
           livenessProbe:
             httpGet:
               path: /healthz
