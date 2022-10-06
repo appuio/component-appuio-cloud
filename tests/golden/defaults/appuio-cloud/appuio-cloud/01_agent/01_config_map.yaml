@@ -4,7 +4,7 @@ data:
 
     "MemoryPerCoreLimit": "4Gi"
 
-    "NamespaceDenyEmptyNodeSelector": true
+    "NamespaceDenyEmptyNodeSelector": false
 
     "OrganizationLabel": "appuio.io/organization"
 
