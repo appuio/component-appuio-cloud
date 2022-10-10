@@ -10,6 +10,7 @@ local common = import 'common.libsonnet';
 
 local image = params.images.agent;
 local loadManifest(manifest) = std.parseJson(kap.yaml_load('appuio-cloud/agent/manifests/' + image.tag + '/' + manifest));
+local loadManifests(manifest) = std.parseJson(kap.yaml_load_stream('appuio-cloud/agent/manifests/' + image.tag + '/' + manifest));
 
 local serviceAccount = loadManifest('rbac/service_account.yaml') {
   metadata+: {
@@ -112,9 +113,9 @@ local admissionWebhookTlsSecret =
     },
   };
 
-local admissionWebhook = loadManifest('webhook/manifests.yaml') {
+local admissionWebhook = std.map(function(webhook) webhook {
   metadata+: {
-    name: '%s-validating-webhook' % params.namespace,
+    name: '%s-%s' % [ params.namespace, webhook.metadata.name ],
   },
   webhooks: [
     w {
@@ -129,7 +130,7 @@ local admissionWebhook = loadManifest('webhook/manifests.yaml') {
     }
     for w in super.webhooks
   ],
-};
+}, loadManifests('webhook/manifests.yaml'));
 
 local admissionWebhookService = loadManifest('webhook/service.yaml') {
   metadata+: {
