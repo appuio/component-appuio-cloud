@@ -163,7 +163,6 @@ spec:
                   - key: '{{regex_match(`"^custom.appuio.io/.*$"`, `"{{element.key}}"`)
                       || regex_match(`"^kubectl.kubernetes.io/last-applied-configuration$"`,
                       `"{{element.key}}"`) || regex_match(`"^policies.kyverno.io/last-applied-patches$"`,
-                      `"{{element.key}}"`) || regex_match(`"^openshift.io/node-selector$"`,
                       `"{{element.key}}"`) || regex_match(`"^appuio.io/active-deadline-seconds-override$"`,
                       `"{{element.key}}"`) || regex_match(`"^test.appuio.io/.*$"`,
                       `"{{element.key}}"`) || regex_match(`"^compute.test.appuio.io/cpu$"`,
@@ -175,8 +174,7 @@ spec:
               map(&{key: @}, keys(@))'
         message: "The following annotations can be modified:\n    custom.appuio.io/*,\
           \ kubectl.kubernetes.io/last-applied-configuration, policies.kyverno.io/last-applied-patches,\
-          \ openshift.io/node-selector, appuio.io/active-deadline-seconds-override,\
-          \ test.appuio.io/*, compute.test.appuio.io/cpu.\nannotations given:\n  \
-          \  {{request.object.metadata.annotations}}.\nannotations before modification:\n\
-          \    {{request.oldObject.metadata.annotations}}."
+          \ appuio.io/active-deadline-seconds-override, test.appuio.io/*, compute.test.appuio.io/cpu.\n\
+          annotations given:\n    {{request.object.metadata.annotations}}.\nannotations\
+          \ before modification:\n    {{request.oldObject.metadata.annotations}}."
   validationFailureAction: enforce

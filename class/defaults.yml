@@ -100,9 +100,6 @@ parameters:
       # - The annotation is only for debugging and not referenced elsewhere.
       # - The mutating policies are validated with a validation rule too.
       kyvernoMutateLabel: policies.kyverno.io/last-applied-patches
-      # Node selectors are validated by the agent
-      nodeSelector:
-        - openshift.io/node-selector
 
     generatedDefaultRoleBindingInNewNamespaces:
       bindingName: admin
