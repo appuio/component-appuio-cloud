@@ -10,7 +10,7 @@ parameters:
       agent:
         registry: ghcr.io
         repository: appuio/appuio-cloud-agent
-        tag: v0.6.0-dev
+        tag: v0.6.0
 
     agent:
       replicas: 3
@@ -34,6 +34,7 @@ parameters:
         PrivilegedClusterRoles: ${appuio_cloud:bypassNamespaceRestrictions:clusterRoles}
 
         DefaultNodeSelector: {}
+        DefaultNamespaceNodeSelectorAnnotation: appuio.io/default-node-selector
 
     bypassNamespaceRestrictions:
       # Roles are not supported for the APPUiO Cloud Agent. Should be left empty.
@@ -100,6 +101,7 @@ parameters:
       # - The annotation is only for debugging and not referenced elsewhere.
       # - The mutating policies are validated with a validation rule too.
       kyvernoMutateLabel: policies.kyverno.io/last-applied-patches
+      defaultNamespaceNodeSelectorAnnotation: ${appuio_cloud:agent:config:DefaultNamespaceNodeSelectorAnnotation}
 
     generatedDefaultRoleBindingInNewNamespaces:
       bindingName: admin

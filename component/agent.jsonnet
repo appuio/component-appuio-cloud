@@ -71,7 +71,6 @@ local deployment = loadManifest('manager/manager.yaml') {
           if c.name == 'agent' then
             c {
               image: '%(registry)s/%(repository)s:%(tag)s' % image,
-              imagePullPolicy: 'Always',
               args+: [
                 '--webhook-cert-dir=' + webhookCertDir,
               ],

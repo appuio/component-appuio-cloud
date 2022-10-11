@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 6120e5ad9d1f8ce724ef2c8bb5307ad7
+        checksum/config: b7a1a6fb8d69460b38bfd407c167366f
         kubectl.kubernetes.io/default-container: agent
       labels:
         control-plane: appuio-cloud-agent
@@ -25,8 +25,7 @@ spec:
             - --webhook-cert-dir=/var/run/webhook-service-tls
           command:
             - appuio-cloud-agent
-          image: ghcr.io/appuio/appuio-cloud-agent:v0.6.0-dev
-          imagePullPolicy: Always
+          image: ghcr.io/appuio/appuio-cloud-agent:v0.6.0
           livenessProbe:
             httpGet:
               path: /healthz
