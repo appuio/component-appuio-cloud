@@ -10,8 +10,10 @@ local params = inv.parameters.appuio_cloud;
 local bindingToPatch = kube.ClusterRoleBinding('system:build-strategy-docker-binding');
 
 local disallowDockerBuildStrategyPatch = {
-  annotations: {
-    'rbac.authorization.kubernetes.io/autoupdate': 'false',
+  metadata: {
+    annotations: {
+      'rbac.authorization.kubernetes.io/autoupdate': 'false',
+    },
   },
   subjects: [],
 };
