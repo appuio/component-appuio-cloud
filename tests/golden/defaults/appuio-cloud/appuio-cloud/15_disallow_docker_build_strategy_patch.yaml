@@ -1,17 +1,41 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  annotations:
+    resourcelocker.syn.tools/target-object: rbac.authorization.k8s.io.ClusterRoleBinding/system:build-strategy-docker-binding
   labels:
-    name: system-build-strategy-docker-binding-manager
-  name: system-build-strategy-docker-binding-manager
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/part-of: appuio-cloud
+    name: clusterrolebinding-system-build-3729a69e19ab960-manager
+  name: clusterrolebinding-system-build-3729a69e19ab960-manager
   namespace: syn-resource-locker
+secrets:
+  - name: clusterrolebinding-system-build-3729a69e19ab960-manager
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    kubernetes.io/service-account.name: clusterrolebinding-system-build-3729a69e19ab960-manager
+    resourcelocker.syn.tools/target-object: rbac.authorization.k8s.io.ClusterRoleBinding/system:build-strategy-docker-binding
+  labels:
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/part-of: appuio-cloud
+    name: clusterrolebinding-system-build-3729a69e19ab960-manager
+  name: clusterrolebinding-system-build-3729a69e19ab960-manager
+  namespace: syn-resource-locker
+type: kubernetes.io/service-account-token
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  annotations:
+    resourcelocker.syn.tools/target-object: rbac.authorization.k8s.io.ClusterRoleBinding/system:build-strategy-docker-binding
   labels:
-    name: syn-resource-locker-ystem-build-strategy-docker-binding-manager
-  name: syn-resource-locker-ystem-build-strategy-docker-binding-manager
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/part-of: appuio-cloud
+    name: syn-resource-locker-inding-system-build-3729a69e19ab960-manager
+  name: syn-resource-locker-inding-system-build-3729a69e19ab960-manager
 rules:
   - apiGroups:
       - rbac.authorization.k8s.io
@@ -26,16 +50,20 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
+  annotations:
+    resourcelocker.syn.tools/target-object: rbac.authorization.k8s.io.ClusterRoleBinding/system:build-strategy-docker-binding
   labels:
-    name: syn-resource-locker-ystem-build-strategy-docker-binding-manager
-  name: syn-resource-locker-ystem-build-strategy-docker-binding-manager
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/part-of: appuio-cloud
+    name: syn-resource-locker-inding-system-build-3729a69e19ab960-manager
+  name: syn-resource-locker-inding-system-build-3729a69e19ab960-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: syn-resource-locker-ystem-build-strategy-docker-binding-manager
+  name: syn-resource-locker-inding-system-build-3729a69e19ab960-manager
 subjects:
   - kind: ServiceAccount
-    name: system-build-strategy-docker-binding-manager
+    name: clusterrolebinding-system-build-3729a69e19ab960-manager
     namespace: syn-resource-locker
 ---
 apiVersion: redhatcop.redhat.io/v1alpha1
@@ -44,13 +72,13 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   labels:
-    name: system-build-strategy-docker-binding
-  name: system-build-strategy-docker-binding
+    name: clusterrolebinding-system-build-3729a69e19ab960
+  name: clusterrolebinding-system-build-3729a69e19ab960
   namespace: syn-resource-locker
 spec:
   patches:
     - id: patch1
-      patchTemplate: "\"annotations\":\n  \"rbac.authorization.kubernetes.io/autoupdate\"\
+      patchTemplate: "\"metadata\":\n  \"annotations\":\n    \"rbac.authorization.kubernetes.io/autoupdate\"\
         : \"false\"\n\"subjects\": []"
       patchType: application/strategic-merge-patch+json
       targetObjectRef:
@@ -58,4 +86,4 @@ spec:
         kind: ClusterRoleBinding
         name: system:build-strategy-docker-binding
   serviceAccountRef:
-    name: system-build-strategy-docker-binding-manager
+    name: clusterrolebinding-system-build-3729a69e19ab960-manager
