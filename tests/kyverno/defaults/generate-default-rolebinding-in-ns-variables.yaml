@@ -1,6 +1,0 @@
-policies:
-  - name: default-rolebinding-in-ns
-    rules:
-      - name: patch-uninitialized-default-rolebinding
-        values:
-          organization: "purple-fox"

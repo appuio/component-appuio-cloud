@@ -14,7 +14,6 @@ parameters:
       - input_paths:
           - appuio-cloud/component/main.jsonnet
           - appuio-cloud/component/namespace-policies.jsonnet
-          - appuio-cloud/component/generated-rolebindings.jsonnet
           - appuio-cloud/component/project-template.jsonnet
           - appuio-cloud/component/project-policies.jsonnet
           - appuio-cloud/component/quota-limitrange.jsonnet
@@ -22,6 +21,7 @@ parameters:
           - appuio-cloud/component/build-strategy.jsonnet
           - appuio-cloud/component/runonce-activedeadlineseconds.jsonnet
           - appuio-cloud/component/monitoring.jsonnet
+          - appuio-cloud/component/namespace-owner.jsonnet
         input_type: jsonnet
         output_path: appuio-cloud/
       - input_paths:

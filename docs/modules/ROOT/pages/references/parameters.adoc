@@ -235,31 +235,6 @@ subjects:
 
 `ServiceAccount`, `User` or `Group` (chosen by `kind:`) excluded from all namespace policies.
 
-== `generatedDefaultRoleBindingInNewNamespaces.clusterRoleName`
-
-[horizontal]
-type:: string
-default:: `admin`
-
-The `ClusterRole` name to which the requesting user account gets a new `RoleBinding` to.
-
-== `generatedDefaultRoleBindingInNewNamespaces.bindingName`
-
-[horizontal]
-type:: string
-default:: `organization-admin`
-
-The `metadata.name` of the `RoleBinding` that gets generated in the new `Namespace` created by the user.
-The role binding is only created upon Namespace creation, it doesn't get synchronized.
-
-== `generatedNamespaceOwnerClusterRole.name`
-
-[horizontal]
-type:: string
-default:: `namespace-owner`
-
-The `ClusterRole` and `RoleBinding` name for the cluster role that allows users to edit the new `Namespace`
-
 == `generatedResourceQuota`
 
 [horizontal]
