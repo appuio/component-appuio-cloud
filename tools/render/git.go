@@ -15,6 +15,15 @@ import (
 )
 
 func newGitInfo(rawurl string) (*gitInfo, error) {
+
+	if strings.HasPrefix(rawurl, "git@") {
+		hostPath := strings.Split(strings.TrimPrefix(rawurl, "git@"), ":")
+		if len(hostPath) != 2 {
+			return nil, fmt.Errorf("failed to parse SSH URL %q", rawurl)
+		}
+		rawurl = fmt.Sprintf("https://%s/%s", hostPath[0], hostPath[1])
+	}
+
 	u, err := url.Parse(rawurl)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse URL %s: %v", rawurl, err)
