@@ -188,6 +188,7 @@ local metricsService = loadManifest('manager/service.yaml') {
     ],
   },
   '01_default_org_role_binding': [
+    // The agent needs to have all the permissions it should delegate, so we create a ClusterRoleBinding for every ClusterRole it needs to be able to create
     kube.ClusterRoleBinding('appuio-cloud-agent:%s' % [ cr ]) {
       roleRef: {
         kind: 'ClusterRole',
