@@ -234,10 +234,10 @@ TIP: This policy is executed when namespaces are created or updated.
 `default-rolebinding-in-ns (labeled ORG_RBAC)`::
 The https://github.com/appuio/appuio-cloud-agent/blob/master/controllers/org_rbac_controller.go[Organization RBAC Controller] of the APPUiO Cloud Agent makes sure that by default organizations are granted all the permissions necessary to manager their own namespaces.
 +
-It does this by creating `RoleBindings` in every organization namespace that grant configured `ClusterRoles`.
-Most importantly it grants role `admin` to the organization to which the new namespace belongs.
+It does so by creating `RoleBindings` in every organization namespace that grant configured `ClusterRoles`.
+Most importantly, it grants role `admin` to the organization to which the new namespace belongs.
 +
-The controller will only make sure that the `RoleBindings` exit and won't modify existing `RoleBindings`.
+The controller will only make sure that the `RoleBindings` exist and won't modify existing `RoleBindings`.
 This allows organizations to further restrict access for their members.
 +
 This fulfills the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[namespaces are owned by organizations].
