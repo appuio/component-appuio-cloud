@@ -1,0 +1,31 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations: {}
+  labels:
+    name: appuio-cloud-agent-admin
+  name: appuio-cloud-agent:admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+  - kind: ServiceAccount
+    name: appuio-cloud-agent
+    namespace: appuio-cloud
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations: {}
+  labels:
+    name: appuio-cloud-agent-namespace-owner
+  name: appuio-cloud-agent:namespace-owner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: namespace-owner
+subjects:
+  - kind: ServiceAccount
+    name: appuio-cloud-agent
+    namespace: appuio-cloud

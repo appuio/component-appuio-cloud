@@ -23,6 +23,12 @@ rules:
   - apiGroups:
       - ''
     resources:
+      - namespaces/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - ''
+    resources:
       - pods
     verbs:
       - get
@@ -35,4 +41,15 @@ rules:
     verbs:
       - get
       - list
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - rolebindings
+    verbs:
+      - create
+      - get
+      - list
+      - patch
+      - update
       - watch

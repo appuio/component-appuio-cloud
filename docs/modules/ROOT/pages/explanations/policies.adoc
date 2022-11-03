@@ -6,11 +6,11 @@ This documentation explains how the different policies interact to implement the
 == Namespace ownership
 
 The overall desired architecture for namespace ownership on APPUiO Cloud is documented in the https://kb.vshn.ch/appuio-cloud/references/architecture/namespace-ownership.html[APPUiO Cloud for System Engineers] documentation.
-This component implements the architecture described there with Kyverno policies.
+This component implements the architecture described there with Kyverno policies and the https://github.com/appuio/appuio-cloud-agent[APPUiO Cloud Agent].
 
-This article explains how the different Kyverno policies managed by the component implement namespace ownership and other adjacent policies.
+This article explains how the different policies managed by the component implement namespace ownership and other adjacent policies.
 
-Looking at the quality requirements for APPUiO cloud, there's three main points which need to be covered by the implementation:
+Looking at the quality requirements for APPUiO cloud, there are three main points which need to be covered by the implementation:
 
 * Users should be able to https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-arbitrary-name.html[create arbitrary namespaces directly with `kubectl create`].
 * Users should be able to https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/create-ns-with-oc-new-project.html[create arbitrary namespaces through OpenShift's Project mechanism], either on the web console or with `oc new-project`.
@@ -20,13 +20,13 @@ Additionally, the following APPUiO Cloud requirements also need to be considered
 
 * A single organization can only https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/ns-quota.html[create a limited number of namespaces] on an APPUiO Cloud zone.
 * Users should be able to https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/create-ns-with-serviceaccount.html[use ServiceAccount tokens to create namespaces] belonging to the same organization to which the ServiceAccount belongs.
-* Users should be able modify selected annotations and labels on namespaces belonging to their organizations.
+* Users should be able to modify selected annotations and labels on namespaces belonging to their organizations.
 For example, this is required to allow users to https://docs.appuio.cloud/user/explanation/organizations-and-rbac.html#_transfer_projects[reassign namespaces to a different organization].
 * By default, https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[the namespace's organization is granted role `admin`] in the namespace.
 
 === Request flow and policy execution
 
-The diagram shows how the Kyverno policies interact with a request to create a `Namespace`, `Project` or `ProjectRequest`.
+The diagram shows how the policies interact with a request to create a `Namespace`, `Project` or `ProjectRequest`.
 
 [IMPORTANT]
 ====
@@ -181,7 +181,7 @@ See the detailed policy explanations or the policy reference documentation for d
                             ORG_RBAC v                  RES_QUOT   v
                             +-----------------+         +---------------------+
                             |+---------------+|         |  +---------------+  |
-                            ||cGREGENERATE   ||         |  |cGREGENERATE   |  |
+                            ||cYELAGENT      ||         |  |cGREGENERATE   |  |
                             |+---------------+|         |  +---------------+  |
                             |    Grant the    |         |   Create            |
                             |    organization |         |   ResourceQuota and |
@@ -231,13 +231,16 @@ To protect the cluster, we need to ensure that users can't modify arbitrary labe
 +
 TIP: This policy is executed when namespaces are created or updated.
 
-xref:references/policies/10_generate_default_rolebinding_in_ns.adoc[`default-rolebinding-in-ns` (labeled `ORG_RBAC`)]::
-This policy is applied to any namespace which is created with an organization label.
-It grants role `admin` to the organization to which the new namespace belongs.
+`default-rolebinding-in-ns (labeled ORG_RBAC)`::
+The https://github.com/appuio/appuio-cloud-agent/blob/master/controllers/org_rbac_controller.go[Organization RBAC Controller] of the APPUiO Cloud Agent makes sure that by default organizations are granted all the permissions necessary to manager their own namespaces.
 +
-This fulfils the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[namespaces are owned by organizations].
+It does so by creating `RoleBindings` in every organization namespace that grant configured `ClusterRoles`.
+Most importantly, it grants role `admin` to the organization to which the new namespace belongs.
 +
-TIP: For namespaces created through OpenShift projects, the policy mutates the `RoleBinding` which is created by OpenShift to grant the organization role `admin`.
+The controller will only make sure that the `RoleBindings` exist and won't modify existing `RoleBindings`.
+This allows organizations to further restrict access for their members.
++
+This fulfills the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[namespaces are owned by organizations].
 
 xref:references/policies/11_generate_quota_limit_range_in_ns.adoc[`quota-and-limit-range-in-ns` (labeled `RES_QUOT`)]::
 This policy is applied to any namespace which is created with an organization label.

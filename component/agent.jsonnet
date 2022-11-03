@@ -39,6 +39,36 @@ local mapSubjects = function(subjMap)
     { groups: [], users: [] }
   );
 
+
+local defaultOrganizationClusterRoles = std.prune(
+  params.agent.config.DefaultOrganizationClusterRoles
+  + (
+    if std.objectHas(params, 'generatedDefaultRoleBindingInNewNamespaces') then
+      std.trace(
+        '\nParameter "generatedDefaultRoleBindingInNewNamespaces" is deprecated. Please use "agent.config.DefaultOrganizationClusterRoles"',
+        { admin: null }
+        +
+        {
+          [params.generatedDefaultRoleBindingInNewNamespaces.bindingName]: params.generatedDefaultRoleBindingInNewNamespaces.clusterRoleName,
+        }
+      )
+    else {}
+  )
+  + (
+    if std.objectHas(params, 'generatedNamespaceOwnerClusterRole') then
+      std.trace(
+        '\nParameter "generatedNamespaceOwnerClusterRole" is deprecated. Please use "agent.config.DefaultOrganizationClusterRoles"',
+        { 'namespace-owner': null }
+        +
+        {
+          [params.generatedNamespaceOwnerClusterRole.name]: params.generatedNamespaceOwnerClusterRole.name,
+        }
+      )
+    else {}
+  )
+);
+
+
 local configMap = kube.ConfigMap('appuio-cloud-agent-config') {
   metadata+: {
     namespace: params.namespace,
@@ -50,6 +80,7 @@ local configMap = kube.ConfigMap('appuio-cloud-agent-config') {
       PrivilegedGroups: subjects.groups,
       PrivilegedUsers: subjects.users,
       PrivilegedClusterRoles: common.FlattenSet(super.PrivilegedClusterRoles),
+      DefaultOrganizationClusterRoles: defaultOrganizationClusterRoles,
     }),
   },
 };
@@ -165,6 +196,24 @@ local metricsService = loadManifest('manager/service.yaml') {
       },
     ],
   },
+  '01_default_org_role_binding': [
+    // The agent needs to have all the permissions it should delegate, so we create a ClusterRoleBinding for every ClusterRole it needs to be able to create
+    kube.ClusterRoleBinding('appuio-cloud-agent:%s' % [ cr ]) {
+      roleRef: {
+        kind: 'ClusterRole',
+        apiGroup: 'rbac.authorization.k8s.io',
+        name: cr,
+      },
+      subjects: [
+        {
+          kind: 'ServiceAccount',
+          name: serviceAccount.metadata.name,
+          namespace: serviceAccount.metadata.namespace,
+        },
+      ],
+    }
+    for cr in std.objectValues(defaultOrganizationClusterRoles)
+  ],
   '01_leader_election_role_binding': kube.RoleBinding(role.metadata.name) {
     metadata+: {
       namespace: params.namespace,
