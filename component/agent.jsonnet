@@ -40,13 +40,17 @@ local mapSubjects = function(subjMap)
   );
 
 
-local defaultOrganizationClusterRoles =
+local defaultOrganizationClusterRoles = std.prune(
   params.agent.config.DefaultOrganizationClusterRoles
   + (
     if std.objectHas(params, 'generatedDefaultRoleBindingInNewNamespaces') then
       std.trace(
         '\nParameter "generatedDefaultRoleBindingInNewNamespaces" is deprecated. Please use "agent.config.DefaultOrganizationClusterRoles"',
-        { [params.generatedDefaultRoleBindingInNewNamespaces.bindingName]: params.generatedDefaultRoleBindingInNewNamespaces.clusterRoleName }
+        { admin: null }
+        +
+        {
+          [params.generatedDefaultRoleBindingInNewNamespaces.bindingName]: params.generatedDefaultRoleBindingInNewNamespaces.clusterRoleName,
+        }
       )
     else {}
   )
@@ -54,10 +58,15 @@ local defaultOrganizationClusterRoles =
     if std.objectHas(params, 'generatedNamespaceOwnerClusterRole') then
       std.trace(
         '\nParameter "generatedNamespaceOwnerClusterRole" is deprecated. Please use "agent.config.DefaultOrganizationClusterRoles"',
-        { 'namespace-owner': params.generatedNamespaceOwnerClusterRole.name }
+        { 'namespace-owner': null }
+        +
+        {
+          [params.generatedNamespaceOwnerClusterRole.name]: params.generatedNamespaceOwnerClusterRole.name,
+        }
       )
     else {}
-  );
+  )
+);
 
 
 local configMap = kube.ConfigMap('appuio-cloud-agent-config') {

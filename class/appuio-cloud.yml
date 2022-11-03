@@ -21,7 +21,7 @@ parameters:
           - appuio-cloud/component/build-strategy.jsonnet
           - appuio-cloud/component/runonce-activedeadlineseconds.jsonnet
           - appuio-cloud/component/monitoring.jsonnet
-          - appuio-cloud/component/namespace-owner.jsonnet
+          - appuio-cloud/component/cluster-roles.jsonnet
         input_type: jsonnet
         output_path: appuio-cloud/
       - input_paths:

@@ -40,6 +40,17 @@ parameters:
           admin: admin
           namespace-owner: namespace-owner
 
+    clusterRoles:
+      namespace-owner:
+        rules:
+          - apiGroups: ['']
+            resources: [namespaces]
+            verbs:
+              - get
+              - watch
+              - edit
+              - patch
+              - delete
 
     bypassNamespaceRestrictions:
       # Roles are not supported for the APPUiO Cloud Agent. Should be left empty.

@@ -133,6 +133,30 @@ _subjects:
 A special key to map between the Kyverno way of specifying subjects and the APPUiO Cloud Agent way.
 The key is omitted from the final configuration.
 
+== `clusterRoles`
+
+[horizontal]
+type:: dict
+example::
+
+[source,yaml]
+----
+clusterRoles:
+  namespace-owner:
+    rules:
+      - apiGroups: ['']
+        resources: [namespaces]
+        verbs:
+          - get
+          - watch
+          - edit
+          - patch
+          - delete
+----
+
+The `clusterRoles` parameter can be used to create a list of arbitrary `ClusterRoles`.
+The key is used as the name of the `ClusterRole` and the value is transformed into the `ClusterRole` resource.
+
 
 == `reservedNamespaces`
 
