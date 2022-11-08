@@ -105,6 +105,7 @@ local deployment = loadManifest('manager/manager.yaml') {
               args+: [
                 '--webhook-cert-dir=' + webhookCertDir,
               ],
+              resources+: com.makeMergeable(params.agent.resources),
               volumeMounts+: [
                 {
                   name: 'webhook-service-tls',
