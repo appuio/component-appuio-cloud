@@ -36,6 +36,22 @@ default:: 3
 With how many replicas the APPUiO Cloud Agent should run.
 
 
+== `agent.resources`
+
+[horizontal]
+type:: dict
+default::
++
+[source,yaml]
+----
+limits:
+  memory: 1Gi
+----
+
+Resource requests and limits for the APPUiO Cloud Agent deployment.
+
+The contents of this parameter are merged over the default resource requests and limits of the Agent's base configuration.
+
 == `agent.resourceRatio.memoryPerCore`
 type:: string
 default:: `4Gi`
