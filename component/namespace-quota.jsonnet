@@ -116,7 +116,7 @@ local namespaceQuotaPolicy = kyverno.ClusterPolicy('check-namespace-quota') {
             name: 'organization',
             apiCall: {
               urlPath: '/apis/user.openshift.io/v1/users/{{request.userInfo.username}}',
-              jmesPath: 'metadata.annotations."appuio.io/default-organization"',
+              jmesPath: 'metadata.annotations."appuio.io/default-organization" || ""',
             },
           },
           overrideContext(varName='{{organization}}'),

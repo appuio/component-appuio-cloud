@@ -70,7 +70,7 @@ local organizationInProject = kyverno.ClusterPolicy('organization-in-projectrequ
               {
                 // In the case of a system user, with Kyverno 1.4.2+ the key will be empty
                 // if the annotations object is empty.
-                key: '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}',
+                key: '{{ocpuser.metadata.annotations."appuio.io/default-organization" || ""}}',
                 operator: 'Equals',
                 value: '',
               },
