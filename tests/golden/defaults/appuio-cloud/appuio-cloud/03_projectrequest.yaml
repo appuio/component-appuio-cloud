@@ -79,9 +79,14 @@ spec:
       validate:
         deny:
           conditions:
-            - key: '{{ocpuser.metadata.annotations."appuio.io/default-organization"
-                || ""}}'
-              operator: Equals
-              value: ''
+            any:
+              - key:
+                  - appuio.io/default-organization
+                operator: AllNotIn
+                value: '{{ocpuser.metadata.annotations.keys(@)}}'
+              - key: '{{ocpuser.metadata.annotations."appuio.io/default-organization"
+                  || ""}}'
+                operator: Equals
+                value: ''
         message: You cannot create Projects without belonging to an organization
   validationFailureAction: enforce

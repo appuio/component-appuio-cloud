@@ -116,7 +116,6 @@ spec:
               - system:controller:operator-lifecycle-manager
               - system:master
               - system:openshift:controller:namespace-security-allocation-controller
-          - roles: []
           - subjects:
               - kind: ServiceAccount
                 name: argocd-application-controller
@@ -189,7 +188,6 @@ spec:
               - system:controller:operator-lifecycle-manager
               - system:master
               - system:openshift:controller:namespace-security-allocation-controller
-          - roles: []
           - subjects:
               - kind: ServiceAccount
                 name: argocd-application-controller
