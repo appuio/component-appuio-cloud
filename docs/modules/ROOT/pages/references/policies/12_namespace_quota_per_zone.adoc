@@ -148,9 +148,10 @@ spec:
       validate:
         deny:
           conditions:
-            - key: '{{nsCount}}'
-              operator: GreaterThanOrEquals
-              value: '{{override || `3`}}'
+            any:
+              - key: '{{nsCount}}'
+                operator: GreaterThanOrEquals
+                value: '{{override || `3`}}'
         message: 'You cannot create more than {{override || `3`}} namespaces for organization
           ''{{request.object.metadata.labels."appuio.io/organization"}}''.
 
@@ -216,9 +217,10 @@ spec:
       validate:
         deny:
           conditions:
-            - key: '{{nsCount}}'
-              operator: GreaterThanOrEquals
-              value: '{{override || `3`}}'
+            any:
+              - key: '{{nsCount}}'
+                operator: GreaterThanOrEquals
+                value: '{{override || `3`}}'
         message: 'You cannot create more than {{override || `3`}} namespaces for organization
           ''{{organization}}''.
 

@@ -229,13 +229,16 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
         validate: {
           message: 'Creating namespace for {{request.object.metadata.labels."appuio.io/organization"}} but {{request.userInfo.username}} is not in organization',
           deny: {
-            conditions: [
-              {
-                key: '{{request.object.metadata.labels."appuio.io/organization" || ""}}',
-                operator: 'NotIn',
-                value: '{{request.userInfo.groups}}',
-              },
-            ],
+            conditions: {
+              any:
+                [
+                  {
+                    key: '{{request.object.metadata.labels."appuio.io/organization" || ""}}',
+                    operator: 'AnyNotIn',
+                    value: '{{request.userInfo.groups}}',
+                  },
+                ],
+            },
           },
         },
       },
