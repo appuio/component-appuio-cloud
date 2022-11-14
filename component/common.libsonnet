@@ -26,6 +26,8 @@ local flattenSet(set) = std.flatMap(function(s)
                                       if std.isArray(set[s]) then set[s] else [ set[s] ],
                                     std.objectFields(std.prune(set)));
 
+
+local ifNotEmpty(key, array) = if std.length(array) > 0 then [ { [key]: array } ] else [];
 /**
   * bypassNamespaceRestrictionsSubjects returns an object containing the configured roles and subjects
   * allowed to bypass restrictions.
@@ -33,11 +35,10 @@ local flattenSet(set) = std.flatMap(function(s)
 local bypassNamespaceRestrictionsSubjects() =
   local bypass = params.bypassNamespaceRestrictions;
   {
-    any: [
-      { clusterRoles+: flattenSet(bypass.clusterRoles) },
-      { roles+: flattenSet(bypass.roles) },
-      { subjects+: flattenSet(bypass.subjects) },
-    ],
+    any:
+      ifNotEmpty('clusterRoles', flattenSet(bypass.clusterRoles)) +
+      ifNotEmpty('roles', flattenSet(bypass.roles)) +
+      ifNotEmpty('subjects', flattenSet(bypass.subjects)),
   };
 
 local matchKinds(selector=null, names=null, match='all', kinds) = {
