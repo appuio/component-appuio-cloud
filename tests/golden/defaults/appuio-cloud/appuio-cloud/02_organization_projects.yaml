@@ -64,7 +64,8 @@ spec:
         patchStrategicMerge:
           metadata:
             labels:
-              +(appuio.io/organization): '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}'
+              +(appuio.io/organization): '{{ocpuser.metadata.annotations."appuio.io/default-organization"
+                || ""}}'
       name: set-default-organization
       preconditions: {}
   validationFailureAction: enforce

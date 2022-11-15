@@ -30,13 +30,15 @@ local overrideContext(varName) = {
 local validateRule(varName) = {
   message: "You cannot create more than {{override || `%s`}} namespaces for organization '%s'.\nPlease contact support to have your quota raised." % [ params.maxNamespaceQuota, varName ],
   deny: {
-    conditions: [
-      {
-        key: '{{nsCount}}',
-        operator: 'GreaterThanOrEquals',
-        value: '{{override || `%s`}}' % params.maxNamespaceQuota,
-      },
-    ],
+    conditions: {
+      any: [
+        {
+          key: '{{nsCount}}',
+          operator: 'GreaterThanOrEquals',
+          value: '{{override || `%s`}}' % params.maxNamespaceQuota,
+        },
+      ],
+    },
   },
 };
 
@@ -116,7 +118,7 @@ local namespaceQuotaPolicy = kyverno.ClusterPolicy('check-namespace-quota') {
             name: 'organization',
             apiCall: {
               urlPath: '/apis/user.openshift.io/v1/users/{{request.userInfo.username}}',
-              jmesPath: 'metadata.annotations."appuio.io/default-organization"',
+              jmesPath: 'metadata.annotations."appuio.io/default-organization" || ""',
             },
           },
           overrideContext(varName='{{organization}}'),

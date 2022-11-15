@@ -85,7 +85,7 @@ local setDefaultOrgPolicy(name, match, exclude, preconditions, username) = {
       metadata: {
         labels: {
           '+(appuio.io/organization)':
-            '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}',
+            '{{ocpuser.metadata.annotations."appuio.io/default-organization" || ""}}',
         },
       },
     },
@@ -220,7 +220,7 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
           all+:
             [
               {
-                key: '{{request.object.metadata.labels."appuio.io/organization"}}',
+                key: '{{request.object.metadata.labels."appuio.io/organization" || ""}}',
                 operator: 'NotEquals',
                 value: '',
               },
@@ -229,13 +229,16 @@ local organizationNamespaces = kyverno.ClusterPolicy('organization-namespaces') 
         validate: {
           message: 'Creating namespace for {{request.object.metadata.labels."appuio.io/organization"}} but {{request.userInfo.username}} is not in organization',
           deny: {
-            conditions: [
-              {
-                key: '{{request.object.metadata.labels."appuio.io/organization"}}',
-                operator: 'NotIn',
-                value: '{{request.userInfo.groups}}',
-              },
-            ],
+            conditions: {
+              any:
+                [
+                  {
+                    key: '{{request.object.metadata.labels."appuio.io/organization" || ""}}',
+                    operator: 'AnyNotIn',
+                    value: '{{request.userInfo.groups}}',
+                  },
+                ],
+            },
           },
         },
       },
@@ -292,7 +295,7 @@ local organizationSaNamespaces = kyverno.ClusterPolicy('organization-sa-namespac
             metadata: {
               labels: {
                 '+(appuio.io/organization)':
-                  '{{saNamespace.metadata.labels."appuio.io/organization"}}',
+                  '{{saNamespace.metadata.labels."appuio.io/organization" || ""}}',
               },
             },
           },
@@ -336,7 +339,7 @@ local organizationSaNamespaces = kyverno.ClusterPolicy('organization-sa-namespac
           all+:
             [
               {
-                key: '{{request.object.metadata.labels."appuio.io/organization"}}',
+                key: '{{request.object.metadata.labels."appuio.io/organization" || ""}}',
                 operator: 'NotEquals',
                 value: '',
               },

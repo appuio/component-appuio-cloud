@@ -66,15 +66,23 @@ local organizationInProject = kyverno.ClusterPolicy('organization-in-projectrequ
         validate: {
           message: 'You cannot create Projects without belonging to an organization',
           deny: {
-            conditions: [
-              {
-                // In the case of a system user, with Kyverno 1.4.2+ the key will be empty
-                // if the annotations object is empty.
-                key: '{{ocpuser.metadata.annotations."appuio.io/default-organization"}}',
-                operator: 'Equals',
-                value: '',
-              },
-            ],
+            conditions: {
+              any: [
+                // The `||` defaulting doesn't work as expected in this case for kyverno <1.8.0
+                // So we first check that the user has an annotation 'appuio.io/default-organization'
+                {
+                  key: [ 'appuio.io/default-organization' ],
+                  operator: 'AllNotIn',
+                  value: '{{ocpuser.metadata.annotations.keys(@)}}',
+
+                },
+                {
+                  key: '{{ocpuser.metadata.annotations."appuio.io/default-organization" || ""}}',
+                  operator: 'Equals',
+                  value: '',
+                },
+              ],
+            },
           },
         },
       },
