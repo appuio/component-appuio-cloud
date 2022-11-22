@@ -55,6 +55,12 @@ parameters:
               - edit
               - patch
               - delete
+      appuio:metrics-reader:
+        rules:
+          - apiGroups: ['']
+            resources: [pods]
+            verbs:
+              - get
 
     bypassNamespaceRestrictions:
       # Roles are not supported for the APPUiO Cloud Agent. Should be left empty.
