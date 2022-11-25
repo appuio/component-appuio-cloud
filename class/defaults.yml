@@ -10,7 +10,7 @@ parameters:
       agent:
         registry: ghcr.io
         repository: appuio/appuio-cloud-agent
-        tag: v0.7.1
+        tag: v0.8.0
 
     agent:
       replicas: 3
