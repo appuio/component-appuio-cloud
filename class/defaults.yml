@@ -2,6 +2,13 @@ parameters:
   appuio_cloud:
     =_metadata: {}
     namespace: appuio-cloud
+    namespaceLabels:
+      # Ensure the default network policies are not created in the
+      # namespace, as we need to allow access to the validating webhook
+      # from various agreggated API servers.
+      network-policies.syn.tools/no-defaults: 'true'
+      network-policies.syn.tools/purge-defaults: 'true'
+    namespaceAnnotations: {}
 
     monitoring:
       enabled: true
