@@ -146,6 +146,7 @@ parameters:
         spec:
           hard:
             count/configmaps: "150"
+            count/jobs.batch: "150"
             count/secrets: "150"
             count/services: "20"
             count/services.loadbalancers: "0"

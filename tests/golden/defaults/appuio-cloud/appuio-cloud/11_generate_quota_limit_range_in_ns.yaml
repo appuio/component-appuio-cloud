@@ -135,6 +135,8 @@ spec:
                 || ''25Gi'' }}'
               count/configmaps: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_configmaps"
                 || ''150'' }}'
+              count/jobs.batch: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_jobs.batch"
+                || ''150'' }}'
               count/replicationcontrollers: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_replicationcontrollers"
                 || ''100'' }}'
               count/secrets: '{{ request.object.metadata.annotations."resourcequota.appuio.io/organization-objects.count_secrets"
