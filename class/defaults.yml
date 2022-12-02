@@ -92,6 +92,7 @@ parameters:
         system:controller:operator-lifecycle-manager: system:controller:operator-lifecycle-manager
         system:master: system:master
         system:openshift:controller:namespace-security-allocation-controller: system:openshift:controller:namespace-security-allocation-controller
+        system:openshift:controller:podsecurity-admission-label-syncer-controller: system:openshift:controller:podsecurity-admission-label-syncer-controller
       subjects:
         syn-resource-locker-ingress:
           kind: ServiceAccount
