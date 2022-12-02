@@ -102,6 +102,7 @@ spec:
               - system:controller:operator-lifecycle-manager
               - system:master
               - system:openshift:controller:namespace-security-allocation-controller
+              - system:openshift:controller:podsecurity-admission-label-syncer-controller
           - subjects:
               - kind: ServiceAccount
                 name: argocd-application-controller
@@ -150,6 +151,7 @@ spec:
               - system:controller:operator-lifecycle-manager
               - system:master
               - system:openshift:controller:namespace-security-allocation-controller
+              - system:openshift:controller:podsecurity-admission-label-syncer-controller
           - subjects:
               - kind: ServiceAccount
                 name: argocd-application-controller
@@ -203,6 +205,7 @@ spec:
               - system:controller:operator-lifecycle-manager
               - system:master
               - system:openshift:controller:namespace-security-allocation-controller
+              - system:openshift:controller:podsecurity-admission-label-syncer-controller
           - subjects:
               - kind: ServiceAccount
                 name: argocd-application-controller
