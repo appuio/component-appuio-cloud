@@ -11,6 +11,7 @@ data:
     \n- \"system:controller:operator-lifecycle-manager\"\n- \"system:master\"\n- \"\
     system:openshift:controller:namespace-security-allocation-controller\"\n- \"system:openshift:controller:podsecurity-admission-label-syncer-controller\"\
     \n\"PrivilegedGroups\": []\n\"PrivilegedUsers\":\n- \"system:serviceaccount:argocd:argocd-application-controller\"\
+    \n- \"system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount\"\
     \n- \"system:serviceaccount:syn-resource-locker:namespace-openshift-config-2c8343f13594d63-manager\"\
     \n- \"system:serviceaccount:syn-resource-locker:namespace-default-d6a0af6dd07e8a3-manager\"\
     \n- \"system:serviceaccount:syn-resource-locker:namespace-openshift-monitoring-c4273dc15ddfdf7-manager\""
