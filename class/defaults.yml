@@ -106,6 +106,10 @@ parameters:
           kind: ServiceAccount
           name: namespace-openshift-config-2c8343f13594d63-manager
           namespace: syn-resource-locker
+        openshift-operator-lifecycle-manager:
+          kind: ServiceAccount
+          name: olm-operator-serviceaccount
+          namespace: openshift-operator-lifecycle-manager
 
     reservedNamespaces:
       kubernetes: ["default", "kube-*"]
