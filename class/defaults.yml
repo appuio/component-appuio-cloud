@@ -110,6 +110,10 @@ parameters:
           kind: ServiceAccount
           name: olm-operator-serviceaccount
           namespace: openshift-operator-lifecycle-manager
+        openshift-logging-operator:
+          kind: ServiceAccount
+          name: cluster-logging-operator
+          namespace: openshift-logging
 
     reservedNamespaces:
       kubernetes: ["default", "kube-*"]

@@ -69,6 +69,9 @@ spec:
                 name: argocd-application-controller
                 namespace: argocd
               - kind: ServiceAccount
+                name: cluster-logging-operator
+                namespace: openshift-logging
+              - kind: ServiceAccount
                 name: olm-operator-serviceaccount
                 namespace: openshift-operator-lifecycle-manager
               - kind: ServiceAccount
