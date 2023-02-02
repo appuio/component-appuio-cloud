@@ -50,6 +50,8 @@ parameters:
         DefaultOrganizationClusterRoles:
           admin: admin
           namespace-owner: namespace-owner
+          monitoring-edit: monitoring-edit
+          alert-routing-edit: alert-routing-edit
 
     clusterRoles:
       namespace-owner:

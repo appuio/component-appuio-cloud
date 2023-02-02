@@ -19,6 +19,38 @@ kind: ClusterRoleBinding
 metadata:
   annotations: {}
   labels:
+    name: appuio-cloud-agent-alert-routing-edit
+  name: appuio-cloud-agent:alert-routing-edit
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: alert-routing-edit
+subjects:
+  - kind: ServiceAccount
+    name: appuio-cloud-agent
+    namespace: appuio-cloud
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations: {}
+  labels:
+    name: appuio-cloud-agent-monitoring-edit
+  name: appuio-cloud-agent:monitoring-edit
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: monitoring-edit
+subjects:
+  - kind: ServiceAccount
+    name: appuio-cloud-agent
+    namespace: appuio-cloud
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations: {}
+  labels:
     name: appuio-cloud-agent-namespace-owner
   name: appuio-cloud-agent:namespace-owner
 roleRef:

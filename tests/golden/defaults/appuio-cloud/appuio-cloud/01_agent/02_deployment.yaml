@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: b1f9b327b7b8cf0a06958af73263bc62
+        checksum/config: f4afb0b2c6f9b91a2018c3793acdb071
         kubectl.kubernetes.io/default-container: agent
       labels:
         control-plane: appuio-cloud-agent
