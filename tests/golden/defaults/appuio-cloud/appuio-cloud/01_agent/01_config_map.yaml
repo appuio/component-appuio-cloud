@@ -3,8 +3,9 @@ data:
   config.yaml: "\"DefaultNamespaceNodeSelectorAnnotation\": \"appuio.io/default-node-selector\"\
     \n\"DefaultNodeSelector\": {}\n\"DefaultOrganizationClusterRoles\":\n  \"admin\"\
     : \"admin\"\n  \"alert-routing-edit\": \"alert-routing-edit\"\n  \"monitoring-edit\"\
-    : \"monitoring-edit\"\n  \"namespace-owner\": \"namespace-owner\"\n\"MemoryPerCoreLimit\"\
-    : \"4Gi\"\n\"OrganizationLabel\": \"appuio.io/organization\"\n\"PrivilegedClusterRoles\"\
+    : \"monitoring-edit\"\n  \"monitoring-edit-probe\": \"monitoring-edit-probe\"\n\
+    \  \"namespace-owner\": \"namespace-owner\"\n\"MemoryPerCoreLimit\": \"4Gi\"\n\
+    \"OrganizationLabel\": \"appuio.io/organization\"\n\"PrivilegedClusterRoles\"\
     :\n- \"cluster-admin\"\n- \"cluster-image-registry-operator\"\n- \"cluster-node-tuning-operator\"\
     \n- \"kyverno:generatecontroller\"\n- \"kyverno:policycontroller\"\n- \"multus-admission-controller-webhook\"\
     \n- \"openshift-dns-operator\"\n- \"openshift-ingress-operator\"\n- \"syn-admin\"\

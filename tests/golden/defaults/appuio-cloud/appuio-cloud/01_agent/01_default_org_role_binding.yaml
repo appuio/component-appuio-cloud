@@ -51,6 +51,22 @@ kind: ClusterRoleBinding
 metadata:
   annotations: {}
   labels:
+    name: appuio-cloud-agent-monitoring-edit-probe
+  name: appuio-cloud-agent:monitoring-edit-probe
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: monitoring-edit-probe
+subjects:
+  - kind: ServiceAccount
+    name: appuio-cloud-agent
+    namespace: appuio-cloud
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations: {}
+  labels:
     name: appuio-cloud-agent-namespace-owner
   name: appuio-cloud-agent:namespace-owner
 roleRef:

@@ -52,6 +52,7 @@ parameters:
           namespace-owner: namespace-owner
           monitoring-edit: monitoring-edit
           alert-routing-edit: alert-routing-edit
+          monitoring-edit-probe: monitoring-edit-probe
 
     clusterRoles:
       namespace-owner:
@@ -70,6 +71,13 @@ parameters:
             resources: [pods]
             verbs:
               - get
+      monitoring-edit-probe:
+        rules:
+          - apiGroups: ['monitoring.coreos.com']
+            resources:
+              - probes
+            verbs:
+              - '*'
 
     bypassNamespaceRestrictions:
       # Roles are not supported for the APPUiO Cloud Agent. Should be left empty.
