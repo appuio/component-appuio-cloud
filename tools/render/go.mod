@@ -3,7 +3,7 @@ module github.com/appuio/component-appuio-cloud/tools/render
 go 1.18
 
 require (
-	github.com/go-git/go-billy/v5 v5.4.0
+	github.com/go-git/go-billy/v5 v5.4.1
 	github.com/go-git/go-git/v5 v5.5.2
 	github.com/kyverno/kyverno v1.9.0
 	github.com/spf13/cobra v1.6.1
