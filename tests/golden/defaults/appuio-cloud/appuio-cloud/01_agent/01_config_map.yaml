@@ -1,23 +1,41 @@
 apiVersion: v1
 data:
-  config.yaml: "\"DefaultNamespaceNodeSelectorAnnotation\": \"appuio.io/default-node-selector\"\
-    \n\"DefaultNodeSelector\": {}\n\"DefaultOrganizationClusterRoles\":\n  \"admin\"\
-    : \"admin\"\n  \"alert-routing-edit\": \"alert-routing-edit\"\n  \"monitoring-edit\"\
-    : \"monitoring-edit\"\n  \"monitoring-edit-probe\": \"monitoring-edit-probe\"\n\
-    \  \"namespace-owner\": \"namespace-owner\"\n\"MemoryPerCoreLimit\": \"4Gi\"\n\
-    \"OrganizationLabel\": \"appuio.io/organization\"\n\"PrivilegedClusterRoles\"\
-    :\n- \"cluster-admin\"\n- \"cluster-image-registry-operator\"\n- \"cluster-node-tuning-operator\"\
-    \n- \"kyverno:generatecontroller\"\n- \"kyverno:policycontroller\"\n- \"multus-admission-controller-webhook\"\
-    \n- \"openshift-dns-operator\"\n- \"openshift-ingress-operator\"\n- \"syn-admin\"\
-    \n- \"syn-argocd-application-controller\"\n- \"syn-argocd-server\"\n- \"system:controller:generic-garbage-collector\"\
-    \n- \"system:controller:operator-lifecycle-manager\"\n- \"system:master\"\n- \"\
-    system:openshift:controller:namespace-security-allocation-controller\"\n- \"system:openshift:controller:podsecurity-admission-label-syncer-controller\"\
-    \n\"PrivilegedGroups\": []\n\"PrivilegedUsers\":\n- \"system:serviceaccount:argocd:argocd-application-controller\"\
-    \n- \"system:serviceaccount:openshift-logging:cluster-logging-operator\"\n- \"\
-    system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount\"\
-    \n- \"system:serviceaccount:syn-resource-locker:namespace-openshift-config-2c8343f13594d63-manager\"\
-    \n- \"system:serviceaccount:syn-resource-locker:namespace-default-d6a0af6dd07e8a3-manager\"\
-    \n- \"system:serviceaccount:syn-resource-locker:namespace-openshift-monitoring-c4273dc15ddfdf7-manager\""
+  config.yaml: |-
+    "DefaultNamespaceNodeSelectorAnnotation": "appuio.io/default-node-selector"
+    "DefaultNodeSelector": {}
+    "DefaultOrganizationClusterRoles":
+      "admin": "admin"
+      "alert-routing-edit": "alert-routing-edit"
+      "monitoring-edit": "monitoring-edit"
+      "monitoring-edit-probe": "monitoring-edit-probe"
+      "namespace-owner": "namespace-owner"
+    "MemoryPerCoreLimit": "4Gi"
+    "OrganizationLabel": "appuio.io/organization"
+    "PrivilegedClusterRoles":
+    - "cluster-admin"
+    - "cluster-image-registry-operator"
+    - "cluster-node-tuning-operator"
+    - "kyverno:generatecontroller"
+    - "kyverno:policycontroller"
+    - "multus-admission-controller-webhook"
+    - "openshift-dns-operator"
+    - "openshift-ingress-operator"
+    - "syn-admin"
+    - "syn-argocd-application-controller"
+    - "syn-argocd-server"
+    - "system:controller:generic-garbage-collector"
+    - "system:controller:operator-lifecycle-manager"
+    - "system:master"
+    - "system:openshift:controller:namespace-security-allocation-controller"
+    - "system:openshift:controller:podsecurity-admission-label-syncer-controller"
+    "PrivilegedGroups": []
+    "PrivilegedUsers":
+    - "system:serviceaccount:argocd:argocd-application-controller"
+    - "system:serviceaccount:openshift-logging:cluster-logging-operator"
+    - "system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount"
+    - "system:serviceaccount:syn-resource-locker:namespace-openshift-config-2c8343f13594d63-manager"
+    - "system:serviceaccount:syn-resource-locker:namespace-default-d6a0af6dd07e8a3-manager"
+    - "system:serviceaccount:syn-resource-locker:namespace-openshift-monitoring-c4273dc15ddfdf7-manager"
 kind: ConfigMap
 metadata:
   annotations: {}
