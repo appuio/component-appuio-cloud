@@ -3,35 +3,19 @@ kind: ClusterPolicy
 metadata:
   annotations:
     policies.kyverno.io/category: Namespace Ownership
-    policies.kyverno.io/description: 'This policy will:
+    policies.kyverno.io/description: |
+      This policy will:
 
+      - Check if the namespace name of the request matches one of the disallowed namespace patterns.
+      - Check if the requesting user/serviceaccount has a cluster role that allows them to create reserved namespaces.
 
-      - Check if the namespace name of the request matches one of the disallowed namespace
-      patterns.
+      If the namespace matches a disallowed pattern and the requester doesn't have a cluster role which allows them to bypass the policy, the request is denied.
+      The policy is applied for requests to create `Namespace` and `ProjectRequest` resources.
+      This ensures that unprivileged users can't use disallowed patterns regardless of whether they use `oc new-project`, `kubectl create ns` or the OpenShift web console.
 
-      - Check if the requesting user/serviceaccount has a cluster role that allows
-      them to create reserved namespaces.
+      The list of reserved namespace patterns is configured with xref:references/parameters#_reservednamespaces[component parameter `reservedNamespaces`].
 
-
-      If the namespace matches a disallowed pattern and the requester doesn''t have
-      a cluster role which allows them to bypass the policy, the request is denied.
-
-      The policy is applied for requests to create `Namespace` and `ProjectRequest`
-      resources.
-
-      This ensures that unprivileged users can''t use disallowed patterns regardless
-      of whether they use `oc new-project`, `kubectl create ns` or the OpenShift web
-      console.
-
-
-      The list of reserved namespace patterns is configured with xref:references/parameters#_reservednamespaces[component
-      parameter `reservedNamespaces`].
-
-
-      Requesters which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component
-      parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
-
-      '
+      Requesters which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
     policies.kyverno.io/jsonnet: component/namespace-policies.jsonnet
     policies.kyverno.io/minversion: v1
     policies.kyverno.io/subject: APPUiO Organizations

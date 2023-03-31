@@ -3,33 +3,20 @@ kind: ClusterPolicy
 metadata:
   annotations:
     policies.kyverno.io/category: Namespace Ownership
-    policies.kyverno.io/description: 'This policy will:
+    policies.kyverno.io/description: |
+      This policy will:
 
+      - Check that each namespace created by a serviceaccount without cluster-admin permissions has a label appuio.io/organization which isn't empty.
+      - Check that the creating serviceaccount is part of the organization it tries to create a namespace for.
 
-      - Check that each namespace created by a serviceaccount without cluster-admin
-      permissions has a label appuio.io/organization which isn''t empty.
+      The serviceaccount's organization membership is checked by:
 
-      - Check that the creating serviceaccount is part of the organization it tries
-      to create a namespace for.
+      - Fetching the serviceaccount's namespace
+      - Comparing that namespace's `appuio.io/organization` label value with the request's `appuio.io/organization` label value.
 
+      If the label `appuio.io/organization` is missing or empty or the serviceaccount's organization doesn't match the request's organization the request is denied.
 
-      The serviceaccount''s organization membership is checked by:
-
-
-      - Fetching the serviceaccount''s namespace
-
-      - Comparing that namespace''s `appuio.io/organization` label value with the
-      request''s `appuio.io/organization` label value.
-
-
-      If the label `appuio.io/organization` is missing or empty or the serviceaccount''s
-      organization doesn''t match the request''s organization the request is denied.
-
-
-      Serviceaccounts which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component
-      parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
-
-      '
+      Serviceaccounts which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
     policies.kyverno.io/jsonnet: component/namespace-policies.jsonnet
     policies.kyverno.io/minversion: v1
     policies.kyverno.io/subject: APPUiO Organizations

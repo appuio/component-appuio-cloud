@@ -3,36 +3,21 @@ kind: ClusterPolicy
 metadata:
   annotations:
     policies.kyverno.io/category: Namespace Ownership
-    policies.kyverno.io/description: 'This policy will:
+    policies.kyverno.io/description: |
+      This policy will:
 
+      - Check that each project created by a user without cluster-admin  permissions has a label appuio.io/organization which isn't empty.
+      - Check that the creating user is in the organization they try to create a project for.
 
-      - Check that each project created by a user without cluster-admin  permissions
-      has a label appuio.io/organization which isn''t empty.
+      The user's organization membership is checked by:
 
-      - Check that the creating user is in the organization they try to create a project
-      for.
-
-
-      The user''s organization membership is checked by:
-
-
-      - Reading the project''s annotation `openshift.io/requester` which contains
-      the username of the user who originally requested the project.
-
+      - Reading the project's annotation `openshift.io/requester` which contains the username of the user who originally requested the project.
       - Fetching all OpenShift groups
+      - Reading the `appuio.io/organization` label of the request and finding a group with the same name
 
-      - Reading the `appuio.io/organization` label of the request and finding a group
-      with the same name
+      If a group matching the label value exists, the policy checks that the user which requested the project is a member of that group.
 
-
-      If a group matching the label value exists, the policy checks that the user
-      which requested the project is a member of that group.
-
-
-      If the label `appuio.io/organization` is missing or empty or the user isn''t
-      a member of the group, the request is denied.
-
-      '
+      If the label `appuio.io/organization` is missing or empty or the user isn't a member of the group, the request is denied.
     policies.kyverno.io/jsonnet: component/namespace-policies.jsonnet
     policies.kyverno.io/minversion: v1
     policies.kyverno.io/subject: APPUiO Organizations

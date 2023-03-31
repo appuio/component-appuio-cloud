@@ -78,8 +78,11 @@ metadata:
 spec:
   patches:
     - id: patch1
-      patchTemplate: "\"metadata\":\n  \"annotations\":\n    \"rbac.authorization.kubernetes.io/autoupdate\"\
-        : \"false\"\n\"subjects\": []"
+      patchTemplate: |-
+        "metadata":
+          "annotations":
+            "rbac.authorization.kubernetes.io/autoupdate": "false"
+        "subjects": []
       patchType: application/strategic-merge-patch+json
       targetObjectRef:
         apiVersion: rbac.authorization.k8s.io/v1
