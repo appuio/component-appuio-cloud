@@ -32,23 +32,14 @@ kind: ClusterPolicy
 metadata:
   annotations:
     policies.kyverno.io/category: Namespace Ownership
-    policies.kyverno.io/description: 'This policy will check that the requesting user
-      has the `appuio.io/default-organization` annotation.
+    policies.kyverno.io/description: |
+      This policy will check that the requesting user has the `appuio.io/default-organization` annotation.
+      The content of the annotation isn't validated.
+      Instead the policy assumes that any default organization annotations which are present on user objects are valid.
 
-      The content of the annotation isn''t validated.
+      If the requesting user doesn't have the `appuio.io/default-organization` annotation, the project request is denied.
 
-      Instead the policy assumes that any default organization annotations which are
-      present on user objects are valid.
-
-
-      If the requesting user doesn''t have the `appuio.io/default-organization` annotation,
-      the project request is denied.
-
-
-      Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component
-      parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
-
-      '
+      Users which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
     policies.kyverno.io/jsonnet: component/project-policies.jsonnet
     policies.kyverno.io/minversion: v1
     policies.kyverno.io/subject: APPUiO Organizations
