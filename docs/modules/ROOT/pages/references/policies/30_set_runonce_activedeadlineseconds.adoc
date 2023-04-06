@@ -31,20 +31,12 @@ metadata:
   annotations:
     pod-policies.kyverno.io/autogen-controllers: none
     policies.kyverno.io/category: Resource Quota
-    policies.kyverno.io/description: 'This policy ensures that all "runonce" pods
-      have `.spec.activeDeadlineSeconds` set.
+    policies.kyverno.io/description: |
+      This policy ensures that all "runonce" pods have `.spec.activeDeadlineSeconds` set.
 
+      The value for `.spec.activeDeadlineSeconds` for a namepsace can be overridden by adding annotation `appuio.io/active-deadline-seconds-override` with the desired default value on a namespace.
 
-      The value for `.spec.activeDeadlineSeconds` for a namepsace can be overridden
-      by adding annotation `appuio.io/active-deadline-seconds-override` with the desired
-      default value on a namespace.
-
-
-      Pods can be excluded from the policy by configuring label match expressions
-      in xref:references/parameters.adoc#_runonceactivedeadlineseconds_podmatchexpressions[component
-      parameter `runOnceActiveDeadlineSeconds.podMatchExpressions`].
-
-      '
+      Pods can be excluded from the policy by configuring label match expressions in xref:references/parameters.adoc#_runonceactivedeadlineseconds_podmatchexpressions[component parameter `runOnceActiveDeadlineSeconds.podMatchExpressions`].
     policies.kyverno.io/jsonnet: component/runonce-activedeadlineseconds.jsonnet
     policies.kyverno.io/minversion: v1
     policies.kyverno.io/subject: APPUiO Organizations

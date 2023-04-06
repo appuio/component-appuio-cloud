@@ -35,26 +35,16 @@ metadata:
   annotations:
     pod-policies.kyverno.io/autogen-controllers: none
     policies.kyverno.io/category: Namespace Ownership
-    policies.kyverno.io/description: 'This policy will:
-
+    policies.kyverno.io/description: |
+      This policy will:
 
       - Check annotations and labels on new and modified namespaces against a whitelist.
 
+      If the namespace has an annotation or label which isn't whitelisted and the requester doesn't have a cluster role which allows them to bypass the policy, the request is denied.
 
-      If the namespace has an annotation or label which isn''t whitelisted and the
-      requester doesn''t have a cluster role which allows them to bypass the policy,
-      the request is denied.
+      The list of allowed namespace annotations and labels is configured with xref:references/parameters#_allowednamespaceannotations[component parameter `allowedNamespaceAnnotations`] and xref:references/parameters#_allowednamespacelabels[component parameter `allowedNamespaceLabels`] respectively.
 
-
-      The list of allowed namespace annotations and labels is configured with xref:references/parameters#_allowednamespaceannotations[component
-      parameter `allowedNamespaceAnnotations`] and xref:references/parameters#_allowednamespacelabels[component
-      parameter `allowedNamespaceLabels`] respectively.
-
-
-      Requesters which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component
-      parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
-
-      '
+      Requesters which match an entry of xref:references/parameters#_bypassnamespacerestrictions[component parameter `bypassNamespaceRestrictions`] are allowed to bypass the policy.
     policies.kyverno.io/jsonnet: component/namespace-policies.jsonnet
     policies.kyverno.io/minversion: v1
     policies.kyverno.io/subject: APPUiO Organizations
@@ -140,11 +130,13 @@ spec:
             list: 'request.object&& merge(    not_null(request.object.metadata.labels,
               `{}`)   ,not_null(request.oldObject.metadata.labels, `{}`))  | map(&{key:
               @}, keys(@))'
-        message: "The following labels can be modified:\n    appuio.io/organization,\
-          \ custom.appuio.io/*, kubernetes.io/metadata.name, network-policies.syn.tools/no-defaults,\
-          \ network-policies.syn.tools/purge-defaults, test.appuio.io/*, compute.test.appuio.io/cpu.\n\
-          labels given:\n    {{request.object.metadata.labels}}.\nlabels before modification:\n\
-          \    {{request.oldObject.metadata.labels}}."
+        message: |-
+          The following labels can be modified:
+              appuio.io/organization, custom.appuio.io/*, kubernetes.io/metadata.name, network-policies.syn.tools/no-defaults, network-policies.syn.tools/purge-defaults, test.appuio.io/*, compute.test.appuio.io/cpu.
+          labels given:
+              {{request.object.metadata.labels}}.
+          labels before modification:
+              {{request.oldObject.metadata.labels}}.
     - exclude:
         any:
           - clusterRoles:
@@ -218,12 +210,13 @@ spec:
             list: 'request.object&& merge(    not_null(request.object.metadata.annotations,
               `{}`)   ,not_null(request.oldObject.metadata.annotations, `{}`))  |
               map(&{key: @}, keys(@))'
-        message: "The following annotations can be modified:\n    custom.appuio.io/*,\
-          \ appuio.io/default-node-selector, kubectl.kubernetes.io/last-applied-configuration,\
-          \ policies.kyverno.io/last-applied-patches, appuio.io/active-deadline-seconds-override,\
-          \ test.appuio.io/*, compute.test.appuio.io/cpu.\nannotations given:\n  \
-          \  {{request.object.metadata.annotations}}.\nannotations before modification:\n\
-          \    {{request.oldObject.metadata.annotations}}."
+        message: |-
+          The following annotations can be modified:
+              custom.appuio.io/*, appuio.io/default-node-selector, kubectl.kubernetes.io/last-applied-configuration, policies.kyverno.io/last-applied-patches, appuio.io/active-deadline-seconds-override, test.appuio.io/*, compute.test.appuio.io/cpu.
+          annotations given:
+              {{request.object.metadata.annotations}}.
+          annotations before modification:
+              {{request.oldObject.metadata.annotations}}.
   validationFailureAction: enforce
 
 ----
