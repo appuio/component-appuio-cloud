@@ -36,6 +36,8 @@ data:
     - "system:serviceaccount:syn-resource-locker:namespace-openshift-config-2c8343f13594d63-manager"
     - "system:serviceaccount:syn-resource-locker:namespace-default-d6a0af6dd07e8a3-manager"
     - "system:serviceaccount:syn-resource-locker:namespace-openshift-monitoring-c4273dc15ddfdf7-manager"
+    "QuotaOverrideNamespace": "appuio-cloud"
+    "UserDefaultOrganizationAnnotation": "appuio.io/default-organization"
 kind: ConfigMap
 metadata:
   annotations: {}

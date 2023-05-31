@@ -1,5 +1,6 @@
 // main template for appuio-cloud
 local common = import 'common.libsonnet';
+local com = import 'lib/commodore.libjsonnet';
 local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
@@ -17,6 +18,7 @@ local monitoringLabel =
       SYNMonitoring: 'main',
     };
 
+local secrets = com.generateResources(params.secrets, function(name) com.namespaced(params.namespace, kube.Secret(name) + common.DefaultLabels));
 
 {
   '00_namespace': kube.Namespace(params.namespace) {
@@ -25,4 +27,5 @@ local monitoringLabel =
       annotations+: params.namespaceAnnotations,
     },
   } + common.DefaultLabels,
+  '00_secrets': secrets,
 }

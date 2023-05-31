@@ -104,7 +104,8 @@ local deployment = loadManifest('manager/manager.yaml') {
               image: '%(registry)s/%(repository)s:%(tag)s' % image,
               args+: [
                 '--webhook-cert-dir=' + webhookCertDir,
-              ],
+              ] + params.agent.extraArgs,
+              env+: com.envList(params.agent.extraEnv),
               resources+: com.makeMergeable(params.agent.resources),
               volumeMounts+: [
                 {

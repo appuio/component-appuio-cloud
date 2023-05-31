@@ -43,6 +43,19 @@ This parameter allows selecting the Docker images to us.
 Each image is specified using keys `registry`, `repository` and `tag`.
 This structure allows easily injecting a registry mirror, if required.
 
+
+== `secrets`
+
+[horizontal]
+type:: dictionary
+default:: `{}`
+
+This parameter allows creating arbitrary `Secret` resources.
+
+The dictionary keys are used as `metadata.name` for the resulting `Secret` resources.
+The secrets are created in the namespace indicated by parameter `namespace`.
+
+
 == `monitoring.enabled`
 
 [horizontal]
@@ -75,6 +88,37 @@ limits:
 Resource requests and limits for the APPUiO Cloud Agent deployment.
 
 The contents of this parameter are merged over the default resource requests and limits of the Agent's base configuration.
+
+
+== `agent.extraArgs`
+
+[horizontal]
+type:: list(string)
+default:: `[]`
+
+A list of extra command line arguments for the agent deployment.
+
+
+== `agent.extraEnv`
+
+[horizontal]
+type:: list
+default:: `{}`
+example::
++
+[source,yaml]
+----
+extraEnv:
+  CONTROL_API_TOKEN:
+    secretKeyRef:
+      name: control-api
+      key: token
+  DEBUG: "true"
+----
+
+Additional environment that should be passed to the agent deployment.
+If a dict is given `valueFrom:` is assumed.
+
 
 == `agent.resourceRatio.memoryPerCore`
 type:: string
