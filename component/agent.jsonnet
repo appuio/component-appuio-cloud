@@ -182,6 +182,8 @@ local metricsService = loadManifest('manager/service.yaml') {
 };
 
 {
+  // TODO(bastjan) we should switch to kustomize
+  '00_crds/cloudagent.appuio.io_zoneusageprofiles': loadManifest('crd/bases/cloudagent.appuio.io_zoneusageprofiles.yaml'),
   '01_role': role,
   '01_leader_election_role': leaderElectionRole,
   '01_role_binding': kube.ClusterRoleBinding(role.metadata.name) {
