@@ -64,6 +64,28 @@ default:: `true`
 
 Controls if `ServiceMonitor` object is created to scrape the APPUiO Cloud Agent metrics.
 
+
+== `agent_feature_set`
+
+[horizontal]
+type:: list(string)
+default:: []
+possible values::
++
+[source,yaml]
+----
+agent_feature_set:
+- usage-profiles
+----
+
+Controls which Kyverno policies are installed.
+As we're migrating policies to the agent this parameter allows to disable deprecated policies.
+See `possible values` for a list of available feature sets.
+
+This parameter will not configure the agent to use the feature set.
+The agent should first be upgraded and then the policy should be removed from the cluster to not have a window where both policies are disabled.
+
+
 == `agent.replicas`
 
 [horizontal]

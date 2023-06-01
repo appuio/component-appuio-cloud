@@ -21,6 +21,10 @@ parameters:
 
     secrets: {}
 
+    # Disables Kyverno policies deployed.
+    # possible values: [usage-profiles]
+    agent_feature_set: []
+
     agent:
       replicas: 3
       # Customize agent deployment resource requests & limits
