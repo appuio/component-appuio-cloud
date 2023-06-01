@@ -10,9 +10,9 @@
 
 . Create zone
 +
-If the control-api cluster is managed by commodore refer to the https://hub.syn.tools/control-api/references/parameters.html#_zones[`zones` documentation].
+If the control-api cluster is managed by Commodore refer to the https://hub.syn.tools/control-api/references/parameters.html#_zones[`zones` documentation].
 
-. If the control-api cluster is not managed by commodore, create the zone manually:
+. If the control-api cluster is not managed by Commodore, create the zone manually:
 +
 [source,bash]
 ----
@@ -39,7 +39,7 @@ ZONE_NAME=my-zone
 kubectl get secrets ${ZONE_NAME}-cloud-agent -oyaml | yq '.data.token' | base64 --decode
 ----
 
-. Store the token in vault and configure the agent:
+. Store the token in Vault and configure the agent:
 +
 [source,bash]
 ----

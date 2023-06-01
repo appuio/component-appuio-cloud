@@ -79,11 +79,11 @@ agent_feature_set:
 ----
 
 Controls which Kyverno policies are installed.
-As we're migrating policies to the agent this parameter allows to disable deprecated policies.
+As we're migrating policies to the agent, this parameter allows to disable deprecated policies.
 See `possible values` for a list of available feature sets.
 
 This parameter will not configure the agent to use the feature set.
-The agent should first be upgraded and then the policy should be removed from the cluster to not have a window where both policies are disabled.
+To ensure there's no window where both policies are disabled, the agent should be upgraded _before_ the policy is removed.
 
 
 == `agent.replicas`
