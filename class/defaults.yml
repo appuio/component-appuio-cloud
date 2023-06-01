@@ -17,7 +17,13 @@ parameters:
       agent:
         registry: ghcr.io
         repository: appuio/appuio-cloud-agent
-        tag: v0.9.0
+        tag: v0.10.0
+
+    secrets: {}
+
+    # Disables Kyverno policies deployed.
+    # possible values: [usage-profiles]
+    agent_feature_set: []
 
     agent:
       replicas: 3
@@ -25,6 +31,8 @@ parameters:
       resources:
         limits:
           memory: 1Gi
+      extraArgs: []
+      extraEnv: {}
       resourceRatio:
         memoryPerCore: 4Gi
       webhook:
@@ -38,8 +46,10 @@ parameters:
             - key: appuio.io/organization
               operator: Exists
       config:
+        QuotaOverrideNamespace: ${appuio_cloud:namespace}
         MemoryPerCoreLimit: ${appuio_cloud:agent:resourceRatio:memoryPerCore}
         OrganizationLabel: appuio.io/organization
+        UserDefaultOrganizationAnnotation: appuio.io/default-organization
 
         _subjects: ${appuio_cloud:bypassNamespaceRestrictions:subjects}
         PrivilegedClusterRoles: ${appuio_cloud:bypassNamespaceRestrictions:clusterRoles}

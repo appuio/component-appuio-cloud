@@ -70,7 +70,15 @@ local jsonnetFile(filename) =
   local pcount = std.length(parts);
   '%s/%s' % [ parts[pcount - 2], parts[pcount - 1] ];
 
+
+local agentFeatureEnabled(name) =
+  local knownFeatures = [ 'usage-profiles' ];
+  assert std.member(knownFeatures, name) : 'Unknown agent feature "%s"' % name;
+  std.member(params.agent_feature_set, name);
+
 {
+  // AgentFeatureEnabled returns true if the given feature is enabled.
+  AgentFeatureEnabled: agentFeatureEnabled,
   DefaultLabels: defaultLabels,
   FlattenSet: flattenSet,
   BypassNamespaceRestrictionsSubjects: bypassNamespaceRestrictionsSubjects,

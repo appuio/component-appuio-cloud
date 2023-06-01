@@ -16,6 +16,12 @@ parameters:
   appuio_cloud:
     metrics:
       enabled: true
+
+    secrets:
+      control-api:
+        stringData:
+          token: blub
+
     agent:
       webhook:
         tls:
