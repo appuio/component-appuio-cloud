@@ -220,6 +220,13 @@ This policy denies creation of new namespaces for an organization which has used
 The component allows operators to adjust the global and per-organization namespace quota.
 +
 This policy implements the requirement that a single organization can only https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/ns-quota.html[create a limited number of namespaces] on an APPUiO Cloud zone.
++
+[NOTE]
+====
+This policy was migrated to the APPUiO Cloud Agent with introduction of the UsageProfile feature. See https://kb.vshn.ch/appuio-cloud/references/architecture/control-api-usage-profile.html[Control API: UsageProfile].
+
+Overrides of the default quotas are still possible using the same ConfigMap as the Kyverno policy.
+====
 
 xref:references/policies/02_validate_namespace_metadata.adoc[`validate-namespace-metadata` (labeled `NS_LBL`)]::
 This policy ensures that users can only create or edit selected labels and annotations.
@@ -249,6 +256,13 @@ The policy allows cluster operators to adjust the generated objects by adding ap
 +
 This policy implements the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html[the APPUiO Cloud zone is protected from abusive resource usage] for resource types which can be managed through Kubernetes `ResourceQuota` and `LimitRange` objects.
 Notably, we deploy a quota limiting the cumulative memory and CPU https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/[resource requests and limits] of all containers per namespace and a quota limiting the count of other Resources, such as `Service` and `Secret` objects, per namespace.
++
+[NOTE]
+====
+This policy was migrated to the APPUiO Cloud Agent with introduction of the UsageProfile feature. See https://kb.vshn.ch/appuio-cloud/references/architecture/control-api-usage-profile.html[Control API: UsageProfile].
+
+Overrides of the default quotas are still possible by adding the same annotations as before to the namespace.
+====
 
 === Policies which are executed for requests to create a Namespace by specific unprivileged principals
 
