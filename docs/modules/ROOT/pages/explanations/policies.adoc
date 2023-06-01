@@ -130,7 +130,7 @@ See the detailed policy explanations or the policy reference documentation for d
 |  |                    |   |              NS_QUOT  v                                  |
 |  \---------+----------/   |              +-----------------+                         |
 |            |              |              |+---------------+|                         |
-|            |              |              ||cBLUVALIDATE   ||                         |
+|            |              |              ||cYELAGENT      ||                         |
 |            |              |              |+---------------+|                         |
 |            |              |         no   |  Check if       |                         |
 |            |              +--------------+  organization   |                         |
@@ -181,7 +181,7 @@ See the detailed policy explanations or the policy reference documentation for d
                             ORG_RBAC v                  RES_QUOT   v
                             +-----------------+         +---------------------+
                             |+---------------+|         |  +---------------+  |
-                            ||cYELAGENT      ||         |  |cGREGENERATE   |  |
+                            ||cYELAGENT      ||         |  |cYELAGENT      |  |
                             |+---------------+|         |  +---------------+  |
                             |    Grant the    |         |   Create            |
                             |    organization |         |   ResourceQuota and |
