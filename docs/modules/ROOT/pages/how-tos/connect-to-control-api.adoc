@@ -1,0 +1,60 @@
+= Connect Zone to Control-API
+
+== Prerequisites
+
+- kustomize
+- yq
+- connection to control-api cluster through kubectl
+
+== Connect Zone
+
+. Create zone
++
+If the control-api cluster is managed by commodore refer to the https://hub.syn.tools/control-api/references/parameters.html#_zones[`zones` documentation].
+
+. If the control-api cluster is not managed by commodore, create the zone manually:
++
+[source,bash]
+----
+# e.g. exoscale-ch-gva-2-0
+ZONE_NAME=my-zone
+
+cat > kustomization.yaml <<EOF
+resources:
+- https://github.com/appuio/appuio-cloud-agent.git//config/foreign_rbac?ref=usage-profiles
+
+namePrefix: ${ZONE_NAME}-
+EOF
+
+kubectl apply -k .
+----
+
+. Get the created token from the secret
++
+[source,bash]
+----
+# e.g. exoscale-ch-gva-2-0
+ZONE_NAME=my-zone
+
+kubectl get secrets ${ZONE_NAME}-cloud-agent -oyaml | yq '.data.token' | base64 --decode
+----
+
+. Store the token in vault and configure the agent:
++
+[source,bash]
+----
+appuio_cloud:
+  secrets:
+    agent-control-api-token:
+      stringData:
+        token: "?{vaultkv:${cluster:tenant}/${cluster:name}/agent-control-api-token/bearer_token}"
+  agent:
+    extraArgs:
+    - -control-api-url=https://api.appuio.cloud
+    extraEnv:
+      CONTROL_API_BEARER_TOKEN:
+        valueFrom:
+          secretKeyRef:
+            key: token
+            name: agent-control-api-token
+----

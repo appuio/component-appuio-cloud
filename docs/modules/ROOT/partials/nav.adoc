@@ -1,5 +1,7 @@
 * xref:index.adoc[Home]
-* xref:how-tos/tls.adoc[Setup Webook Certificate]
+* How-Tos
+** xref:how-tos/tls.adoc[Setup Webook Certificate]
+** xref:how-tos/connect-to-control-api.adoc[]
 * References
 ** xref:references/parameters.adoc[Parameters]
 include::partial$nav-policy.adoc[]
