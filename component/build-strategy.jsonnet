@@ -1,7 +1,7 @@
 local common = import 'common.libsonnet';
 local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
-local resourceLocker = import 'lib/resource-locker.libjsonnet';
+local po = import 'lib/patch-operator.libsonnet';
 local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.appuio_cloud;
@@ -20,5 +20,5 @@ local disallowDockerBuildStrategyPatch = {
 
 {
   [if params.disallowDockerBuildStrategy then '15_disallow_docker_build_strategy_patch']:
-    resourceLocker.Patch(bindingToPatch, disallowDockerBuildStrategyPatch),
+    po.Patch(bindingToPatch, disallowDockerBuildStrategyPatch),
 }
