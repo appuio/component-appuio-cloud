@@ -35,6 +35,12 @@ parameters:
       extraEnv: {}
       resourceRatio:
         memoryPerCore: 4Gi
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - effect: "NoSchedule"
+          key: "node-role.kubernetes.io/master"
+          operator: "Exists"
       webhook:
         tls:
           certSecretName: webhook-service-tls

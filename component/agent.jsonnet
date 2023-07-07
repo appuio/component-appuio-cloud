@@ -127,6 +127,8 @@ local deployment = loadManifest('manager/manager.yaml') {
             },
           },
         ],
+        nodeSelector: params.agent.nodeSelector,
+        tolerations: params.agent.tolerations,
       },
     },
   },

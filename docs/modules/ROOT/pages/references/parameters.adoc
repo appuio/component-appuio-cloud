@@ -150,6 +150,38 @@ The "fair-use" limit of memory to CPU request.
 That means, if a namespace requests less than `4Gi` of memory per requested CPU core, the APPUiO Cloud Agent will warn the user that they exceed the "fair-use" limit and will potentially generate additional costs.
 
 
+== `agent.nodeSelector`
+
+[horizontal]
+type:: dict
+default::
++
+[source,yaml]
+----
+nodeSelector:
+  node-role.kubernetes.io/master: ""
+----
+
+The node selector (if applicable) for the agent deployment.
+
+
+== `agent.tolerations`
+
+[horizontal]
+type:: list
+default::
++
+[source,yaml]
+----
+tolerations:
+  - effect: "NoSchedule"
+    key: "node-role.kubernetes.io/master"
+    operator: "Exists"
+----
+
+The tolerations (if applicable) for the agent deployment.
+
+
 == `agent.webhook.tls`
 
 This key configures encryption of traffic to the controller's admission webhook server.
