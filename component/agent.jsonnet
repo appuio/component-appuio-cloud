@@ -12,6 +12,29 @@ local image = params.images.agent;
 local loadManifest(manifest) = std.parseJson(kap.yaml_load('appuio-cloud/agent/manifests/' + image.tag + '/' + manifest));
 local loadManifests(manifest) = std.parseJson(kap.yaml_load_stream('appuio-cloud/agent/manifests/' + image.tag + '/' + manifest));
 
+local agentVersion =
+  if !std.startsWith(image.tag, 'v') then
+    // report version which has usageprofiles if not a tag
+    {
+      major: 0,
+      minor: 10,
+      patch: 0,
+    }
+  else
+    local verparts = std.map(std.parseInt, std.split(image.tag[1:], '.'));
+    if std.length(verparts) >= 3 then
+      {
+        major: verparts[0],
+        minor: verparts[1],
+        patch: verparts[2],
+      }
+    else if std.length(verparts) >= 2 then
+      {
+        major: verparts[0],
+        minor: verparts[1],
+        patch: 0,
+      };
+
 local serviceAccount = loadManifest('rbac/service_account.yaml') {
   metadata+: {
     namespace: params.namespace,
@@ -185,7 +208,10 @@ local metricsService = loadManifest('manager/service.yaml') {
 
 {
   // TODO(bastjan) we should switch to kustomize
-  '00_crds/cloudagent.appuio.io_zoneusageprofiles': loadManifest('crd/bases/cloudagent.appuio.io_zoneusageprofiles.yaml'),
+  [if agentVersion.minor >= 10 then
+    '00_crds/cloudagent.appuio.io_zoneusageprofiles'
+  ]:
+    loadManifest('crd/bases/cloudagent.appuio.io_zoneusageprofiles.yaml'),
   '01_role': role,
   '01_leader_election_role': leaderElectionRole,
   '01_role_binding': kube.ClusterRoleBinding(role.metadata.name) {
