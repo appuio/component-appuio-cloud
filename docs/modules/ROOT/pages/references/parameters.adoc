@@ -245,6 +245,7 @@ default:: https://github.com/appuio/component-appuio-cloud/blob/master/class/def
 This parameter allows configuring the APPUiO Cloud Agent.
 See the https://github.com/appuio/appuio-cloud-agent/blob/HEAD/config.go[Agent repository] for an overview of the available configuration options.
 
+Configuration parameters can be removed in the hierarchy by setting them to `null`.
 
 ==== `agent.config._subjects`
 

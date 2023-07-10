@@ -92,21 +92,27 @@ local defaultOrganizationClusterRoles = std.prune(
 );
 
 
-local configMap = kube.ConfigMap('appuio-cloud-agent-config') {
-  metadata+: {
-    namespace: params.namespace,
-  },
-  data: {
-    'config.yaml': std.manifestYamlDoc(params.agent.config {
-      local subjects = mapSubjects(super._subjects),
-      _subjects:: null,
-      PrivilegedGroups: subjects.groups,
-      PrivilegedUsers: subjects.users,
-      PrivilegedClusterRoles: common.FlattenSet(super.PrivilegedClusterRoles),
-      DefaultOrganizationClusterRoles: defaultOrganizationClusterRoles,
-    }),
-  },
-};
+local configMap =
+  local cleanConfig = {
+    [k]: params.agent.config[k]
+    for k in std.objectFields(params.agent.config)
+    if params.agent.config[k] != null
+  };
+  kube.ConfigMap('appuio-cloud-agent-config') {
+    metadata+: {
+      namespace: params.namespace,
+    },
+    data: {
+      'config.yaml': std.manifestYamlDoc(cleanConfig {
+        local subjects = mapSubjects(super._subjects),
+        _subjects:: null,
+        PrivilegedGroups: subjects.groups,
+        PrivilegedUsers: subjects.users,
+        PrivilegedClusterRoles: common.FlattenSet(super.PrivilegedClusterRoles),
+        DefaultOrganizationClusterRoles: defaultOrganizationClusterRoles,
+      }),
+    },
+  };
 
 local deployment = loadManifest('manager/manager.yaml') {
   metadata+: {
