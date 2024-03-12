@@ -101,6 +101,18 @@ rules:
   - apiGroups:
       - user.openshift.io
     resources:
+      - groups
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - user.openshift.io
+    resources:
       - users
     verbs:
       - get
