@@ -26,7 +26,7 @@ spec:
           command:
             - appuio-cloud-agent
           env: []
-          image: ghcr.io/appuio/appuio-cloud-agent:v0.11.0
+          image: ghcr.io/appuio/appuio-cloud-agent:v0.12.1
           livenessProbe:
             httpGet:
               path: /healthz
