@@ -77,3 +77,19 @@ subjects:
   - kind: ServiceAccount
     name: appuio-cloud-agent
     namespace: appuio-cloud
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations: {}
+  labels:
+    name: appuio-cloud-agent-resource-quota-edit
+  name: appuio-cloud-agent:resource-quota-edit
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: resource-quota-edit
+subjects:
+  - kind: ServiceAccount
+    name: appuio-cloud-agent
+    namespace: appuio-cloud

@@ -55,3 +55,21 @@ rules:
       - edit
       - patch
       - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: appuio-cloud
+    name: resource-quota-edit
+  name: resource-quota-edit
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - resourcequotas
+    verbs:
+      - '*'
