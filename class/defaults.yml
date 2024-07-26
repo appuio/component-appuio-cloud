@@ -17,7 +17,7 @@ parameters:
       agent:
         registry: ghcr.io
         repository: appuio/appuio-cloud-agent
-        tag: v0.13.2
+        tag: v0.14.0
 
     secrets: {}
 
