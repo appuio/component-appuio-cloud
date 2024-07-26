@@ -101,6 +101,9 @@ spec:
                 name: olm-operator-serviceaccount
                 namespace: openshift-operator-lifecycle-manager
               - kind: ServiceAccount
+                name: cloud-controller-manager
+                namespace: syn-cloudscale-cloud-controller-manager
+              - kind: ServiceAccount
                 name: namespace-openshift-config-2c8343f13594d63-manager
                 namespace: syn-resource-locker
               - kind: ServiceAccount
@@ -155,6 +158,9 @@ spec:
               - kind: ServiceAccount
                 name: olm-operator-serviceaccount
                 namespace: openshift-operator-lifecycle-manager
+              - kind: ServiceAccount
+                name: cloud-controller-manager
+                namespace: syn-cloudscale-cloud-controller-manager
               - kind: ServiceAccount
                 name: namespace-openshift-config-2c8343f13594d63-manager
                 namespace: syn-resource-locker
@@ -215,6 +221,9 @@ spec:
               - kind: ServiceAccount
                 name: olm-operator-serviceaccount
                 namespace: openshift-operator-lifecycle-manager
+              - kind: ServiceAccount
+                name: cloud-controller-manager
+                namespace: syn-cloudscale-cloud-controller-manager
               - kind: ServiceAccount
                 name: namespace-openshift-config-2c8343f13594d63-manager
                 namespace: syn-resource-locker

@@ -34,6 +34,7 @@ data:
     - "system:serviceaccount:argocd:argocd-application-controller"
     - "system:serviceaccount:openshift-logging:cluster-logging-operator"
     - "system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount"
+    - "system:serviceaccount:syn-cloudscale-cloud-controller-manager:cloud-controller-manager"
     - "system:serviceaccount:syn-resource-locker:namespace-openshift-config-2c8343f13594d63-manager"
     - "system:serviceaccount:syn-resource-locker:namespace-default-d6a0af6dd07e8a3-manager"
     - "system:serviceaccount:syn-resource-locker:namespace-openshift-monitoring-c4273dc15ddfdf7-manager"

@@ -128,6 +128,10 @@ parameters:
         system:openshift:controller:namespace-security-allocation-controller: system:openshift:controller:namespace-security-allocation-controller
         system:openshift:controller:podsecurity-admission-label-syncer-controller: system:openshift:controller:podsecurity-admission-label-syncer-controller
       subjects:
+        syn-cloudscale-cloud-controller-manager:
+          kind: ServiceAccount
+          name: cloud-controller-manager
+          namespace: syn-cloudscale-cloud-controller-manager
         syn-resource-locker-ingress:
           kind: ServiceAccount
           name: namespace-default-d6a0af6dd07e8a3-manager
