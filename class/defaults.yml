@@ -25,6 +25,9 @@ parameters:
     # possible values: [usage-profiles]
     agent_feature_set: []
 
+    # Allows to generically disable a Kyverno ClusterPolicy
+    disable_kyverno_cluster_policies: []
+
     agent:
       replicas: 3
       # Customize agent deployment resource requests & limits
