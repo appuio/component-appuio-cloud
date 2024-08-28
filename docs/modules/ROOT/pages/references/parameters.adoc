@@ -86,6 +86,16 @@ This parameter will not configure the agent to use the feature set.
 To ensure there's no window where both policies are disabled, the agent should be upgraded _before_ the policy is removed.
 
 
+== `disable_kyverno_cluster_policies`
+
+[horizontal]
+type:: list(string)
+default:: `[]`
+example:: `[organization-namespaces]`
+
+Allows to generically disable Kyverno cluster policies by name.
+
+
 == `agent.replicas`
 
 [horizontal]
