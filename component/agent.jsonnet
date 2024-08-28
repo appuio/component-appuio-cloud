@@ -197,7 +197,19 @@ local admissionWebhook = std.map(function(webhook) webhook {
           namespace: params.namespace,
         },
       },
-      namespaceSelector: params.agent.webhook.namespaceSelector,
+      // Inject namespace selector for objects that are not namespaces or projects
+      [if !(
+        std.length(
+          std.filter(
+            function(r) std.length(
+              std.setInter(
+                std.set([ 'projects', 'projectrequests', 'namespaces' ]),
+                std.set(r.resources),
+              )
+            ) > 0, w.rules
+          )
+        ) > 0
+      ) then 'namespaceSelector']: params.agent.webhook.namespaceSelector,
     }
     for w in super.webhooks
   ],
