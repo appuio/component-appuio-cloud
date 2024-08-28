@@ -100,6 +100,6 @@ local generateQuotaLimitRangeInNsPolicy = kyverno.ClusterPolicy('quota-and-limit
 };
 
 // Define outputs below
-{
+common.RemoveDisabledPolicies({
   [if !common.AgentFeatureEnabled('usage-profiles') then '11_generate_quota_limit_range_in_ns']: generateQuotaLimitRangeInNsPolicy + common.DefaultLabels,
-}
+})

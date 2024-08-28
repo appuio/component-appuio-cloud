@@ -76,7 +76,23 @@ local agentFeatureEnabled(name) =
   assert std.member(knownFeatures, name) : 'Unknown agent feature "%s"' % name;
   std.member(params.agent_feature_set, name);
 
+local disabledPolicies = std.prune(params.disable_kyverno_cluster_policies);
+
+local removeDisabledPolicies = function(policies)
+  {
+    [p]: policies[p]
+    for p in std.filter(
+      function(pk)
+        local policy = policies[pk];
+        !std.isObject(policy) || policy.apiVersion != 'kyverno.io/v1' || policy.kind != 'ClusterPolicy' || std.length(std.find(policy.metadata.name, disabledPolicies)) == 0,
+      std.objectFields(policies)
+    )
+  };
+
 {
+  // Remove disabled Kyverno policies
+  // Takes a dict with kubernetes resources and removes kyverno.io/v1.ClusterPolicy manifests that are disabled
+  RemoveDisabledPolicies: removeDisabledPolicies,
   // AgentFeatureEnabled returns true if the given feature is enabled.
   AgentFeatureEnabled: agentFeatureEnabled,
   DefaultLabels: defaultLabels,

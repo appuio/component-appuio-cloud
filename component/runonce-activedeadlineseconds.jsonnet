@@ -83,6 +83,6 @@ local policy =
     },
   };
 
-{
+common.RemoveDisabledPolicies({
   '30_set_runonce_activedeadlineseconds': policy + common.DefaultLabels,
-}
+})

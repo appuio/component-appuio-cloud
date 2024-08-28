@@ -506,7 +506,7 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
 };
 
 // Define outputs below
-{
+common.RemoveDisabledPolicies({
   '01_appuio_ns_provisioner_role': appuioNsProvisionerRole + common.DefaultLabels,
   '01_appuio_ns_provisioners_crb': appuioNsProvisionersRoleBinding + common.DefaultLabels,
   '02_organization_namespaces': organizationNamespaces + common.DefaultLabels,
@@ -514,4 +514,4 @@ local validateNamespaceMetadata = kyverno.ClusterPolicy('validate-namespace-meta
   '02_organization_projects': organizationProjects + common.DefaultLabels,
   '02_disallow_reserved_namespaces': disallowReservedNamespaces + common.DefaultLabels,
   '02_validate_namespace_metadata': validateNamespaceMetadata + common.DefaultLabels,
-}
+})
