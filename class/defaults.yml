@@ -74,6 +74,8 @@ parameters:
           monitoring-edit-probe: monitoring-edit-probe
           resource-quota-edit: resource-quota-edit
 
+        LegacyNamespaceQuota: ${appuio_cloud:maxNamespaceQuota}
+
         _reservedNamespaces: ${appuio_cloud:reservedNamespaces}
         _allowedAnnotations: ${appuio_cloud:allowedNamespaceAnnotations}
         _allowedLabels: ${appuio_cloud:allowedNamespaceLabels}
