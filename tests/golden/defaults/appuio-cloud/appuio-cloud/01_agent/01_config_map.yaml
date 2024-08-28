@@ -26,6 +26,7 @@ data:
       "monitoring-edit-probe": "monitoring-edit-probe"
       "namespace-owner": "namespace-owner"
       "resource-quota-edit": "resource-quota-edit"
+    "LegacyNamespaceQuota": 25
     "MemoryPerCoreLimit": "4Gi"
     "OrganizationLabel": "appuio.io/organization"
     "PrivilegedClusterRoles":
