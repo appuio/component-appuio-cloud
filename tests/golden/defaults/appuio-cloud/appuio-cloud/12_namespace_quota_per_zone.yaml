@@ -107,9 +107,9 @@ spec:
             any:
               - key: '{{nsCount}}'
                 operator: GreaterThanOrEquals
-                value: '{{override || `3`}}'
+                value: '{{override || `25`}}'
         message: |-
-          You cannot create more than {{override || `3`}} namespaces for organization '{{request.object.metadata.labels."appuio.io/organization"}}'.
+          You cannot create more than {{override || `25`}} namespaces for organization '{{request.object.metadata.labels."appuio.io/organization"}}'.
           Please contact support to have your quota raised.
     - context:
         - apiCall:
@@ -185,8 +185,8 @@ spec:
             any:
               - key: '{{nsCount}}'
                 operator: GreaterThanOrEquals
-                value: '{{override || `3`}}'
+                value: '{{override || `25`}}'
         message: |-
-          You cannot create more than {{override || `3`}} namespaces for organization '{{organization}}'.
+          You cannot create more than {{override || `25`}} namespaces for organization '{{organization}}'.
           Please contact support to have your quota raised.
   validationFailureAction: enforce
