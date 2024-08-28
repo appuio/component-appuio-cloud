@@ -17,7 +17,7 @@ parameters:
       agent:
         registry: ghcr.io
         repository: appuio/appuio-cloud-agent
-        tag: v0.15.0
+        tag: v0.16.0
 
     secrets: {}
 
@@ -71,6 +71,9 @@ parameters:
           monitoring-edit-probe: monitoring-edit-probe
           resource-quota-edit: resource-quota-edit
 
+        _reservedNamespaces: ${appuio_cloud:reservedNamespaces}
+        _allowedAnnotations: ${appuio_cloud:allowedNamespaceAnnotations}
+        _allowedLabels: ${appuio_cloud:allowedNamespaceLabels}
 
     clusterRoles:
       namespace-owner:

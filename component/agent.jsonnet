@@ -110,6 +110,13 @@ local configMap =
         PrivilegedUsers: subjects.users,
         PrivilegedClusterRoles: common.FlattenSet(super.PrivilegedClusterRoles),
         DefaultOrganizationClusterRoles: defaultOrganizationClusterRoles,
+
+        ReservedNamespaces: common.FlattenSet(super._reservedNamespaces),
+        _reservedNamespaces:: null,
+        AllowedAnnotations: common.FlattenSet(super._allowedAnnotations),
+        _allowedAnnotations:: null,
+        AllowedLabels: common.FlattenSet(super._allowedLabels),
+        _allowedLabels:: null,
       }),
     },
   };
