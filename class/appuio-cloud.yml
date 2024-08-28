@@ -27,10 +27,3 @@ parameters:
           - appuio-cloud/component/agent.jsonnet
         input_type: jsonnet
         output_path: appuio-cloud/01_agent/
-
-  commodore:
-    postprocess:
-      filters:
-        - type: jsonnet
-          filter: postprocess/disable-kyveno-policies.jsonnet
-          path: ${_instance}/

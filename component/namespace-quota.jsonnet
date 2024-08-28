@@ -147,7 +147,7 @@ local namespaceQuotaOverrides = [
 ];
 
 // Define outputs below
-{
+common.RemoveDisabledPolicies({
   [if !common.AgentFeatureEnabled('usage-profiles') then '12_namespace_quota_per_zone']: namespaceQuotaPolicy + common.DefaultLabels,
   [if std.length(namespaceQuotaOverrides) > 0 then '13_namespace_quota_overrides']: namespaceQuotaOverrides,
-}
+})
