@@ -66,6 +66,10 @@ webhooks:
       matchExpressions:
         - key: appuio.io/organization
           operator: Exists
+    objectSelector:
+      matchExpressions:
+        - key: acme.cert-manager.io/http01-solver
+          operator: DoesNotExist
     reinvocationPolicy: IfNeeded
     rules:
       - apiGroups:

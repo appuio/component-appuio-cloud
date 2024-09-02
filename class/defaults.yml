@@ -54,6 +54,11 @@ parameters:
           matchExpressions:
             - key: appuio.io/organization
               operator: Exists
+        patches:
+          pod-run-once-active-deadline-mutator.appuio.io:
+            _objectSelector:
+              matchExpressions: ${appuio_cloud:runOnceActiveDeadlineSeconds:podMatchExpressions}
+
       config:
         QuotaOverrideNamespace: ${appuio_cloud:namespace}
         MemoryPerCoreLimit: ${appuio_cloud:agent:resourceRatio:memoryPerCore}
@@ -79,6 +84,9 @@ parameters:
         _reservedNamespaces: ${appuio_cloud:reservedNamespaces}
         _allowedAnnotations: ${appuio_cloud:allowedNamespaceAnnotations}
         _allowedLabels: ${appuio_cloud:allowedNamespaceLabels}
+
+        PodRunOnceActiveDeadlineSecondsOverrideAnnotation: ${appuio_cloud:runOnceActiveDeadlineSeconds:overrideAnnotationKey}
+        PodRunOnceActiveDeadlineSecondsDefault: ${appuio_cloud:runOnceActiveDeadlineSeconds:defaultActiveDeadlineSeconds}
 
     clusterRoles:
       namespace-owner:
