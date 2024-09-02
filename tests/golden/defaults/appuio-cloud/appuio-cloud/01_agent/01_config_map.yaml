@@ -29,6 +29,8 @@ data:
     "LegacyNamespaceQuota": 25
     "MemoryPerCoreLimit": "4Gi"
     "OrganizationLabel": "appuio.io/organization"
+    "PodRunOnceActiveDeadlineSecondsDefault": 1800
+    "PodRunOnceActiveDeadlineSecondsOverrideAnnotation": "appuio.io/active-deadline-seconds-override"
     "PrivilegedClusterRoles":
     - "cluster-admin"
     - "cluster-image-registry-operator"

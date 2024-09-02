@@ -184,6 +184,25 @@ local admissionWebhookTlsSecret =
     },
   };
 
+local formatWebhookObjectSelector = function(obj)
+  if std.objectHas(obj, '_objectSelector') then
+    local me = obj._objectSelector.matchExpressions;
+    obj {
+      objectSelector+: {
+        matchExpressions: std.prune([
+          if me[name] != null then
+            {
+              key: name,
+            } + me[name]
+          for name in std.objectFields(me)
+        ]),
+      },
+      _objectSelector:: null,
+    }
+  else
+    obj
+;
+
 local admissionWebhook = std.map(function(webhook) webhook {
   metadata+: {
     name: '%s-%s' % [ params.namespace, webhook.metadata.name ],
@@ -210,7 +229,7 @@ local admissionWebhook = std.map(function(webhook) webhook {
           )
         ) > 0
       ) then 'namespaceSelector']: params.agent.webhook.namespaceSelector,
-    }
+    } + com.makeMergeable(formatWebhookObjectSelector(std.get(params.agent.webhook.patches, w.name, {})))
     for w in super.webhooks
   ],
 }, loadManifests('webhook/manifests.yaml'));
