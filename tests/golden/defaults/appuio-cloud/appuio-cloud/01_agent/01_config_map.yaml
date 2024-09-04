@@ -26,7 +26,59 @@ data:
       "monitoring-edit-probe": "monitoring-edit-probe"
       "namespace-owner": "namespace-owner"
       "resource-quota-edit": "resource-quota-edit"
+    "LegacyDefaultLimitRange":
+      "limits":
+      - "default":
+          "cpu": "600m"
+          "memory": "768Mi"
+        "defaultRequest":
+          "cpu": "10m"
+          "memory": "100Mi"
+        "min":
+          "cpu": "10m"
+          "ephemeral-storage": "100Ki"
+          "memory": "4Mi"
+        "type": "Container"
+    "LegacyDefaultResourceQuotas":
+      "organization-compute":
+        "hard":
+          "limits.cpu": 8
+          "limits.memory": "20Gi"
+          "pods": "45"
+          "requests.cpu": 4
+          "requests.memory": "4Gi"
+        "scopes":
+        - "NotTerminating"
+      "organization-compute-terminating":
+        "hard":
+          "limits.cpu": "4000m"
+          "limits.memory": "4Gi"
+          "pods": "5"
+          "requests.cpu": "500m"
+          "requests.memory": "2Gi"
+        "scopes":
+        - "Terminating"
+      "organization-objects":
+        "hard":
+          "cephfs-fspool-cluster.storageclass.storage.k8s.io/requests.storage": "25Gi"
+          "count/configmaps": "150"
+          "count/jobs.batch": "150"
+          "count/replicationcontrollers": "100"
+          "count/secrets": "150"
+          "count/services": "20"
+          "count/services.loadbalancers": "0"
+          "count/services.nodeports": "0"
+          "limits.ephemeral-storage": "500Mi"
+          "localblock-storage.storageclass.storage.k8s.io/persistentvolumeclaims": "0"
+          "openshift.io/imagestreams": "20"
+          "openshift.io/imagestreamtags": "50"
+          "persistentvolumeclaims": "10"
+          "rbd-storagepool-cluster.storageclass.storage.k8s.io/requests.storage": "25Gi"
+          "requests.ephemeral-storage": "250Mi"
+          "requests.storage": "1000Gi"
+    "LegacyLimitRangeName": "organization"
     "LegacyNamespaceQuota": 25
+    "LegacyResourceQuotaAnnotationBase": "resourcequota.appuio.io"
     "MemoryPerCoreLimit": "4Gi"
     "OrganizationLabel": "appuio.io/organization"
     "PodRunOnceActiveDeadlineSecondsDefault": 1800
