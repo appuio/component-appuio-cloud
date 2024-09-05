@@ -117,6 +117,16 @@ local configMap =
         _allowedAnnotations:: null,
         AllowedLabels: common.FlattenSet(super._allowedLabels),
         _allowedLabels:: null,
+
+        local legacyDefaultResourceQuotas = super._LegacyDefaultResourceQuotas,
+        LegacyDefaultResourceQuotas: std.foldl(function(prev, k) prev { [k]: legacyDefaultResourceQuotas[k] + legacyDefaultResourceQuotas[k].spec { synchronize:: null, spec:: null } }, std.objectFields(legacyDefaultResourceQuotas), {}),
+        _LegacyDefaultResourceQuotas:: null,
+
+        local legacyDefaultLimitRange = super._LegacyDefaultLimitRange,
+        LegacyDefaultLimitRange: {
+          limits: std.map(function(l) legacyDefaultLimitRange._limits[l] { type: l }, std.objectFields(legacyDefaultLimitRange._limits)),
+        },
+        _LegacyDefaultLimitRange:: null,
       }),
     },
   };

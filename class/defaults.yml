@@ -17,7 +17,7 @@ parameters:
       agent:
         registry: ghcr.io
         repository: appuio/appuio-cloud-agent
-        tag: v0.18.1
+        tag: v0.19.0
 
     secrets: {}
 
@@ -87,6 +87,13 @@ parameters:
 
         PodRunOnceActiveDeadlineSecondsOverrideAnnotation: ${appuio_cloud:runOnceActiveDeadlineSeconds:overrideAnnotationKey}
         PodRunOnceActiveDeadlineSecondsDefault: ${appuio_cloud:runOnceActiveDeadlineSeconds:defaultActiveDeadlineSeconds}
+
+        LegacyResourceQuotaAnnotationBase: resourcequota.appuio.io
+        _LegacyDefaultResourceQuotas: ${appuio_cloud:generatedResourceQuota}
+
+        LegacyLimitRangeName: ${appuio_cloud:generatedLimitRange:name}
+        _LegacyDefaultLimitRange:
+          _limits: ${appuio_cloud:generatedLimitRange:limits}
 
     clusterRoles:
       namespace-owner:
