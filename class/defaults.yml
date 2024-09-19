@@ -21,13 +21,6 @@ parameters:
 
     secrets: {}
 
-    # Disables Kyverno policies deployed.
-    # possible values: [usage-profiles]
-    agent_feature_set: []
-
-    # Allows to generically disable a Kyverno ClusterPolicy
-    disable_kyverno_cluster_policies: []
-
     agent:
       replicas: 3
       # Customize agent deployment resource requests & limits
@@ -130,15 +123,12 @@ parameters:
       # Roles are not supported for the APPUiO Cloud Agent. Should be left empty.
       roles: {}
       # In APPUiO Cloud Agent ClusterRoles are only ever matched if they are bound through a ClusterRoleBinding,
-      # this is different from the behavior of Kyverno.
       # This is done to prevent a user from wrongly configuring a low-privileged ClusterRole which users
       # can then bind to themselves to bypass the restrictions.
       clusterRoles:
         cluster-admin: cluster-admin
         cluster-image-registry-operator: cluster-image-registry-operator
         cluster-node-tuning-operator: cluster-node-tuning-operator
-        kyverno:generatecontroller: kyverno:generatecontroller
-        kyverno:policycontroller: kyverno:policycontroller
         multus-admission-controller-webhook: multus-admission-controller-webhook
         openshift-dns-operator: openshift-dns-operator
         openshift-ingress-operator: openshift-ingress-operator
@@ -197,13 +187,6 @@ parameters:
         - kubectl.kubernetes.io/last-applied-configuration
       appuioUserDefined: custom.appuio.io/*
       runOnceActiveDeadlineSecondsOverride: ${appuio_cloud:runOnceActiveDeadlineSeconds:overrideAnnotationKey}
-      # If using mutate, Kyverno appends an annotation to debug the mutate patches.
-      # The annotation is appended in the context of the original requestor.
-      # Thus we have to whitelist the annotation or the later validation rejects the request.
-      # This should be safe because:
-      # - The annotation is only for debugging and not referenced elsewhere.
-      # - The mutating policies are validated with a validation rule too.
-      kyvernoMutateLabel: policies.kyverno.io/last-applied-patches
       defaultNamespaceNodeSelectorAnnotation: ${appuio_cloud:agent:config:DefaultNamespaceNodeSelectorAnnotation}
 
     maxNamespaceQuota: 25
@@ -212,7 +195,6 @@ parameters:
     generatedResourceQuota:
       # See https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/resource-quota.html
       organization-objects:
-        synchronize: true
         spec:
           hard:
             count/configmaps: "150"
@@ -237,7 +219,6 @@ parameters:
             rbd-storagepool-cluster.storageclass.storage.k8s.io/requests.storage: 25Gi
 
       organization-compute:
-        synchronize: true
         spec:
           hard:
             requests.cpu: 4
@@ -249,7 +230,6 @@ parameters:
             - NotTerminating
 
       organization-compute-terminating:
-        synchronize: true
         spec:
           hard:
             limits.cpu: 4000m
@@ -262,7 +242,6 @@ parameters:
 
     generatedLimitRange:
       name: organization
-      synchronize: true
       limits:
         "Container":
           min:

@@ -1,6 +1,0 @@
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: delete-existing-auxiliary-annotation
-  annotations:
-    test.appuio.io/environment: staging
