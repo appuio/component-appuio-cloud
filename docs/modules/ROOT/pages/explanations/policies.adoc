@@ -1,12 +1,12 @@
-= Policies
+= Cloud Agent Policies
 
 [abstract]
-This documentation explains how the different policies interact to implement the requirements and architectural decisions for APPUiO Cloud.
+This documentation explains how the different admission webhooks and controllers, referenced here as policies, interact to implement the requirements and architectural decisions for APPUiO Cloud.
 
 == Namespace ownership
 
 The overall desired architecture for namespace ownership on APPUiO Cloud is documented in the https://kb.vshn.ch/appuio-cloud/references/architecture/namespace-ownership.html[APPUiO Cloud for System Engineers] documentation.
-This component implements the architecture described there with Kyverno policies and the https://github.com/appuio/appuio-cloud-agent[APPUiO Cloud Agent].
+This component implements the architecture described there with the https://github.com/appuio/appuio-cloud-agent[APPUiO Cloud Agent].
 
 This article explains how the different policies managed by the component implement namespace ownership and other adjacent policies.
 
@@ -59,7 +59,7 @@ See the detailed policy explanations or the policy reference documentation for d
                                        |                                               |
                                        |no                                             |
                                        |                                               |
-                            RSVD       v                                               |
+                            NMEV       v                                               |
                             +--------------------+                                     |
                             |  +---------------+ |                                     |
                             |  |cBLUVALIDATE   | |                                     |
@@ -79,12 +79,12 @@ See the detailed policy explanations or the policy reference documentation for d
 |              |ProjectRequest                           |Namespace                    |
 |              |                                         |                             |
 |              |                          +--------------+--------------+              |
-|    PRJREQ_ORGv                          |                             |              |
+|    ORG_NS    v                          |                             |              |
 |    +-----------------+                  |Principal           Principal|              |
 |    |+---------------+|                  |is User                 is SA|              |
 |    ||cBLUVALIDATE   ||                  v                             v              |
 |    |+---------------+|       +----------------------+     +----------------------+   |
-|    |  Check that user| no    :USR_NS_ORG            |     :SA_NS_ORG             |   |
+|    |  Check that user| no    :ORG_NS                |     :ORG_NS                |   |
 |    |  has default    +----+  | +-----------------+  |     |  +----------------+  |   |
 |    |  organization   |    |  | | +-------------+ |  |     |  | +-------------+|  |   |
 |    | {d}             |    |  | | |cPNKMUTATE   | |  |     |  | |cPNKMUTATE   ||  |   |
@@ -130,7 +130,7 @@ See the detailed policy explanations or the policy reference documentation for d
 |  |                    |   |              NS_QUOT  v                                  |
 |  \---------+----------/   |              +-----------------+                         |
 |            |              |              |+---------------+|                         |
-|            |              |              ||cYELAGENT      ||                         |
+|            |              |              ||cBLUVALIDATE   ||                         |
 |            |              |              |+---------------+|                         |
 |            |              |         no   |  Check if       |                         |
 |            |              +--------------+  organization   |                         |
@@ -141,7 +141,7 @@ See the detailed policy explanations or the policy reference documentation for d
 |            |              |                       |                                  |
 |            |              |                       |yes                               |
 |            |              |                       |                                  |
-|            |              |              NS_LBL   v                                  |
+|            |              |              NMEV     v                                  |
 |            |              |              +-----------------+                         |
 |            |              |              |+---------------+|                         |
 |            |              |              ||cBLUVALIDATE   ||                         |
@@ -181,7 +181,7 @@ See the detailed policy explanations or the policy reference documentation for d
                             ORG_RBAC v                  RES_QUOT   v
                             +-----------------+         +---------------------+
                             |+---------------+|         |  +---------------+  |
-                            ||cYELAGENT      ||         |  |cYELAGENT      |  |
+                            ||cYELRECONCILE  ||         |  |cYELRECONCILE  |  |
                             |+---------------+|         |  +---------------+  |
                             |    Grant the    |         |   Create            |
                             |    organization |         |   ResourceQuota and |
@@ -195,41 +195,28 @@ See the detailed policy explanations or the policy reference documentation for d
 
 [NOTE]
 ====
-Checking whether a principal is allowed to bypass the namespace policies is implemented as exclude rules in the other validating policies.
-However, to better illustrate the flow of a request in the diagram, we pretend it's a separate validating policy (labeled `PRIV`).
+Checking whether a principal is allowed to bypass the namespace policies is implemented as exclude rules in the other policies.
+However, to better illustrate the flow of a request in the diagram, we pretend it's a separate policy (labeled `PRIV`).
 ====
 
 [TIP]
 ====
-Generally, Kyverno policies are evaluated in parallel, but we organize them in a flow-chart style to better illustrate how they interact.
+Mutating policies are executed before validating policies, both are executed in parallel with other policies of the same type.
+We organize them in a flow-chart style to better illustrate how they interact.
 ====
 
 === Policies which are executed for all requests by unprivileged principals
 
 The following policies are executed for all namespaces which are created by an unprivileged principal:
 
-xref:references/policies/02_disallow_reserved_namespaces.adoc[`disallow-reserved-namespaces` (labeled `RSVD`)]::
+https://github.com/appuio/appuio-cloud-agent/blob/master/webhooks/namespace_metadata_validator.go[`namespace_metadata_validator` (labeled `NMEV`)]::
 This policy ensures that users can't create namespaces which match a pattern which is reserved for the system.
 We need this policy to ensure that users can't adversely impact the system by using namespace names which might be used by the system in the future.
 +
 Effectively, this is a restriction of the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-arbitrary-name.html[users can choose arbitrary namespace names] to ensure overall system availability.
 The component allows operators to configure the set of disallowed patterns.
 
-xref:references/policies/12_namespace_quota_per_zone.adoc[`check-namespace-quota` (labeled `NS_QUOT`)]::
-This policy denies creation of new namespaces for an organization which has used up their namespace quota on a zone.
-The component allows operators to adjust the global and per-organization namespace quota.
-+
-This policy implements the requirement that a single organization can only https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/ns-quota.html[create a limited number of namespaces] on an APPUiO Cloud zone.
-+
-[NOTE]
-====
-This policy was migrated to the APPUiO Cloud Agent with introduction of the UsageProfile feature. See https://kb.vshn.ch/appuio-cloud/references/architecture/control-api-usage-profile.html[Control API: UsageProfile].
-
-Overrides of the default quotas are still possible using the same ConfigMap as the Kyverno policy.
-====
-
-xref:references/policies/02_validate_namespace_metadata.adoc[`validate-namespace-metadata` (labeled `NS_LBL`)]::
-This policy ensures that users can only create or edit selected labels and annotations.
+This policy also ensures that users can only create or edit selected labels and annotations.
 In particular, we want to allow users to transfer namespace ownership between organizations of which they're members.
 +
 As shown in the https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[end-user documentation], transferring a namespace is done by changing the namespace's `appuio.io/organization` label to the organization which should receive ownership of the namespace.
@@ -238,7 +225,22 @@ To protect the cluster, we need to ensure that users can't modify arbitrary labe
 +
 TIP: This policy is executed when namespaces are created or updated.
 
-`default-rolebinding-in-ns (labeled ORG_RBAC)`::
+
+https://github.com/appuio/appuio-cloud-agent/blob/master/webhooks/namespace_quota_validator.go[`namespace_quota_validator.go` (labeled `NS_QUOT`)]::
+This policy denies creation of new namespaces for an organization which has used up their namespace quota on a zone.
+The component allows operators to adjust the global and per-organization namespace quota.
++
+This policy implements the requirement that a single organization can only https://kb.vshn.ch/appuio-cloud/references/quality-requirements/performance/ns-quota.html[create a limited number of namespaces] on an APPUiO Cloud zone.
++
+[NOTE]
+====
+This policy has two modes:
+Legacy mode: The policy reads the namespace quota from a ConfigMap in the same namespace as the policy.
+UsageProfile mode: See https://kb.vshn.ch/appuio-cloud/references/architecture/control-api-usage-profile.html[Control API: UsageProfile].
+Overrides of the default quotas are still possible using the same ConfigMap as the legacy policy.
+====
+
+https://github.com/appuio/appuio-cloud-agent/blob/master/controllers/org_rbac_controller.go[`org_rbac_controller.go` (labeled `ORG_RBAC`)]::
 The https://github.com/appuio/appuio-cloud-agent/blob/master/controllers/org_rbac_controller.go[Organization RBAC Controller] of the APPUiO Cloud Agent makes sure that by default organizations are granted all the permissions necessary to manager their own namespaces.
 +
 It does so by creating `RoleBindings` in every organization namespace that grant configured `ClusterRoles`.
@@ -249,7 +251,7 @@ This allows organizations to further restrict access for their members.
 +
 This fulfills the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-organization-rbac.html[namespaces are owned by organizations].
 
-xref:references/policies/11_generate_quota_limit_range_in_ns.adoc[`quota-and-limit-range-in-ns` (labeled `RES_QUOT`)]::
+https://github.com/appuio/appuio-cloud-agent/blob/master/controllers/legacy_resource_quota_controller.go[`legacy_resource_quota_controller.go` (labeled `RES_QUOT`)]::
 This policy is applied to any namespace which is created with an organization label.
 It generates default `ResourceQuota` and `LimitRange` objects in all namespaces belonging to an organization.
 The policy allows cluster operators to adjust the generated objects by adding appropriate annotations to namespaces.
@@ -259,17 +261,25 @@ Notably, we deploy a quota limiting the cumulative memory and CPU https://kubern
 +
 [NOTE]
 ====
-This policy was migrated to the APPUiO Cloud Agent with introduction of the UsageProfile feature. See https://kb.vshn.ch/appuio-cloud/references/architecture/control-api-usage-profile.html[Control API: UsageProfile].
+This policy is superseeded by the UsageProfile feature. See https://kb.vshn.ch/appuio-cloud/references/architecture/control-api-usage-profile.html[Control API: UsageProfile].
 
 Overrides of the default quotas are still possible by adding the same annotations as before to the namespace.
+====
++
+[NOTE]
+====
+A validating policy (https://github.com/appuio/appuio-cloud-agent/blob/master/webhooks/reserved_resourcequota_limitrange_validator.go[`reserved_resourcequota_limitrange_validator.go`]) forbids modification of the reserved `ResourceQuota` and `LimitRange` objects in the namespace.
 ====
 
 === Policies which are executed for requests to create a Namespace by specific unprivileged principals
 
 We handle actual validation of namespace creation by users and by ServiceAccounts in different policies:
 
-xref:references/policies/02_organization_namespaces.adoc[`organization-namespaces` (labeled `USR_NS_ORG`)]::
-This policy is executed when a namespace is created by a user.
+https://github.com/appuio/appuio-cloud-agent/blob/master/webhooks/namespace_project_organization_mutator.go[`namespace_project_organization_mutator.go` (labeled `ORG_NS`)]::
+This policy is executed when a namespace or OpenShift project is created by a user or a ServiceAccount.
+
+==== User flow
+
 If the user creates a namespace without an explicit `appuio.io/organization` label, their default organization is set as the value of the label.
 +
 The policy denies the request if the user tries to create a namespace for an organization which they're not a member of.
@@ -278,8 +288,8 @@ It also denies the request when a user who doesn't have a default organization t
 This policy implements the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/ns-arbitrary-name.html[users can create arbitrary namespaces directly with `kubectl create`]
 Additionally, this policy ensures that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/functional/namespace-organization.html[user namespaces are associated with an organization for billing purposes] for those namespaces.
 
-xref:references/policies/02_organization_sa_namespaces.adoc[`organization-sa-namespaces` (labeled `SA_NS_ORG`)]::
-This policy is executed when a namespace is created by a ServiceAccount.
+==== ServiceAccount flow
+
 The policy looks up the ServiceAccount's organization by looking up the organization to which the ServiceAccount's namespace belongs.
 If the ServiceAccount creates a namespace without an explicit `appuio.io/organization` label, it's organization is set as the value of the label.
 +
@@ -288,23 +298,8 @@ The policy denies the request if the ServiceAccount tries to create a namespace 
 This policy implements the requirement that users should be able to https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/create-ns-with-serviceaccount.html[use ServiceAccount tokens to create namespaces].
 Additionally, this policy ensures that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/functional/namespace-organization.html[user namespaces are associated with an organization for billing purposes] for namespaces created by ServiceAccounts.
 
-=== Policies which are executed for requests to create an OpenShift project
+=== OpenShift Project flow
 
-xref:references/policies/03_projectrequest.adoc[`organization-in-projectrequests` (labeled `PRJREQ_ORG`)]::
-This policy is executed when a user creates a `ProjectRequest` either with `oc new-project` or through the OpenShift web console.
-It checks whether the user has a default organization and denies the request if they don't.
-This policy is necessary because the request to create a `ProjectRequest` is the only request in the project creation flow where the principal is the user which wants to create the project.
-+
-We need to rely on the user's default organization for namespaces created through OpenShift projects, because there's no straightforward way for us to allow users to specify additional metadata in an OpenShift `ProjectRequest`.
-+
-Note that this policy doesn't itself inject the user's default organization into the request.
-Instead, the `organization-projects` policy ensures that the resulting namespace is created with label `appuio.io/organization` set to the user's default organization for any project requests which weren't denied.
-+
-This policy enables the requirement that users can https://kb.vshn.ch/appuio-cloud/references/quality-requirements/usability/create-ns-with-oc-new-project.html[create arbitrary namespaces through OpenShift's Project mechanism] without violating the requirement that https://kb.vshn.ch/appuio-cloud/references/quality-requirements/functional/namespace-organization.html[user namespaces are associated with an organization for billing purposes].
-+
-Injecting the organization label also ensures the policies which generate the default `RoleBinding` and quota objects are triggered for namespaces created through OpenShift projects.
-
-xref:references/policies/02_organization_projects.adoc[`organization-projects` (labeled `PRJ_ORG`)]::
 This policy is executed when the control plane creates a `Project` resource based on a `ProjectRequest` created by a user.
 The policy reads the annotation `openshift.io/requester` on the `Project` and uses the value of that annotation to lookup the user which requested the project.
 The user's default organization is then injected as label `appuio.io/organization` on the `Project` resourcefootnote:[
@@ -316,10 +311,9 @@ This policy ensures the requirement that https://kb.vshn.ch/appuio-cloud/referen
 
 == Policies which don't interact with organization namespaces
 
-The component also manages Kyverno policies which implement other features than namespace ownership on APPUiO Cloud zones.
-As shown below, there's currently only one policy which doesn't cover some aspect of namespace ownership.
+The component also manages policies which implement other features than namespace ownership on APPUiO Cloud zones.
 
-xref:references/policies/30_set_runonce_activedeadlineseconds.adoc[`set-runonce-activedeadlineseconds`]::
+https://github.com/appuio/appuio-cloud-agent/blob/master/webhooks/pod_runonce_active_deadline_seconds_mutator.go[`pod_runonce_active_deadline_seconds_mutator.go`]::
 This policy injects a default value for `.spec.activeDeadlineSeconds` for run-once podsfootnote:[
 Usually, those are pods created by Kubernetes jobs or cronjobs.
 However, the policy also affects pods created directly without a controller, for example by applying a Pod manifest to the cluster.
@@ -329,7 +323,21 @@ This policy implements requirement that https://kb.vshn.ch/appuio-cloud/referenc
 +
 TIP: The policy which validates mutations of annotations on namespaces allows users to override the default value which is injected for individual namespaces by annotating the namespace.
 
+https://github.com/appuio/appuio-cloud-agent/blob/master/webhooks/pod_node_selector_mutator.go[`pod_node_selector_mutator.go`]::
+This policy injects a default value for `.spec.nodeSelector` for pods which don't have an explicit value for that field.
++
+This allows users to choose a default node class value for their workloads if they don't specify a node selector in their pod or pod controller manifests.
++
+TIP: The policy which validates mutations of annotations on namespaces allows users to override the default value which is injected for individual namespaces by annotating the namespace.
+
+https://github.com/appuio/appuio-cloud-agent/blob/master/webhooks/ratio_validator.go[`ratio_validator.go`]::
+This policy validates that the ratio of CPU and memory requests to limits in a pod is within a configured range.
++
+On violation of the ratio, the policy warns the user that they might be billed more than expected for their workloads.
+It does not however deny the request.
++
+TIP: Fair-usage ratios differ between cloud providers and node node classes.
+
 == References
 
-* The xref:references/policies/index.adoc[policy reference documentation] shows what each policy does and how users can configure the policies through the component.
 * The APPUiO Cloud requirements implemented by the policies can be found in the VSHN Knowledge Base, in the section https://kb.vshn.ch/appuio-cloud/index.html[APPUiO Cloud for Engineers].

@@ -119,7 +119,7 @@ local configMap =
         _allowedLabels:: null,
 
         local legacyDefaultResourceQuotas = super._LegacyDefaultResourceQuotas,
-        LegacyDefaultResourceQuotas: std.foldl(function(prev, k) prev { [k]: legacyDefaultResourceQuotas[k] + legacyDefaultResourceQuotas[k].spec { synchronize:: null, spec:: null } }, std.objectFields(legacyDefaultResourceQuotas), {}),
+        LegacyDefaultResourceQuotas: std.foldl(function(prev, k) prev { [k]: legacyDefaultResourceQuotas[k] + legacyDefaultResourceQuotas[k].spec { spec:: null } }, std.objectFields(legacyDefaultResourceQuotas), {}),
         _LegacyDefaultResourceQuotas:: null,
 
         local legacyDefaultLimitRange = super._LegacyDefaultLimitRange,

@@ -20,5 +20,3 @@
 
 # Additional entries
 jsonnetfile.json
-tests/kyverno/*/compiled
-tools/render/render

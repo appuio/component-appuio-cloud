@@ -65,37 +65,6 @@ default:: `true`
 Controls if `ServiceMonitor` object is created to scrape the APPUiO Cloud Agent metrics.
 
 
-== `agent_feature_set`
-
-[horizontal]
-type:: list(string)
-default:: []
-possible values::
-+
-[source,yaml]
-----
-agent_feature_set:
-- usage-profiles
-----
-
-Controls which Kyverno policies are installed.
-As we're migrating policies to the agent, this parameter allows to disable deprecated policies.
-See `possible values` for a list of available feature sets.
-
-This parameter will not configure the agent to use the feature set.
-To ensure there's no window where both policies are disabled, the agent should be upgraded _before_ the policy is removed.
-
-
-== `disable_kyverno_cluster_policies`
-
-[horizontal]
-type:: list(string)
-default:: `[]`
-example:: `[organization-namespaces]`
-
-Allows to generically disable Kyverno cluster policies by name.
-
-
 == `agent.replicas`
 
 [horizontal]
@@ -279,8 +248,8 @@ _subjects:
     name: admins
 ----
 
-A special key to map between the Kyverno way of specifying subjects and the APPUiO Cloud Agent way.
-The key is omitted from the final configuration.
+A special key format the Subjects configuration for the APPUiO Cloud Agent.
+
 
 == `clusterRoles`
 
@@ -416,21 +385,6 @@ type:: dict
 A key-value map defining `ResourceQuota` objects.
 Each entry will generate a `ResourceQuota` with the key as its name.
 
-=== `generatedResourceQuota[name].synchronize`
-
-[horizontal]
-type:: bool
-default:: `true`
-
-Whether the created `ResourceQuota` is kept in sync.
-If set to `false` the created `ResourceQuota` can be modified.
-
-[WARNING]
-====
-There is a bug in `kyverno` up until `v1.4.2`.
-The bug has been fixed, but as of writing this the fix hasn't been released.
-The bug will cause the `ResourceQuota` to be updated if the `Namespace` or `ClusterPolicy` changes, even if `synchronize` has been disabled.
-====
 
 === `generatedResourceQuota[name].spec`
 
@@ -453,7 +407,7 @@ For example: `resourcequota.appuio.io/organization-objects.openshift.io_imagestr
 
 The exception is that for customizing storage class quotas you need to set annotation `resourcequota.appuio.io/<name>.storageclasses`.
 This is because the regular annotations for storageclass-specific resources are generally too long to be accepted as annotation keys by Kubernetes.
-The value of the `resourcequota.appuio.io/<name>.storageclasses` annotation is parsed as JSON by Kyverno.
+The value of the `resourcequota.appuio.io/<name>.storageclasses` annotation is parsed as JSON by the APPUIO Cloud Agent.
 The policy expects that the parsed JSON is a single object.
 For quota keys of the resource quota `<name>` which match the prefix `<storageclass>.storageclass.storage.k8s.io` the policy checks that JSON object instead of a plain annotation for overrides.
 ====
@@ -473,21 +427,6 @@ default:: `organization`
 
 The `metadata.name` of the `LimitRange` that gets generated in the new `Namespace` created by the user.
 
-=== `generatedLimitRange.synchronize`
-
-[horizontal]
-type:: bool
-default:: `true`
-
-Whether the created `LimitRange` is kept in sync.
-If set to `false` the created `LimitRange` can be modified.
-
-[WARNING]
-====
-There is a bug in `kyverno` up until `v1.4.2`.
-The bug has been fixed, but as of writing this the fix hasn't been released.
-The bug will cause the `LimitRange` to be updated if the `Namespace` or `ClusterPolicy` changes, even if `synchronize` has been disabled.
-====
 
 === `generatedLimitRange.limits`
 
