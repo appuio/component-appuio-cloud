@@ -245,7 +245,7 @@ parameters:
       limits:
         "Container":
           min:
-            cpu: "10m"
+            cpu: "1m"
             memory: "4Mi"
             ephemeral-storage: "100Ki"
           default:
