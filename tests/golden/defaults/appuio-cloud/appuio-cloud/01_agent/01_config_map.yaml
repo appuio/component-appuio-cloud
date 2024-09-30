@@ -34,7 +34,7 @@ data:
           "cpu": "10m"
           "memory": "100Mi"
         "min":
-          "cpu": "10m"
+          "cpu": "1m"
           "ephemeral-storage": "100Ki"
           "memory": "4Mi"
         "type": "Container"
