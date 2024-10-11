@@ -59,6 +59,21 @@ local appuioNsProvisionersRoleBinding = kube.ClusterRoleBinding('appuio-ns-provi
   ],
 };
 
+local namespaceQuotaOverrides = [
+  kube.ConfigMap('override-%s' % org) {
+    metadata+: {
+      labels+: {
+        // this label is informational only here
+        'appuio.io/organization': org,
+      },
+    },
+    data+: {
+      namespaceQuota: '%s' % params.namespaceQuotaOverrides[org],
+    },
+  } + common.DefaultLabels
+  for org in std.filter(function(key) key != null && params.namespaceQuotaOverrides[key] != null, std.objectFields(params.namespaceQuotaOverrides))
+];
+
 {
   '00_namespace': kube.Namespace(params.namespace) {
     metadata+: {
@@ -71,4 +86,5 @@ local appuioNsProvisionersRoleBinding = kube.ClusterRoleBinding('appuio-ns-provi
   '01_appuio_ns_provisioner_role': appuioNsProvisionerRole + common.DefaultLabels,
   '01_appuio_ns_provisioners_crb': appuioNsProvisionersRoleBinding + common.DefaultLabels,
 
+  [if std.length(namespaceQuotaOverrides) > 0 then '13_namespace_quota_overrides']: namespaceQuotaOverrides,
 }
