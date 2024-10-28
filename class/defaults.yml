@@ -111,6 +111,12 @@ parameters:
             resources: [pods]
             verbs:
               - get
+          - apiGroups:
+              - metrics.k8s.io
+            resources:
+              - pods
+            verbs:
+              - get
       monitoring-edit-probe:
         rules:
           - apiGroups: ['monitoring.coreos.com']
