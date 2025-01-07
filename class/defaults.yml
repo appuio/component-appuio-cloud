@@ -1,6 +1,7 @@
 parameters:
   appuio_cloud:
-    =_metadata: {}
+    =_metadata:
+      multi_tenant: true
     namespace: appuio-cloud
     namespaceLabels:
       # Ensure the default network policies are not created in the
