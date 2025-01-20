@@ -72,6 +72,7 @@ parameters:
           alert-routing-edit: alert-routing-edit
           monitoring-edit-probe: monitoring-edit-probe
           resource-quota-edit: resource-quota-edit
+          cluster-logging-application-view: cluster-logging-application-view
 
         LegacyNamespaceQuota: ${appuio_cloud:maxNamespaceQuota}
 
