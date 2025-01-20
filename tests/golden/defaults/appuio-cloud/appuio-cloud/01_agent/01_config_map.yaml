@@ -21,6 +21,7 @@ data:
     "DefaultOrganizationClusterRoles":
       "admin": "admin"
       "alert-routing-edit": "alert-routing-edit"
+      "cluster-logging-application-view": "cluster-logging-application-view"
       "monitoring-edit": "monitoring-edit"
       "monitoring-edit-probe": "monitoring-edit-probe"
       "namespace-owner": "namespace-owner"
