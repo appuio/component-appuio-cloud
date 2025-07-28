@@ -168,6 +168,10 @@ parameters:
           kind: ServiceAccount
           name: olm-operator-serviceaccount
           namespace: openshift-operator-lifecycle-manager
+        cluster-olm-operator:
+          kind: ServiceAccount
+          name: cluster-olm-operator
+          namespace: openshift-cluster-olm-operator
         openshift-logging-operator:
           kind: ServiceAccount
           name: cluster-logging-operator
