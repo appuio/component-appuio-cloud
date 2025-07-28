@@ -100,6 +100,7 @@ data:
     "PrivilegedGroups": []
     "PrivilegedUsers":
     - "system:serviceaccount:argocd:argocd-application-controller"
+    - "system:serviceaccount:openshift-cluster-olm-operator:cluster-olm-operator"
     - "system:serviceaccount:openshift-logging:cluster-logging-operator"
     - "system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount"
     - "system:serviceaccount:syn-cloudscale-cloud-controller-manager:cloud-controller-manager"
