@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-kubectl --as=cluster-admin get clusterrole -ojson | jq '[ .items[]
+kubectl --as=system:admin get clusterrole -ojson | jq '[ .items[]
         | select(
             .rules[]?
                 | select(
