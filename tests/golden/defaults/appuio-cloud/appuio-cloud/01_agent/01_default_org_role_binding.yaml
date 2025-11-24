@@ -1,7 +1,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  annotations: {}
   labels:
     name: appuio-cloud-agent-admin
   name: appuio-cloud-agent:admin
@@ -17,7 +16,6 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  annotations: {}
   labels:
     name: appuio-cloud-agent-alert-routing-edit
   name: appuio-cloud-agent:alert-routing-edit
@@ -33,7 +31,6 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  annotations: {}
   labels:
     name: appuio-cloud-agent-monitoring-edit
   name: appuio-cloud-agent:monitoring-edit
@@ -49,7 +46,6 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  annotations: {}
   labels:
     name: appuio-cloud-agent-monitoring-edit-probe
   name: appuio-cloud-agent:monitoring-edit-probe
@@ -65,7 +61,6 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  annotations: {}
   labels:
     name: appuio-cloud-agent-namespace-owner
   name: appuio-cloud-agent:namespace-owner
@@ -81,7 +76,6 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  annotations: {}
   labels:
     name: appuio-cloud-agent-resource-quota-edit
   name: appuio-cloud-agent:resource-quota-edit

@@ -3,7 +3,6 @@ data:
   namespaceQuota: '50'
 kind: ConfigMap
 metadata:
-  annotations: {}
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore
