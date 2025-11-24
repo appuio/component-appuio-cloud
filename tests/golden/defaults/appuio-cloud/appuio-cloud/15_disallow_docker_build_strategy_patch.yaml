@@ -1,24 +1,88 @@
-apiVersion: redhatcop.redhat.io/v1alpha1
-kind: Patch
+apiVersion: v1
+kind: ServiceAccount
 metadata:
   annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    syn.tools/source: https://github.com/appuio/component-appuio-cloud.git
   labels:
-    name: clusterrolebinding-system-build-strategy-docker-3729a69e19ab960
-  name: clusterrolebinding-system-build-strategy-docker-3729a69e19ab960
-  namespace: syn-patch-operator
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: espejote
+    app.kubernetes.io/part-of: syn
+  name: rbac-clusterrolebinding-system-build-strategy-docker-binding
+  namespace: syn-espejote
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    syn.tools/source: https://github.com/appuio/component-appuio-cloud.git
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: espejote
+    app.kubernetes.io/part-of: syn
+  name: syn-espejote:rbac-clusterrolebinding-system-build-strategy-docker-binding
+rules:
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resourceNames:
+      - system:build-strategy-docker-binding
+    resources:
+      - clusterrolebindings
+    verbs:
+      - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    syn.tools/source: https://github.com/appuio/component-appuio-cloud.git
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: espejote
+    app.kubernetes.io/part-of: syn
+  name: syn-espejote:rbac-clusterrolebinding-system-build-strategy-docker-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: syn-espejote:rbac-clusterrolebinding-system-build-strategy-docker-binding
+subjects:
+  - kind: ServiceAccount
+    name: rbac-clusterrolebinding-system-build-strategy-docker-binding
+    namespace: syn-espejote
+---
+apiVersion: espejote.io/v1alpha1
+kind: ManagedResource
+metadata:
+  annotations:
+    syn.tools/source: https://github.com/appuio/component-appuio-cloud.git
+  labels:
+    app.kubernetes.io/component: appuio-cloud
+    app.kubernetes.io/managed-by: espejote
+    app.kubernetes.io/name: rbac-clusterrolebinding-system-build-strategy-docker-binding
+    app.kubernetes.io/part-of: syn
+  name: rbac-clusterrolebinding-system-build-strategy-docker-binding
+  namespace: syn-espejote
 spec:
-  patches:
-    clusterrolebinding-system-build-strategy-docker-3729a69e19ab960-patch:
-      patchTemplate: |-
-        "metadata":
-          "annotations":
-            "rbac.authorization.kubernetes.io/autoupdate": "false"
-        "subjects": []
-      patchType: application/strategic-merge-patch+json
-      targetObjectRef:
+  applyOptions:
+    force: true
+  serviceAccountRef:
+    name: rbac-clusterrolebinding-system-build-strategy-docker-binding
+  template: |-
+    {
+        "apiVersion": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRoleBinding",
+        "metadata": {
+            "annotations": {
+                "rbac.authorization.kubernetes.io/autoupdate": "false"
+            },
+            "name": "system:build-strategy-docker-binding"
+        },
+        "subjects": [
+
+        ]
+    }
+  triggers:
+    - name: clusterrolebinding
+      watchResource:
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRoleBinding
         name: system:build-strategy-docker-binding
-  serviceAccountRef:
-    name: patch-sa
