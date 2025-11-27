@@ -1,7 +1,6 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  annotations: {}
   labels:
     control-plane: appuio-cloud-agent
     name: appuio-cloud-agent

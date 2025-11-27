@@ -118,7 +118,6 @@ data:
     "UserDefaultOrganizationAnnotation": "appuio.io/default-organization"
 kind: ConfigMap
 metadata:
-  annotations: {}
   labels:
     name: appuio-cloud-agent-config
   name: appuio-cloud-agent-config

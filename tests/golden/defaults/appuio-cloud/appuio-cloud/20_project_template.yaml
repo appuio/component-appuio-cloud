@@ -1,7 +1,6 @@
 apiVersion: config.openshift.io/v1
 kind: Project
 metadata:
-  annotations: {}
   labels:
     name: cluster
   name: cluster
@@ -12,7 +11,6 @@ spec:
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  annotations: {}
   labels:
     name: project-request
   name: project-request

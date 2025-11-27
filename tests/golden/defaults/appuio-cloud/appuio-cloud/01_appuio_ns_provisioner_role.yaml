@@ -1,7 +1,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  annotations: {}
   labels:
     app.kubernetes.io/component: appuio-cloud
     app.kubernetes.io/managed-by: commodore
