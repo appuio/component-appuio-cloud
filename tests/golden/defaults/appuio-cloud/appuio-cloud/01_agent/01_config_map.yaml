@@ -115,6 +115,7 @@ data:
     - "kube-*"
     - "openshift-*"
     - "syn-*"
+    "UnmanagedOrganizationNamespaceLabel": "appuio.io/unmanaged-namespace"
     "UserDefaultOrganizationAnnotation": "appuio.io/default-organization"
 kind: ConfigMap
 metadata:

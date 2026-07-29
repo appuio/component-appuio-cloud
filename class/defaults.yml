@@ -18,7 +18,7 @@ parameters:
       agent:
         registry: ghcr.io
         repository: appuio/appuio-cloud-agent
-        tag: v0.20.2
+        tag: v0.21.0
 
     secrets: {}
 
@@ -48,6 +48,8 @@ parameters:
           matchExpressions:
             - key: appuio.io/organization
               operator: Exists
+            - key: appuio.io/unmanaged-namespace
+              operator: DoesNotExist
         patches:
           pod-run-once-active-deadline-mutator.appuio.io:
             _objectSelector:
@@ -57,6 +59,7 @@ parameters:
         QuotaOverrideNamespace: ${appuio_cloud:namespace}
         MemoryPerCoreLimit: ${appuio_cloud:agent:resourceRatio:memoryPerCore}
         OrganizationLabel: appuio.io/organization
+        UnmanagedOrganizationNamespaceLabel: appuio.io/unmanaged-namespace
         UserDefaultOrganizationAnnotation: appuio.io/default-organization
 
         _subjects: ${appuio_cloud:bypassNamespaceRestrictions:subjects}
