@@ -186,6 +186,7 @@ parameters:
       projectsyn: syn-*
       appuio: appuio-*
       cilium: cilium*
+      appcat2x: ["hel-*", "helx-*"]
 
     allowedNamespaceLabels:
       kubernetesGenerated:
